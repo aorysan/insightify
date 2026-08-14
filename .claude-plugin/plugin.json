@@ -2,41 +2,41 @@
   "name": "insightify-plugin",
   "version": "1.0.0",
   "description": "Generate documentation website and knowledge base from files and URLs",
-  "commands": [
+  "skills": [
     {
       "name": "insightify",
       "description": "Full documentation pipeline",
-      "instructions": "skills/insightify.md"
+      "path": "skills/insightify.md"
     },
     {
       "name": "insightify-ingest",
       "description": "Stage 1: Source Ingestion",
-      "instructions": "skills/ingest/ingest.md"
+      "path": "skills/ingest/ingest.md"
     },
     {
       "name": "insightify-extract",
       "description": "Stage 2: Knowledge Extraction",
-      "instructions": "skills/extract/extract.md"
+      "path": "skills/extract/extract.md"
     },
     {
       "name": "insightify-plan",
       "description": "Stage 3: Documentation Planner",
-      "instructions": "skills/plan/plan.md"
+      "path": "skills/plan/plan.md"
     },
     {
       "name": "insightify-write",
       "description": "Stage 4: Documentation Writer",
-      "instructions": "skills/write/write.md"
+      "path": "skills/write/write.md"
     },
     {
       "name": "insightify-review",
       "description": "Stage 5: Documentation Reviewer",
-      "instructions": "skills/review/review.md"
+      "path": "skills/review/review.md"
     },
     {
       "name": "insightify-build",
       "description": "Stage 6: Documentation Builder",
-      "instructions": "skills/build/build.md"
+      "path": "skills/build/build.md"
     }
   ]
 }
