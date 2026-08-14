@@ -1,5 +1,5 @@
 {
-  "name": "insightify",
+  "name": "insightify-plugin",
   "version": "1.0.0",
   "description": "Documentation generator plugin for Gemini CLI"
 }
