@@ -1,6 +1,10 @@
 {
   "name": "aorysan",
   "description": "Aorysan's Plugin Marketplace",
+  "owner": {
+    "name": "aorysan",
+    "url": "https://github.com/aorysan"
+  },
   "plugins": [
     {
       "name": "insightify-plugin",
