@@ -10,7 +10,10 @@
       "name": "insightify-plugin",
       "description": "Generate documentation website and knowledge base from files and URLs",
       "version": "1.0.0",
-      "url": "https://github.com/aorysan/insightify"
+      "source": {
+        "type": "git",
+        "url": "https://github.com/aorysan/insightify"
+      }
     }
   ]
 }
