@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- **Run unit tests**: `npm test` (Runs native Node.js test runner against `tests/*.test.js`)
+- **Run unit tests**: `npm test` (Runs native Node.js test runner)
 - **Install dependencies**: `npm install` (Uses standard npm; dependencies include `cheerio` and `pdf-parse`)
 
 ## Architecture Overview

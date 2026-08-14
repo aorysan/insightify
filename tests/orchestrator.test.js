@@ -18,4 +18,22 @@ describe('Orchestrator Skill', () => {
     assert.strictEqual(content.includes('Stage 6 (Build):'), true);
     assert.strictEqual(content.includes('.insightify/'), true);
   });
+
+  test('insightify.md includes CLI argument parsing, progress indicators, and error resilience', () => {
+    const orchestratorPath = path.join(__dirname, '../skills/insightify.md');
+    const content = fs.readFileSync(orchestratorPath, 'utf8');
+
+    // CLI argument parsing
+    assert.strictEqual(content.includes('CLI Argument Parsing & Invocation'), true);
+    assert.strictEqual(content.includes('--dry-run'), true);
+    assert.strictEqual(content.includes('--resume'), true);
+    assert.strictEqual(content.includes('--config'), true);
+    assert.strictEqual(content.includes('--project'), true);
+
+    // Progress indicators and error handling
+    assert.strictEqual(content.includes('Progress Indicator:'), true);
+    assert.strictEqual(content.includes('Error Handling:'), true);
+    assert.strictEqual(content.includes('unanswered.md'), true);
+    assert.strictEqual(content.includes('Detect missing `.insightify/` directory on resume'), true);
+  });
 });
