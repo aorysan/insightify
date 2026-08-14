@@ -71,11 +71,11 @@ insightify/
 │   │   └── references/
 │   │       └── review-criteria.md
 │   └── build/
-│       ├── build.md                   ← Stage 6 skill
-│       └── templates/
-│           ├── vitepress-config.js
-│           ├── sidebar-template.js
-│           └── index-template.md
+│   │   ├── build.md                   ← Stage 6 skill
+│   │   └── templates/
+│   │       ├── vitepress-config.js
+│   │       ├── sidebar-template.js
+│   │       └── index-template.md
 ├── .claude-plugin/
 │   └── plugin.json
 ├── .gemini-plugin/
@@ -619,12 +619,12 @@ During pipeline execution, the orchestrator MUST display progress for long-runni
 
 | Stage | Progress Indicator |
 |---|---|
-| 1. Ingest | `���� Ingesting: [===----] 3/5 sources (pdf-parser: 2, html-parser: 1)` |
-| 2. Extract | `���� Extracting: [======-] 6/7 categories (features, api, terminology...)` |
-| 3. Plan | `���� Planning: generating plan...` (fast, no progress bar) |
-| 4. Write | `������ Writing: Wave 2/4 — [======--] 3/5 pages (getting-started.md, api-reference.md...)` |
-| 5. Review | `���� Reviewing: [========] 5/5 dimensions (iteration 1/3)` |
-| 6. Build | `������� Building: generating config, sidebar, index...` |
+| 1. Ingest | `⏳ Ingesting: [===----] 3/5 sources (pdf-parser: 2, html-parser: 1)` |
+| 2. Extract | `⏳ Extracting: [======-] 6/7 categories (features, api, terminology...)` |
+| 3. Plan | `⏳ Planning: generating plan...` (fast, no progress bar) |
+| 4. Write | `⏳ Writing: Wave 2/4 — [======--] 3/5 pages (getting-started.md, api-reference.md...)` |
+| 5. Review | `⏳ Reviewing: [========] 5/5 dimensions (iteration 1/3)` |
+| 6. Build | `⏳ Building: generating config, sidebar, index...` |
 
 Progress updates every 2 seconds or on stage completion, whichever comes first.
 
@@ -635,11 +635,11 @@ The interactive approval flow:
 ```
 1. Planner generates plan.md
 2. Orchestrator displays summary:
-   ��� Documentation Plan: MyApp
-   ��� Audience: developers (primary), product-managers (secondary)
-   ��� Pages: 8 total (5 high, 2 medium, 1 low priority)
-   ��� Dependencies: 3 waves (Wave 1: 3 pages, Wave 2: 3 pages, Wave 3: 2 pages)
-   ������ Est. words: ~15,000
+   📝 Documentation Plan: MyApp
+   🎯 Audience: developers (primary), product-managers (secondary)
+   📄 Pages: 8 total (5 high, 2 medium, 1 low priority)
+   🔄 Dependencies: 3 waves (Wave 1: 3 pages, Wave 2: 3 pages, Wave 3: 2 pages)
+   📊 Est. words: ~15,000
 3. Prompt: "Approve plan? [Y/n/revise] "
    - Y/y/Enter → save plan with status: "approved", continue to Stage 4
    - n → exit pipeline, plan saved as "rejected"
@@ -653,8 +653,8 @@ The interactive approval flow:
 ```
 /insightify --dry-run --project myapp --source ./src --source https://docs.example.com
 
-���� DRY RUN — Insightify Pipeline Plan
-������������������������������������������������������������������������������
+🔍 DRY RUN — Insightify Pipeline Plan
+──────────────────────────────────────────────────────────────────────────────
 
 Project: myapp
 Output: ./myapp-docs/
@@ -673,6 +673,7 @@ Estimated output: ~50 files, ~200 KB
 
 Run without --dry-run to execute.
 ```
+
 ---
 
 ## 11. User Checkpoints Summary
@@ -731,7 +732,7 @@ tests/fixtures/
 ├── sample.js               # JS file with JSDoc comments
 ├── sample.ts               # TS file with interfaces
 ├── sample.md               # Markdown with frontmatter
-��── multi-source/           # Directory for multi-file tests
+└── multi-source/           # Directory for multi-file tests
     ├── README.md
     ├── src/
     │   └── index.ts
