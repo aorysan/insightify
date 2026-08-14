@@ -3,40 +3,6 @@
   "version": "1.0.0",
   "description": "Generate documentation website and knowledge base from files and URLs",
   "skills": [
-    {
-      "name": "insightify",
-      "description": "Full documentation pipeline",
-      "path": "skills/insightify.md"
-    },
-    {
-      "name": "insightify-ingest",
-      "description": "Stage 1: Source Ingestion",
-      "path": "skills/ingest/ingest.md"
-    },
-    {
-      "name": "insightify-extract",
-      "description": "Stage 2: Knowledge Extraction",
-      "path": "skills/extract/extract.md"
-    },
-    {
-      "name": "insightify-plan",
-      "description": "Stage 3: Documentation Planner",
-      "path": "skills/plan/plan.md"
-    },
-    {
-      "name": "insightify-write",
-      "description": "Stage 4: Documentation Writer",
-      "path": "skills/write/write.md"
-    },
-    {
-      "name": "insightify-review",
-      "description": "Stage 5: Documentation Reviewer",
-      "path": "skills/review/review.md"
-    },
-    {
-      "name": "insightify-build",
-      "description": "Stage 6: Documentation Builder",
-      "path": "skills/build/build.md"
-    }
+    "./"
   ]
 }
