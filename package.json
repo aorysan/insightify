@@ -1,0 +1,13 @@
+{
+  "name": "insightify",
+  "version": "1.0.0",
+  "description": "Multi-platform documentation generator plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "pdf-parse": "^1.1.1"
+  }
+}
