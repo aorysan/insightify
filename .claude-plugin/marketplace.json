@@ -9,7 +9,7 @@
     {
       "name": "insightify",
       "description": "Generate documentation website and knowledge base from files and URLs",
-      "version": "1.0.0",
+      "version": "3.0.0",
       "source": "./"
     }
   ]
