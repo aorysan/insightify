@@ -55,7 +55,7 @@ describe('Integration: Documentation Pipeline', () => {
   });
 
   test('orchestrator skill defines the complete 6-stage pipeline flow', () => {
-    const orchestratorPath = path.join(__dirname, '../../skills/insightify.md');
+    const orchestratorPath = path.join(__dirname, '../../skills/insightify/SKILL.md');
     assert.strictEqual(fs.existsSync(orchestratorPath), true);
 
     const content = fs.readFileSync(orchestratorPath, 'utf8');

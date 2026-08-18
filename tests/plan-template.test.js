@@ -12,7 +12,7 @@ describe('Plan Template', () => {
   });
 
   test('plan.md defines interactive revision loop and approval flow', () => {
-    const planSkill = fs.readFileSync(path.join(__dirname, '../skills/plan/plan.md'), 'utf8');
+    const planSkill = fs.readFileSync(path.join(__dirname, '../skills/plan/SKILL.md'), 'utf8');
     assert.strictEqual(planSkill.includes('name: insightify-plan'), true);
     assert.strictEqual(planSkill.includes('Approve plan? [Y/n/revise]'), true);
     assert.strictEqual(planSkill.includes('Max 3 revision cycles'), true);

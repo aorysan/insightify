@@ -1,8 +1,23 @@
 {
-  "name": "insightify-plugin",
+  "name": "insightify",
   "version": "1.0.0",
   "description": "Multi-platform documentation generator plugin",
   "main": "index.js",
+  "author": {
+    "name": "Aryo Adi Putro"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aorysan/insightify"
+  },
+  "keywords": [
+    "documentation",
+    "vitepress",
+    "knowledge-base",
+    "doc-generator",
+    "insightify"
+  ],
   "scripts": {
     "test": "node --test"
   },
