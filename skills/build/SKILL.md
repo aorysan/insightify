@@ -7,11 +7,11 @@ description: Stage 6 - Transform docs for VitePress, generate site config, and f
 
 ## Instructions
 
-1. Transform `docs/*` frontmatter into VitePress format.
-2. Generate `.vitepress/config.js` from `templates/vitepress-config.js` and plan dependency graph.
+1. Transform `[OUT_DIR]/docs/*` frontmatter into VitePress format.
+2. Generate `[OUT_DIR]/.vitepress/config.js` from `templates/vitepress-config.js` and plan dependency graph.
 3. Generate root `index.md` hero page from `templates/index-template.md`.
-4. Create root `package.json` with VitePress devDependencies.
-5. Copy `.insightify/knowledge/*` to `knowledge-base/`.
+4. Create root `[OUT_DIR]/package.json` with VitePress devDependencies.
+5. Copy `[OUT_DIR]/.insightify/knowledge/*` to `[OUT_DIR]/knowledge-base/`.
 6. Perform validation (no broken links, no orphan pages).
 7. Print completion summary and instructions (`npm run dev`).
 
@@ -37,16 +37,16 @@ Generate top navigation from the highest-priority pages:
 - Include links to: Getting Started, main guide sections, API Reference
 - Keep nav items to 5 or fewer
 
-## Output `package.json`
+## Output `[OUT_DIR]/package.json`
 
-The generated `package.json` (in the output project, not the plugin) should include:
+The generated `[OUT_DIR]/package.json` (in the output project, not the plugin) should include:
 
 ```json
 {
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:dev": "vitepress dev .",
+    "docs:build": "vitepress build .",
+    "docs:preview": "vitepress preview ."
   },
   "devDependencies": {
     "vitepress": "^1.0.0"
@@ -57,11 +57,11 @@ The generated `package.json` (in the output project, not the plugin) should incl
 ## Validation Checklist
 
 Before printing the completion summary, verify:
-- [ ] All internal links in `docs/*` resolve to existing files
+- [ ] All internal links in `[OUT_DIR]/docs/*` resolve to existing files
 - [ ] No orphan pages (every page is reachable from sidebar or another page)
 - [ ] Every page has `title` and `description` in frontmatter
 - [ ] `index.md` hero page has correct links to existing pages
-- [ ] `.vitepress/config.js` references only pages that exist
+- [ ] `[OUT_DIR]/.vitepress/config.js` references only pages that exist
 
 If validation fails, log warnings but do not block — report issues in the completion summary.
 
@@ -70,9 +70,9 @@ If validation fails, log warnings but do not block — report issues in the comp
 Print:
 ```
 ✅ Insightify Build Complete!
-📁 Output: ./docs/ (X pages)
-📚 Knowledge Base: ./knowledge-base/ (Y files)
-⚙️  Config: .vitepress/config.js
+📁 Output: [OUT_DIR]/docs/ (X pages)
+📚 Knowledge Base: [OUT_DIR]/knowledge-base/ (Y files)
+⚙️  Config: [OUT_DIR]/.vitepress/config.js
 
 To preview:
   npm install

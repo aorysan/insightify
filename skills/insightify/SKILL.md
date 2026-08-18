@@ -37,6 +37,7 @@ Support the following invocation patterns:
    - *Progress Indicator:* Display `⏳ Building: generating config, sidebar, index...`
 
 ## Workspace Constraints
-- All intermediate data MUST be stored in `.insightify/` relative to the target directory.
-- The final output is the `docs/` folder, `knowledge-base/` folder, `.vitepress` config, and `package.json`.
-- Detect missing `.insightify/` directory on resume and offer to restart or resume from last completed stage.
+- Determine the output directory based on the project name: `OUT_DIR = "insights/<project-name>/"`. All pipeline stages MUST operate within this `OUT_DIR`.
+- All intermediate data MUST be stored in `[OUT_DIR]/.insightify/` relative to the current workspace.
+- The final output is the `[OUT_DIR]/docs/` folder, `[OUT_DIR]/knowledge-base/` folder, `[OUT_DIR]/.vitepress/` config, and `[OUT_DIR]/package.json`.
+- Detect missing `[OUT_DIR]/.insightify/` directory on resume and offer to restart or resume from last completed stage.

@@ -7,9 +7,9 @@ description: Stage 4 - Execute documentation plan by generating markdown docs in
 
 ## Instructions
 
-1. Read `.insightify/plan.md` to get page list and writing order waves.
-2. For each wave, generate pure markdown pages under `docs/` using templates in `templates/`.
-3. Read `.insightify/knowledge/*.md` and previous wave pages for cross-referencing.
+1. Read `[OUT_DIR]/.insightify/plan.md` to get page list and writing order waves.
+2. For each wave, generate pure markdown pages under `[OUT_DIR]/docs/` using templates in `templates/`.
+3. Read `[OUT_DIR]/.insightify/knowledge/*.md` and previous wave pages for cross-referencing.
 4. Display summary to user for post-write review.
 5. Handle targeted page revisions if requested by user.
 

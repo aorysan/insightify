@@ -7,19 +7,19 @@ description: Stage 5 - Evaluate generated docs across 5 quality dimensions and g
 
 ## Instructions
 
-1. Evaluate `docs/*` in parallel across the 5 dimensions defined in `references/review-criteria.md`.
-2. Write report to `.insightify/review/review-report.md`.
+1. Evaluate `[OUT_DIR]/docs/*` in parallel across the 5 dimensions defined in `references/review-criteria.md`.
+2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
 3. If verdict is `changes_needed`, send specific page issues back to Stage 4 Writer.
 4. If iteration reaches 3, escalate remaining issues to user.
 
 ## Scoring Rubric (per dimension, 1-5 scale)
 
-**Accuracy** (compare against `.insightify/knowledge/*`):
+**Accuracy** (compare against `[OUT_DIR]/.insightify/knowledge/*`):
 - 5: All facts match knowledge base, no unsupported claims
 - 3: Minor inaccuracies or missing nuances
 - 1: Major factual errors or contradictions with knowledge base
 
-**Completeness** (compare against `.insightify/plan.md`):
+**Completeness** (compare against `[OUT_DIR]/.insightify/plan.md`):
 - 5: All planned sections present and substantive
 - 3: Most sections present, some thin or missing minor content
 - 1: Major planned sections missing entirely
@@ -55,7 +55,7 @@ When sending issues back to the Writer, format each as:
 
 ```markdown
 ### Issue: [Short description]
-- **Page:** `docs/[filename].md`
+- **Page:** `[OUT_DIR]/docs/[filename].md`
 - **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability]
 - **Severity:** [Critical|Minor]
 - **Issue:** [Description of what's wrong]
