@@ -1,8 +1,8 @@
 # Documentation Review Criteria (5 Dimensions)
 
-1. **Accuracy**: Compare `docs/*` against `.insightify/knowledge/*`. All claims must match knowledge facts.
-2. **Completeness**: Compare `docs/*` against `.insightify/plan.md`. All planned sections must be present.
-3. **Consistency**: Terminology, tone, formatting must be uniform across all `docs/*`.
+1. **Accuracy**: Compare `[OUT_DIR]/docs/*` against `[OUT_DIR]/.insightify/knowledge/*`. All claims must match knowledge facts.
+2. **Completeness**: Compare `[OUT_DIR]/docs/*` against `[OUT_DIR]/.insightify/plan.md`. All planned sections must be present.
+3. **Consistency**: Terminology, tone, formatting must be uniform across all `[OUT_DIR]/docs/*`.
 4. **Structure**: Heading levels must be incremental (H1 -> H2 -> H3). Links between pages must be valid.
 5. **Usability**: Clear code examples, readable prose targeted to the intended audience.
 

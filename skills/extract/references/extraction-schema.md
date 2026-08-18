@@ -1,6 +1,6 @@
 # Knowledge Extraction Schema Reference
 
-Extracted knowledge MUST be categorized into 7 files under `.insightify/knowledge/`:
+Extracted knowledge MUST be categorized into 7 files under `[OUT_DIR]/.insightify/knowledge/`:
 
 1. `product.md`: Product name, description, audience, value prop.
 2. `features.md`: List of features, descriptions, and citations.

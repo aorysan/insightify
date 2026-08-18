@@ -9,8 +9,8 @@ description: Stage 1 - Ingest input files and URLs, normalize content to Markdow
 
 1. Accept input files or URLs from parameters or prompt.
 2. For each source, execute the appropriate parser (HTML, Code, PDF, or Markdown/Text direct copy).
-3. Generate normalized `.insightify/sources/source-XXX.md` with YAML metadata frontmatter.
-4. Write master source index `.insightify/sources/manifest.md`.
+3. Generate normalized `[OUT_DIR]/.insightify/sources/source-XXX.md` with YAML metadata frontmatter.
+4. Write master source index `[OUT_DIR]/.insightify/sources/manifest.md`.
 
 ## Supported Input Types
 
@@ -55,7 +55,7 @@ Content headings should be normalized to start at H2 (`##`) — reserve H1 for t
 
 ## Manifest Format
 
-Each entry in `.insightify/sources/manifest.md` should include:
+Each entry in `[OUT_DIR]/.insightify/sources/manifest.md` should include:
 
 ```markdown
 | Source ID | Path | Type | Status | Words |
