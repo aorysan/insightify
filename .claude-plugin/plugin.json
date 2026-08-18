@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "insightify",
   "displayName": "Insightify",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Generate documentation website and knowledge base from files and URLs",
   "author": {
     "name": "Aryo Adi Putro"
