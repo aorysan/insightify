@@ -13,14 +13,14 @@ Insightify is a multi-platform documentation generator plugin structured as a 6-
 
 ### Pipeline Stages and Skills
 
-The entry point is `skills/insightify.md`, which orchestrates six independent stage skills:
+The entry point is `skills/insightify/SKILL.md`, which orchestrates six independent stage skills:
 
-1. **Stage 1 (Ingest)**: `skills/ingest/ingest.md` - Reads inputs (files, URLs) using parsers (`code-parser.js`, `html-parser.js`, `pdf-parser.js`) and outputs normalized markdown to `.insightify/sources/`.
-2. **Stage 2 (Extract)**: `skills/extract/extract.md` - Extracts structured product knowledge from sources into specific categories using LLM extraction schemas. Outputs to `.insightify/knowledge/`.
-3. **Stage 3 (Plan)**: `skills/plan/plan.md` - Analyzes knowledge and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
-4. **Stage 4 (Write)**: `skills/write/write.md` - Generates markdown documentation pages under `docs/` in dependency-aware waves based on the approved plan.
-5. **Stage 5 (Review)**: `skills/review/review.md` - Automatically reviews generated docs across 5 dimensions. If revisions are needed, sends targeted issues back to Stage 4 (max 3 iterations).
-6. **Stage 6 (Build)**: `skills/build/build.md` - Transforms markdown into a VitePress-ready site (frontmatter, config, sidebar), finalizes the knowledge base, and outputs the final `package.json` and `README.md`.
+1. **Stage 1 (Ingest)**: `skills/ingest/SKILL.md` - Reads inputs (files, URLs) using parsers (`code-parser.js`, `html-parser.js`, `pdf-parser.js`) and outputs normalized markdown to `.insightify/sources/`.
+2. **Stage 2 (Extract)**: `skills/extract/SKILL.md` - Extracts structured product knowledge from sources into specific categories using LLM extraction schemas. Outputs to `.insightify/knowledge/`.
+3. **Stage 3 (Plan)**: `skills/plan/SKILL.md` - Analyzes knowledge and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
+4. **Stage 4 (Write)**: `skills/write/SKILL.md` - Generates markdown documentation pages under `docs/` in dependency-aware waves based on the approved plan.
+5. **Stage 5 (Review)**: `skills/review/SKILL.md` - Automatically reviews generated docs across 5 dimensions. If revisions are needed, sends targeted issues back to Stage 4 (max 3 iterations).
+6. **Stage 6 (Build)**: `skills/build/SKILL.md` - Transforms markdown into a VitePress-ready site (frontmatter, config, sidebar), finalizes the knowledge base, and outputs the final `package.json` and `README.md`.
 
 ### Data Flow & State Management
 

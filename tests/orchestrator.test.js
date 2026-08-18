@@ -5,8 +5,8 @@ const path = require('path');
 
 describe('Orchestrator Skill', () => {
   test('insightify.md exists and contains pipeline stages', () => {
-    const orchestratorPath = path.join(__dirname, '../skills/insightify.md');
-    assert.strictEqual(fs.existsSync(orchestratorPath), true, 'skills/insightify.md must exist');
+    const orchestratorPath = path.join(__dirname, '../skills/insightify/SKILL.md');
+    assert.strictEqual(fs.existsSync(orchestratorPath), true, 'skills/insightify/SKILL.md must exist');
 
     const content = fs.readFileSync(orchestratorPath, 'utf8');
     assert.strictEqual(content.includes('name: insightify'), true);
@@ -20,7 +20,7 @@ describe('Orchestrator Skill', () => {
   });
 
   test('insightify.md includes CLI argument parsing, progress indicators, and error resilience', () => {
-    const orchestratorPath = path.join(__dirname, '../skills/insightify.md');
+    const orchestratorPath = path.join(__dirname, '../skills/insightify/SKILL.md');
     const content = fs.readFileSync(orchestratorPath, 'utf8');
 
     // CLI argument parsing
