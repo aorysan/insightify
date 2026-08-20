@@ -2,9 +2,9 @@ const { describe, test } = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
-const { parseHtml } = require('../../skills/ingest/parsers/html-parser');
-const { parseCode } = require('../../skills/ingest/parsers/code-parser');
-const buildSidebar = require('../../skills/build/templates/sidebar-template');
+const { parseHtml } = require('../../skills/planner/parsers/html-parser');
+const { parseCode } = require('../../skills/planner/parsers/code-parser');
+const buildSidebar = require('../../skills/builder/templates/sidebar-template');
 
 describe('Integration: Documentation Pipeline', () => {
   const fixturesDir = path.join(__dirname, '../fixtures');

@@ -34,6 +34,6 @@ describe('Orchestrator Skill', () => {
     assert.strictEqual(content.includes('Progress Indicator:'), true);
     assert.strictEqual(content.includes('Error Handling:'), true);
     assert.strictEqual(content.includes('unanswered.md'), true);
-    assert.strictEqual(content.includes('Detect missing `.insightify/` directory on resume'), true);
+    assert.strictEqual(content.includes('Detect missing `[OUT_DIR]/.insightify/` directory on resume'), true);
   });
 });

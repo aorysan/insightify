@@ -1,8 +1,8 @@
 const { describe, test } = require('node:test');
 const assert = require('assert');
-const { parseHtml } = require('../skills/ingest/parsers/html-parser');
-const { parseCode } = require('../skills/ingest/parsers/code-parser');
-const { parsePdf } = require('../skills/ingest/parsers/pdf-parser');
+const { parseHtml } = require('../skills/planner/parsers/html-parser');
+const { parseCode } = require('../skills/planner/parsers/code-parser');
+const { parsePdf } = require('../skills/planner/parsers/pdf-parser');
 
 describe('Ingest Parsers', () => {
   test('html-parser extracts main content and ignores nav/footer', () => {
