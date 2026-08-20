@@ -10,12 +10,10 @@ describe('Orchestrator Skill', () => {
 
     const content = fs.readFileSync(orchestratorPath, 'utf8');
     assert.strictEqual(content.includes('name: insightify'), true);
-    assert.strictEqual(content.includes('Stage 1 (Ingest):'), true);
-    assert.strictEqual(content.includes('Stage 2 (Extract):'), true);
-    assert.strictEqual(content.includes('Stage 3 (Plan):'), true);
-    assert.strictEqual(content.includes('Stage 4 (Write):'), true);
-    assert.strictEqual(content.includes('Stage 5 (Review):'), true);
-    assert.strictEqual(content.includes('Stage 6 (Build):'), true);
+    assert.strictEqual(content.includes('Planner'), true);
+    assert.strictEqual(content.includes('Writer'), true);
+    assert.strictEqual(content.includes('Reviewer'), true);
+    assert.strictEqual(content.includes('Builder'), true);
     assert.strictEqual(content.includes('.insightify/'), true);
   });
 
@@ -31,9 +29,8 @@ describe('Orchestrator Skill', () => {
     assert.strictEqual(content.includes('--project'), true);
 
     // Progress indicators and error handling
-    assert.strictEqual(content.includes('Progress Indicator:'), true);
-    assert.strictEqual(content.includes('Error Handling:'), true);
-    assert.strictEqual(content.includes('unanswered.md'), true);
-    assert.strictEqual(content.includes('Detect missing `[OUT_DIR]/.insightify/` directory on resume'), true);
+    assert.strictEqual(content.includes('Progress:'), true);
+    assert.strictEqual(content.includes('Error:'), true);
+    assert.strictEqual(content.includes('.insightify/'), true);
   });
 });

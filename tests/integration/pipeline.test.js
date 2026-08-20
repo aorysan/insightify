@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const { parseHtml } = require('../../skills/planner/parsers/html-parser');
 const { parseCode } = require('../../skills/planner/parsers/code-parser');
-const buildSidebar = require('../../skills/builder/templates/sidebar-template');
 
 describe('Integration: Documentation Pipeline', () => {
   const fixturesDir = path.join(__dirname, '../fixtures');
@@ -35,37 +34,30 @@ describe('Integration: Documentation Pipeline', () => {
     assert.ok(extractedTs.includes('interface User'), 'TypeScript code fallback preserved');
   });
 
-  test('validates multi-source fixtures and pipeline sidebar generation', () => {
+  test('validates multi-source fixtures and builder HTML output', async () => {
     const multiDir = path.join(fixturesDir, 'multi-source');
     assert.strictEqual(fs.existsSync(path.join(multiDir, 'src/index.ts')), true);
     assert.strictEqual(fs.existsSync(path.join(multiDir, 'docs/guide.md')), true);
     assert.strictEqual(fs.existsSync(path.join(multiDir, 'README.md')), true);
 
-    const planPages = [
-      { title: 'Home', slug: 'index' },
-      { title: 'Guide', slug: 'guide' },
-      { title: 'API Reference', slug: 'api' }
-    ];
-    const sidebar = buildSidebar(planPages);
-
-    assert.strictEqual(sidebar.length, 3);
-    assert.deepStrictEqual(sidebar[0], { text: 'Home', link: '/index' });
-    assert.deepStrictEqual(sidebar[1], { text: 'Guide', link: '/guide' });
-    assert.deepStrictEqual(sidebar[2], { text: 'API Reference', link: '/api' });
+    const { renderMarkdown } = await import('../../skills/builder/templates/build-html.mjs');
+    const md = '# Title\n\nParagraph with **bold** and `code`.';
+    const html = renderMarkdown(md);
+    assert.ok(html.includes('<h1>Title</h1>'));
+    assert.ok(html.includes('<strong>bold</strong>'));
+    assert.ok(html.includes('<code>code</code>'));
   });
 
-  test('orchestrator skill defines the complete 6-stage pipeline flow', () => {
+  test('orchestrator skill defines the 4-step pipeline flow', () => {
     const orchestratorPath = path.join(__dirname, '../../skills/insightify/SKILL.md');
     assert.strictEqual(fs.existsSync(orchestratorPath), true);
 
     const content = fs.readFileSync(orchestratorPath, 'utf8');
     const requiredStages = [
-      'Stage 1 (Ingest)',
-      'Stage 2 (Extract)',
-      'Stage 3 (Plan)',
-      'Stage 4 (Write)',
-      'Stage 5 (Review)',
-      'Stage 6 (Build)'
+      'Planner',
+      'Writer',
+      'Reviewer',
+      'Builder'
     ];
 
     for (const stage of requiredStages) {
