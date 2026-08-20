@@ -1,7 +1,7 @@
 {
   "name": "insightify",
-  "version": "3.0.0",
-  "description": "Multi-platform documentation generator plugin",
+  "version": "4.0.0",
+  "description": "Generate artifact-style documentation and a knowledge base from files and URLs",
   "main": "index.js",
   "author": {
     "name": "Aryo Adi Putro"
@@ -13,10 +13,10 @@
   },
   "keywords": [
     "documentation",
-    "vitepress",
     "knowledge-base",
     "doc-generator",
-    "insightify"
+    "insightify",
+    "artifact"
   ],
   "scripts": {
     "test": "node --test"

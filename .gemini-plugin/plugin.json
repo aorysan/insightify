@@ -1,7 +1,7 @@
 {
   "name": "insightify",
-  "version": "1.0.0",
-  "description": "Documentation generator plugin for Gemini CLI",
+  "version": "4.0.0",
+  "description": "Generate artifact-style documentation and a knowledge base from files and URLs",
   "author": {
     "name": "Aryo Adi Putro"
   },

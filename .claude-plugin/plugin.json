@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "insightify",
   "displayName": "Insightify",
-  "version": "3.0.0",
-  "description": "Generate documentation website and knowledge base from files and URLs",
+  "version": "4.0.0",
+  "description": "Generate artifact-style documentation and a knowledge base from files and URLs",
   "author": {
     "name": "Aryo Adi Putro"
   },
@@ -12,10 +12,10 @@
   "license": "MIT",
   "keywords": [
     "documentation",
-    "vitepress",
     "knowledge-base",
     "doc-generator",
-    "insightify"
+    "insightify",
+    "artifact"
   ],
   "skills": ["./"]
 }

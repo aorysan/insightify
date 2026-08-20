@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "insightify",
-      "description": "Generate documentation website and knowledge base from files and URLs",
-      "version": "3.0.0",
+      "description": "Generate artifact-style documentation and a knowledge base from files and URLs",
+      "version": "4.0.0",
       "source": "./"
     }
   ]
