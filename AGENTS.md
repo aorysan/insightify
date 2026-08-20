@@ -9,29 +9,27 @@ This file provides guidance to AI coding agents (like Antigravity and others) wh
 
 ## Architecture Overview
 
-Insightify is a multi-platform documentation generator plugin structured as a 6-stage sequential pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach.
+Insightify is a multi-platform documentation generator plugin structured as a 4-stage sequential pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach.
 
 ### Pipeline Stages and Skills
 
-The entry point is `skills/insightify/SKILL.md`, which orchestrates six independent stage skills:
+The entry point is `skills/insightify/SKILL.md`, which orchestrates four independent stage skills:
 
-1. **Stage 1 (Ingest)**: `skills/ingest/SKILL.md` - Reads inputs (files, URLs) using parsers (`code-parser.js`, `html-parser.js`, `pdf-parser.js`) and outputs normalized markdown to `.insightify/sources/`.
-2. **Stage 2 (Extract)**: `skills/extract/SKILL.md` - Extracts structured product knowledge from sources into specific categories using LLM extraction schemas. Outputs to `.insightify/knowledge/`.
-3. **Stage 3 (Plan)**: `skills/plan/SKILL.md` - Analyzes knowledge and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
-4. **Stage 4 (Write)**: `skills/write/SKILL.md` - Generates markdown documentation pages under `docs/` in dependency-aware waves based on the approved plan.
-5. **Stage 5 (Review)**: `skills/review/SKILL.md` - Automatically reviews generated docs across 5 dimensions. If revisions are needed, sends targeted issues back to Stage 4 (max 3 iterations).
-6. **Stage 6 (Build)**: `skills/build/SKILL.md` - Transforms markdown into a VitePress-ready site (frontmatter, config, sidebar), finalizes the knowledge base, and outputs the final `package.json` and `README.md`.
+1. **Stage 1-3 (Planner)**: `skills/planner/SKILL.md` - Ingests sources (files, URLs), extracts structured product knowledge, and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
+2. **Stage 4 (Writer)**: `skills/writer/SKILL.md` - Generates markdown documentation pages under `docs/markdown/` in dependency-aware waves based on the approved plan.
+3. **Stage 5 (Reviewer)**: `skills/reviewer/SKILL.md` - Automatically reviews generated docs across 5 dimensions. If revisions are needed, sends targeted issues back to Writer (max 3 iterations).
+4. **Stage 6 (Builder)**: `skills/builder/SKILL.md` - Renders documentation as single artifact-style HTML (`index.html`) and assembles knowledge base (`knowledge-base.md`).
 
 ### Data Flow & State Management
 
 - All stages communicate through a temporary workspace directory (`.insightify/`) created relative to the target project.
 - **Stage skills operate in two modes**:
   - **Orchestrated**: Called by `insightify.md` during a full run.
-  - **Standalone**: Called directly via their own commands (e.g., `/insightify-extract`) for manual execution.
+  - **Standalone**: Called directly via their own commands (e.g., `/planner`, `/writer`, `/reviewer`, `/builder`) for manual execution.
 - **Knowledge Traceability**: Every extracted fact in the Knowledge Base includes a blockquote citation tracing it back to the original source ID.
 
 ### External Dependencies
 
-- `pdf-parse`: For extracting text from PDF files in Stage 1.
-- `cheerio`: For parsing and cleaning HTML content in Stage 1.
+- `pdf-parse`: For extracting text from PDF files in Stage 1 (Planner).
+- `cheerio`: For parsing and cleaning HTML content in Stage 1 (Planner).
 - Node.js native features: Uses Node.js built-in `node:test` runner.
