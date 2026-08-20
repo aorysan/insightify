@@ -11,4 +11,11 @@ describe('Review Criteria', () => {
       assert.strictEqual(criteria.includes(dim), true);
     });
   });
+
+  test('reviewer skill has correct name and description', () => {
+    const skill = fs.readFileSync(path.join(__dirname, '../skills/reviewer/SKILL.md'), 'utf8');
+    assert.strictEqual(skill.includes('name: reviewer'), true);
+    assert.strictEqual(skill.includes('Stage 5'), true);
+    assert.strictEqual(skill.includes('5 quality dimensions'), true);
+  });
 });
