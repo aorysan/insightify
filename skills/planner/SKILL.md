@@ -1,44 +1,20 @@
 ---
-name: insightify-planner
-description: Stage 1+2 - Ingest sources, extract knowledge, and generate documentation plan.
+name: planner
+description: Stage 1-3 - Ingest sources, extract knowledge, and generate documentation plan with user approval.
 ---
 
-# Insightify Planner Skill
-
-This skill combines the ingestion, knowledge extraction, and planning stages into a unified planner.
+# Planner Skill (Ingest → Extract → Plan)
 
 ## Instructions
 
-### Phase 1: Source Ingestion
+### Phase 1: Ingest (from former insightify-ingest)
+
 1. Accept input files or URLs from parameters or prompt.
-2. For each source, execute the appropriate parser (`parsers/html-parser.js`, `parsers/code-parser.js`, `parsers/pdf-parser.js`).
+2. For each source, execute the appropriate parser (HTML, Code, PDF, or Markdown/Text direct copy).
 3. Generate normalized `[OUT_DIR]/.insightify/sources/source-XXX.md` with YAML metadata frontmatter.
 4. Write master source index `[OUT_DIR]/.insightify/sources/manifest.md`.
 
-### Phase 2: Knowledge Extraction
-5. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
-6. For each category defined in `references/extraction-schema.md`, analyze sources and extract structured facts.
-7. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every extracted fact.
-8. Write output files to `[OUT_DIR]/.insightify/knowledge/`.
-
-### Phase 3: Documentation Planning
-9. Read `[OUT_DIR]/.insightify/knowledge/*.md`.
-10. Generate documentation plan using `templates/plan-template.md`.
-11. Display a concise summary of the generated plan to the user:
-    ```
-    📝 Documentation Plan: [Project Name]
-    🎯 Audience: [Primary & Secondary]
-    📄 Pages: [Total count, breakdown by priority]
-    🔄 Dependencies: [Number of waves]
-    📊 Est. words: [Estimation]
-    ```
-12. Ask for explicit user approval using this prompt: "Approve plan? [Y/n/revise]"
-    - If `Y`/`y`/Enter: Save plan to `[OUT_DIR]/.insightify/plan.md` with `status: approved` and proceed.
-    - If `n`: Exit pipeline, save plan as `rejected`.
-    - If `revise`: Prompt "What changes? (e.g., 'add FAQ page', 'merge API pages')". Re-generate plan based on feedback, and loop back to Step 11.
-13. Max 3 revision cycles. On the 4th cycle, ask the user to force approval or exit.
-
-## Supported Input Types
+**Supported Input Types:**
 
 | Extension | Parser | Notes |
 |-----------|--------|-------|
@@ -49,22 +25,10 @@ This skill combines the ingestion, knowledge extraction, and planning stages int
 | URLs (`http://`, `https://`) | Fetch → HTML parser | Fetch page, then process as HTML |
 | Other extensions | Skip | Log warning, mark as `skipped` in manifest |
 
-## URL Fetching
+**URL Fetching:** Timeout 30s, 1 retry on 5xx, User-Agent `Insightify/1.0`.
+**File Size Limits:** >5MB warning, >20MB skip as `file_too_large`.
 
-- Timeout: 30 seconds per request
-- Retry: 1 retry on failure (timeout or HTTP 5xx)
-- User-Agent: `Insightify/1.0`
-- On permanent failure (4xx or second failure): mark as `failed` in manifest, continue pipeline
-
-## File Size Limits
-
-- Files > 5MB: log a warning but process normally
-- Files > 20MB: skip and mark as `skipped` in manifest with reason `"file_too_large"`
-
-## Normalized Output Format
-
-Each source file should have this frontmatter:
-
+**Normalized Output Frontmatter:**
 ```yaml
 ---
 source_id: "source-001"
@@ -77,73 +41,51 @@ word_count: 1234
 ---
 ```
 
-Content headings should be normalized to start at H2 (`##`) — reserve H1 for the source title.
+Content headings normalized to start at H2 (`##`). Manifest format: table with Source ID, Path, Type, Status, Words.
 
-## Manifest Format
+### Phase 2: Extract (from former insightify-extract)
 
-Each entry in `[OUT_DIR]/.insightify/sources/manifest.md` should include:
+1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
+2. For each category in `references/extraction-schema.md`, analyze sources and extract structured facts.
+3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
+4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
 
-```markdown
-| Source ID | Path | Type | Status | Words |
-|-----------|------|------|--------|-------|
-| source-001 | ./src/main.js | code | success | 543 |
-| source-002 | https://example.com | url | failed | 0 |
-```
+**Conflict Handling:** Keep both facts, flag in `unanswered.md`.
+**Confidence:** `high` (explicit), `medium` (inferred), `low` (ambiguous).
+**Edge Cases:** Uncategorized → `unanswered.md`; thin sources → min `product.md` + `unanswered.md`; empty → skip, log.
 
-Status values: `success`, `failed`, `skipped`
-
-## Handling Conflicts Between Sources
-
-When two sources provide contradictory information:
-- Keep both facts in the relevant knowledge file
-- Flag the contradiction in `unanswered.md` with references to both sources
-- Example: `> ⚠️ Conflict: source-001 says max 100 users, source-003 says max 500 users`
-
-## Confidence Scoring
-
-Assign confidence to each extracted fact in the YAML frontmatter:
-- `high`: Fact is explicitly and clearly stated in source material
-- `medium`: Fact is inferred from context or implied by multiple sources
-- `low`: Fact is ambiguous, mentioned only once, or from a low-quality source
-
-## Edge Cases
-
-- **Source doesn't fit any category:** Note it in `unanswered.md` with a suggested category name
-- **Very thin sources:** Always produce at minimum `product.md` (even with basic info) and `unanswered.md` (listing what's missing)
-- **Empty source files:** Skip, log a note in `unanswered.md`
-
-## Citation Format
-
-Every extracted fact should include a blockquote citation:
-
+**Citation Format:**
 ```markdown
 The API supports up to 1000 concurrent connections.
 
 > **Source:** source-003.md § API Limits
 ```
 
-The `§` symbol references the section within the source where the fact was found.
+### Phase 3: Plan (from former insightify-plan)
 
-## Page Sizing Guidance
+1. Read `[OUT_DIR]/.insightify/knowledge/*.md`.
+2. Generate plan using `templates/plan-template.md`.
+3. Display summary:
+   ```
+   📝 Documentation Plan: [Project Name]
+   🎯 Audience: [Primary & Secondary]
+   📄 Pages: [Total count, breakdown by priority]
+   🔄 Dependencies: [Number of waves]
+   📊 Est. words: [Estimation]
+   ```
+4. Ask approval: "Approve plan? [Y/n/revise]"
+   - Y/Enter → save as `approved`, proceed (plan frontmatter: `status: approved`)
+   - n → exit, save as `rejected`
+   - revise → prompt "What changes?", regenerate, loop (max 3 cycles). Max 3 revision cycles.
 
-- Ideal page length: 500–2000 words
-- If a page would exceed 3000 words, split it into sub-pages
-- Very short pages (< 300 words) should be merged with related content
+**Page Sizing:** 500–2000 words ideal; >3000 split; <300 merge.
+**Merge when:** same audience, one topic <300 words.
+**Split when:** distinct audiences, >3000 words, mixed conceptual/reference.
+**Priority:** high (getting started, core), medium (features), low (API, FAQ).
+**Dependency Graph:** No cycles; max 3 waves; wave 1 = standalone; max 2 deps/page.
 
-## When to Merge vs Split
+### Progress & Error Handling
 
-- **Merge** when: two topics share the same audience and one topic is < 300 words
-- **Split** when: a page covers two distinct audiences, or exceeds 3000 words, or mixes conceptual/reference content
-
-## Priority Assignment
-
-- `high`: Getting started, installation, core concepts — pages every user needs
-- `medium`: Feature guides, detailed workflows — pages most users need
-- `low`: API reference, troubleshooting, FAQ — pages some users need
-
-## Dependency Graph Rules
-
-- No circular dependencies between pages
-- Aim for max 3 writing waves — if more are needed, re-evaluate page boundaries
-- Wave 1 should contain all standalone pages (no dependencies)
-- Each page should depend on at most 2 other pages
+- Ingest: `⏳ Ingesting: [===----] X/Y sources`; partial failure → log `failed`, continue.
+- Extract: `⏳ Extracting: [======-] X/Y categories`; category failure → empty file, note in `unanswered.md`.
+- Plan: `⏳ Planning: generating plan...`; no response 5min → re-prompt; 10min → save as `draft`, exit.
