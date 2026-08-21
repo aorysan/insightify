@@ -1,5 +1,7 @@
 const { describe, test } = require('node:test');
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const { parseHtml } = require('../skills/planner/parsers/html-parser');
 const { parseCode } = require('../skills/planner/parsers/code-parser');
 const { parseJson } = require('../skills/planner/parsers/json-parser');
@@ -353,8 +355,23 @@ def sub(a, b):
     assert.ok(parsed.includes('"appName": "CustomService"'));
   });
 
+  test('json-parser parses arbitrary JSON and outputs JSON Data section', () => {
+    const json = JSON.stringify({ foo: 'bar' });
+    const parsed = parseJson(json, 'json');
+    assert.ok(parsed.includes('## JSON Data'));
+    assert.ok(parsed.includes('"foo": "bar"'));
+  });
+
   // --- PDF Parser Tests ---
   test('pdf-parser exports parsePdf function', () => {
     assert.strictEqual(typeof parsePdf, 'function');
+  });
+
+  test('pdf-parser extracts text from PDF buffer fixture', async () => {
+    const pdfPath = path.join(__dirname, 'fixtures', 'sample.pdf');
+    const buffer = fs.readFileSync(pdfPath);
+    const text = await parsePdf(buffer);
+    assert.strictEqual(typeof text, 'string');
+    assert.ok(text.includes('Sample PDF Document'));
   });
 });
