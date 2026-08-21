@@ -333,6 +333,31 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(sectionsHtml.includes('Summary content here.'));
   });
 
+  test('buildDocSections strips leading H1 to prevent duplicate headings', async () => {
+    const { buildDocSections } = await import('../skills/builder/templates/build-html.mjs');
+    const docsDir = path.join(__dirname, 'fixtures/sample-docs');
+    const testFile = path.join(docsDir, '03-h1-test.md');
+
+    try {
+      fs.writeFileSync(testFile, '---\ntitle: "H1 Test Page"\ncategory: "testing"\n---\n# H1 Test Page\n\nPage body content without duplicate heading.');
+
+      const plan = {
+        pages: [
+          { file: '03-h1-test.md', title: 'H1 Test Page', category: 'testing' }
+        ]
+      };
+
+      const sectionsHtml = buildDocSections(docsDir, plan);
+      assert.ok(sectionsHtml.includes('<h2>H1 Test Page</h2>'));
+      assert.strictEqual(sectionsHtml.includes('<h1>H1 Test Page</h1>'), false, 'Should strip leading H1 to prevent duplicate heading');
+      assert.ok(sectionsHtml.includes('Page body content without duplicate heading.'));
+    } finally {
+      if (fs.existsSync(testFile)) {
+        fs.unlinkSync(testFile);
+      }
+    }
+  });
+
   test('buildSidebarNav creates navigation links for overview, pages, and pipeline', async () => {
     const { buildSidebarNav } = await import('../skills/builder/templates/build-html.mjs');
     const plan = {

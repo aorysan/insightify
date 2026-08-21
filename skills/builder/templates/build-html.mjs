@@ -316,12 +316,13 @@ export function buildDocSections(docsDir, plan = {}) {
     const slug = fileName.replace('.md', '').replace(/^\d+-/, '');
     const label = frontmatter.category || (typeof page === 'object' ? page.category : null) || 'Documentation';
     const title = frontmatter.title || (typeof page === 'object' ? page.title : null) || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const cleanedContent = content.replace(/^#\s+[^\n]+\n*/, '');
 
     sectionsHtml += `
       <section id="${escapeHtml(slug)}" class="doc-section">
         <span class="section-label">${escapeHtml(label)}</span>
         <h2>${escapeHtml(title)}</h2>
-        ${renderMarkdown(content)}
+        ${renderMarkdown(cleanedContent)}
       </section>
     `;
   }
