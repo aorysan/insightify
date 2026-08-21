@@ -159,14 +159,88 @@ function parseCode(codeString, lang) {
       }
     }
 
+    // Helper to find type definition body accounting for nested braces, brackets, parens, and comments
+    function extractTypeDefinition(str, startIndex) {
+      let depth = 0;
+      let inString = null;
+      let inLineComment = false;
+      let inBlockComment = false;
+
+      for (let i = startIndex; i < str.length; i++) {
+        const char = str[i];
+        const next = str[i + 1];
+
+        if (inLineComment) {
+          if (char === '\n') inLineComment = false;
+          continue;
+        }
+        if (inBlockComment) {
+          if (char === '*' && next === '/') {
+            inBlockComment = false;
+            i++;
+          }
+          continue;
+        }
+        if (inString) {
+          if (char === '\\') {
+            i++;
+          } else if (char === inString) {
+            inString = null;
+          }
+          continue;
+        }
+
+        if (char === '/' && next === '/') {
+          inLineComment = true;
+          i++;
+          continue;
+        }
+        if (char === '/' && next === '*') {
+          inBlockComment = true;
+          i++;
+          continue;
+        }
+        if (char === '"' || char === "'" || char === '`') {
+          inString = char;
+          continue;
+        }
+
+        if (char === '{' || char === '(' || char === '<' || char === '[') {
+          depth++;
+        } else if (char === '}' || char === ')' || char === '>' || char === ']') {
+          if (depth > 0) depth--;
+        } else if (char === ';' && depth === 0) {
+          return {
+            definition: str.substring(startIndex, i).trim(),
+            endIndex: i
+          };
+        }
+      }
+
+      const remaining = str.substring(startIndex).trim();
+      if (remaining) {
+        return {
+          definition: remaining.replace(/;$/, '').trim(),
+          endIndex: str.length
+        };
+      }
+      return null;
+    }
+
     // Types: captures full signature including generics
-    const typeRegex = /(?:^|\n)\s*(?:export\s+)?type\s+(([A-Za-z0-9_$]+)(?:<[^>]*>)?)\s*=\s*([^;]+);/g;
-    while ((match = typeRegex.exec(codeString)) !== null) {
-      extracted.types.push({
-        name: match[2].trim(),
-        signature: match[1].trim(),
-        definition: match[3].trim()
-      });
+    const typeHeaderRegex = /(?:^|\n)\s*(?:export\s+)?type\s+(([A-Za-z0-9_$]+)(?:<[^>]*>)?)\s*=\s*/g;
+    while ((match = typeHeaderRegex.exec(codeString)) !== null) {
+      const signature = match[1].trim();
+      const name = match[2].trim();
+      const block = extractTypeDefinition(codeString, typeHeaderRegex.lastIndex);
+      if (block) {
+        extracted.types.push({
+          name,
+          signature,
+          definition: block.definition
+        });
+        typeHeaderRegex.lastIndex = block.endIndex + 1;
+      }
     }
 
     // Enums: captures regular enum and const enum
@@ -230,7 +304,14 @@ function parseCode(codeString, lang) {
   extracted.comments = comments;
 
   // Build markdown representation strictly for interfaces, types, enums, components, hooks, imports
-  let output = comments.join('\n\n') || codeString;
+  let output = comments.join('\n\n');
+  const hasDefinitions = extracted.interfaces.length > 0 || extracted.types.length > 0 || 
+                         extracted.enums.length > 0 || (extracted.jsxComponents?.length > 0 || extracted.components?.length > 0) || 
+                         extracted.hooks.length > 0;
+  
+  if (!output && !hasDefinitions) {
+      output = codeString;
+  }
 
   if (extracted.interfaces.length > 0) {
     output += '\n\n## Interfaces\n';

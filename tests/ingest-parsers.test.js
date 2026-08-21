@@ -88,6 +88,13 @@ describe('Ingest Parsers', () => {
     assert.ok(md.includes('| A | 1 |'));
   });
 
+  test('html-parser escapes pipe characters in table cells', () => {
+    const html = '<html><body><main><table><thead><tr><th>Header | Sub</th><th>Type</th></tr></thead><tbody><tr><td>a | b</td><td>string | number</td></tr></tbody></table></main></body></html>';
+    const md = parseHtml(html);
+    assert.ok(md.includes('| Header \\| Sub | Type |'));
+    assert.ok(md.includes('| a \\| b | string \\| number |'));
+  });
+
   test('html-parser handles empty elements gracefully', () => {
     const html = '<html><body><main><p></p><h2></h2><ul></ul></main></body></html>';
     const md = parseHtml(html);
@@ -240,6 +247,24 @@ def sub(a, b):
     assert.ok(extracted.includes('From `./globals.css`'));
   });
 
+  test('code-parser does not duplicate raw code when definitions exist without comments', () => {
+    const code = `
+      export interface Config {
+        port: number;
+      }
+    `;
+    const extracted = parseCode(code, 'ts');
+    assert.ok(extracted.includes('## Interfaces'));
+    assert.ok(extracted.includes('### Config'));
+    assert.strictEqual(extracted.startsWith('\n\n## Interfaces'), true);
+  });
+
+  test('code-parser returns raw code string when no comments and no definitions exist', () => {
+    const code = `const a = 1;\nconst b = 2;\nconsole.log(a + b);`;
+    const extracted = parseCode(code, 'js');
+    assert.strictEqual(extracted, code);
+  });
+
   // --- JSON Parser Tests ---
   test('json-parser extracts package.json dependencies, devDependencies, peerDependencies, and scripts', () => {
     const pkgJson = JSON.stringify({
@@ -314,6 +339,18 @@ def sub(a, b):
     const parsed = parseJson(invalidJson, 'json');
     assert.ok(parsed.includes('# JSON Parse Error'));
     assert.ok(parsed.includes('Error:'));
+  });
+
+  test('json-parser falls back to JSON data block for arbitrary JSON without special fields', () => {
+    const customJson = JSON.stringify({
+      appName: 'CustomService',
+      port: 8080,
+      features: ['auth', 'logging']
+    }, null, 2);
+    const parsed = parseJson(customJson, 'json');
+    assert.ok(parsed.includes('## JSON Data'));
+    assert.ok(parsed.includes('```json'));
+    assert.ok(parsed.includes('"appName": "CustomService"'));
   });
 
   // --- PDF Parser Tests ---

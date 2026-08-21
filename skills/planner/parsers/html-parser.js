@@ -182,7 +182,7 @@ function convertTable($, $table) {
   $table.find('tr').each((_, tr) => {
     const cells = [];
     $(tr).find('th, td').each((__, cell) => {
-      cells.push($(cell).text().trim());
+      cells.push($(cell).text().trim().replace(/\|/g, '\\|'));
     });
     rows.push(cells);
   });
