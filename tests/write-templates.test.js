@@ -30,18 +30,49 @@ describe('Writer Templates (14 Templates)', () => {
     });
   });
 
+  function parseAndValidateFrontmatter(content, filename) {
+    const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+    assert.ok(match, `${filename} must start with valid YAML frontmatter enclosed in --- delimiters`);
+    const yamlBlock = match[1];
+
+    // Validate title field with strict multiline regex
+    const titleMatch = yamlBlock.match(/^title:\s*["']?(.+?)["']?\s*$/m);
+    assert.ok(titleMatch && titleMatch[1].trim().length > 0, `${filename} must define a non-empty 'title:' in YAML frontmatter`);
+
+    // Validate description field with strict multiline regex
+    const descMatch = yamlBlock.match(/^description:\s*["']?(.+?)["']?\s*$/m);
+    assert.ok(descMatch && descMatch[1].trim().length > 0, `${filename} must define a non-empty 'description:' in YAML frontmatter`);
+
+    // Validate audience field with strict multiline regex
+    const audienceMatch = yamlBlock.match(/^audience:\s*["']?(.+?)["']?\s*$/m);
+    assert.ok(audienceMatch && audienceMatch[1].trim().length > 0, `${filename} must define a non-empty 'audience:' in YAML frontmatter`);
+
+    // Validate sources list in YAML frontmatter
+    const sourcesMatch = yamlBlock.match(/^sources:\s*\r?\n((?:\s*-\s*.+\r?\n?)+)/m);
+    assert.ok(sourcesMatch, `${filename} must define a 'sources:' list in YAML frontmatter`);
+    const sources = sourcesMatch[1].split(/\r?\n/).map(s => s.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+    assert.ok(sources.length > 0, `${filename} must list at least one source in YAML frontmatter`);
+
+    return {
+      title: titleMatch[1].trim(),
+      description: descMatch[1].trim(),
+      audience: audienceMatch[1].trim(),
+      sources
+    };
+  }
+
   expectedTemplates.forEach(filename => {
     test(`template ${filename} exists and has valid frontmatter & structure`, () => {
       const filePath = path.join(templateDir, filename);
       assert.strictEqual(fs.existsSync(filePath), true, `${filename} must exist`);
       const content = fs.readFileSync(filePath, 'utf8');
 
-      // YAML Frontmatter validation
-      assert.ok(content.startsWith('---\n') || content.startsWith('---\r\n'), `${filename} must start with YAML frontmatter delimiter`);
-      assert.ok(content.includes('title:'), `${filename} must have title in frontmatter`);
-      assert.ok(content.includes('description:'), `${filename} must have description in frontmatter`);
-      assert.ok(content.includes('audience:'), `${filename} must have audience in frontmatter`);
-      assert.ok(content.includes('sources:'), `${filename} must list sources in frontmatter`);
+      // Strict YAML Frontmatter validation
+      const frontmatter = parseAndValidateFrontmatter(content, filename);
+      assert.ok(frontmatter.title, `${filename} parsed frontmatter title`);
+      assert.ok(frontmatter.description, `${filename} parsed frontmatter description`);
+      assert.ok(frontmatter.audience, `${filename} parsed frontmatter audience`);
+      assert.ok(frontmatter.sources.length > 0, `${filename} parsed frontmatter sources list`);
 
       // Content structure validation
       assert.ok(content.includes('# '), `${filename} must have an H1 title`);
@@ -118,9 +149,10 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('Error Handling Flow'), 'Must contain error handling flow diagram');
   });
 
-  test('features-template contains feature catalog, Gherkin stories, and technical mapping', () => {
+  test('features-template contains standardized placeholder catalog, Gherkin stories, and technical mapping', () => {
     const content = fs.readFileSync(path.join(templateDir, 'features-template.md'), 'utf8');
     assert.ok(content.includes('Feature Catalog'), 'Must contain feature catalog table');
+    assert.ok(content.includes('<Feature 1 Name>'), 'Must use standardized placeholder syntax for features');
     assert.ok(content.includes('Feature:'), 'Must contain Gherkin Feature definition');
     assert.ok(content.includes('Scenario:'), 'Must contain Gherkin Scenario definition');
     assert.ok(content.includes('Acceptance Criteria'), 'Must contain acceptance criteria table');
@@ -162,13 +194,15 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('Decision Trees'), 'Must contain decision trees');
   });
 
-  test('appendix-template contains references, changelog, contributor guide, and generation metadata', () => {
+  test('appendix-template contains references, changelog, contributor guide, and generation metadata with standardized placeholders', () => {
     const content = fs.readFileSync(path.join(templateDir, 'appendix-template.md'), 'utf8');
     assert.ok(content.includes('External References & Links'), 'Must contain external references');
     assert.ok(content.includes('Changelog'), 'Must contain changelog section');
     assert.ok(content.includes('Contributor Guide'), 'Must contain contributor guide');
     assert.ok(content.includes('License & Attribution'), 'Must contain license & attribution');
     assert.ok(content.includes('Generation Metadata'), 'Must contain generation metadata table');
+    assert.ok(content.includes('<GENERATED_AT>'), 'Must use standardized placeholder for generation timestamp');
+    assert.ok(content.includes('<Project Name>'), 'Must use standardized placeholder for project name');
   });
 
   test('writer skill lists all 14 templates and exact 5 waves in SKILL.md', () => {
