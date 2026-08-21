@@ -1,6 +1,6 @@
 ---
 name: insightify
-description: Generate comprehensive React/Frontend technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
+description: Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
 ---
 
 # Insightify v4 Pipeline Orchestrator
@@ -40,7 +40,7 @@ Support the following invocation patterns:
 
 ## Output Specification (v4)
 
-The pipeline generates a **React/Frontend Technical Specification** matching the reference artifact structure:
+The pipeline generates a **Technical Specification** matching the reference artifact structure:
 
 | Output | Description |
 |--------|-------------|
@@ -62,11 +62,3 @@ The pipeline generates a **React/Frontend Technical Specification** matching the
 12. Constraints & Limitations
 13. Workflows & Procedures
 14. Appendix
-
-**Architecture Patterns Enforced:**
-- Feature-based modular React (components/ui, features/, hooks/, stores/, services/, types/, utils/)
-- TypeScript interfaces with BaseEntity, ApiResponse, PaginatedResponse
-- Zustand for global state with persist, immer, devtools middleware
-- React Router v6 with layout-driven routing (PublicLayout, AuthLayout, ProtectedLayout) and guards
-- TanStack Query v5 for data fetching (useFetchData, useInfiniteQuery, useMutation, useOptimisticUpdate)
-- Tailwind CSS with design tokens, class-variance-authority for variants

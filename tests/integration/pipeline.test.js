@@ -32,7 +32,7 @@ describe('Integration: Documentation Pipeline v4', () => {
 
     const tsContent = fs.readFileSync(tsPath, 'utf8');
     const extractedTs = parseCode(tsContent, 'ts');
-    assert.ok(extractedTs.includes('interface User') || extractedTs.includes('User'));
+    assert.ok(extractedTs.includes('interface User'), 'TypeScript code fallback preserved');
   });
 
   test('directory scanner produces valid hierarchical tree from multi-source fixture', () => {
@@ -48,9 +48,11 @@ describe('Integration: Documentation Pipeline v4', () => {
 
   test('builder renders HTML with CSS sidebar and Mermaid support', async () => {
     const { renderMarkdown, buildProcessDiagram } = await import('../../skills/builder/templates/build-html.mjs');
-    const md = '# Component Architecture\n\n```mermaid\ngraph TD\n  App --> Layout\n```';
+    const md = '# Component Architecture\n\nParagraph with **bold** and `code`.\n\n```mermaid\ngraph TD\n  App --> Layout\n```';
     const html = renderMarkdown(md);
-    assert.ok(html.includes('Component Architecture'));
+    assert.ok(html.includes('<h1 id="component-architecture">Component Architecture</h1>') || html.includes('<h1>Component Architecture</h1>'), 'Markdown header converted to HTML');
+    assert.ok(html.includes('<strong>bold</strong>'), 'Markdown bold converted to HTML');
+    assert.ok(html.includes('<code>code</code>'), 'Markdown code converted to HTML');
 
     const processHtml = buildProcessDiagram();
     assert.ok(processHtml.includes('Planner'));

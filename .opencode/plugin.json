@@ -1,7 +1,7 @@
 {
   "name": "insightify",
   "version": "4.0.0",
-  "description": "Generate comprehensive React/Frontend technical specification documentation (artifact-style HTML + knowledge-base.md) from code repositories. 14-section spec with directory structure, TypeScript data models, component architecture, Zustand state management, React Router v6 routing, TanStack Query v5 API patterns, and Mermaid diagrams.",
+  "description": "Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from code repositories. 14-section spec with directory structure, data models, component architecture, state management, routing, API patterns, and Mermaid diagrams.",
   "author": {
     "name": "Aryo Adi Putro"
   },
