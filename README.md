@@ -15,7 +15,7 @@ Generate artifact-style documentation and a Product Knowledge Base from source c
 /insightify
 
 # Individual stages
-/planner          # Ingest → Extract → Plan (with approval)
+/insightify-planner # Ingest → Extract → Plan (with approval)
 /writer           # Generate markdown docs from plan
 /reviewer         # Review docs, send revisions back to writer
 /builder          # Render index.html + knowledge-base.md from markdown
@@ -24,7 +24,7 @@ Generate artifact-style documentation and a Product Knowledge Base from source c
 ## Output Structure
 
 ```
-insight/<project-name>/
+insights/<project-name>/
 ├── index.html              # Single artifact-style page (open in browser)
 ├── knowledge-base.md       # PRIMARY output — consolidated knowledge
 ├── docs/

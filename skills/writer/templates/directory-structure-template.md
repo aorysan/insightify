@@ -6,7 +6,6 @@ sources:
   - directory-structure.md
 ---
 
-# Directory Structure
 
 ## Overview
 

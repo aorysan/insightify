@@ -6,7 +6,6 @@ sources:
   - workflows.md
 ---
 
-# Workflows & Procedures
 
 ## Overview
 

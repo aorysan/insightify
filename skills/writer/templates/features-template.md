@@ -7,7 +7,6 @@ sources:
   - workflows.md
 ---
 
-# Features & Business Logic
 
 ## Overview
 

@@ -167,7 +167,11 @@ function parseJson(jsonString, lang) {
       output += `## TypeScript Compiler Options\n\`\`\`json\n${JSON.stringify(extracted.compilerOptions, null, 2)}\n\`\`\`\n\n`;
     }
 
-    return output.trim();
+    const finalOutput = output.trim();
+    if (!finalOutput) {
+      return `## JSON Data\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``;
+    }
+    return finalOutput;
   } catch (e) {
     return `# JSON Parse Error\n\n\`\`\`json\n${jsonString}\n\`\`\`\n\nError: ${e.message}`;
   }

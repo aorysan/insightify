@@ -6,7 +6,6 @@ sources:
   - ui-component-library.md
 ---
 
-# UI Component Library
 
 ## Overview
 

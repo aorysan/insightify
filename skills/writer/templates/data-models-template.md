@@ -7,7 +7,6 @@ sources:
   - api-patterns.md
 ---
 
-# Global Data Models
 
 ## Overview
 

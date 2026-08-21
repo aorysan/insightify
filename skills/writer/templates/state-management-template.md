@@ -6,7 +6,6 @@ sources:
   - state-management.md
 ---
 
-# State Management
 
 ## Overview
 

@@ -7,7 +7,6 @@ sources:
   - ui-component-library.md
 ---
 
-# Component Architecture
 
 ## Overview
 
