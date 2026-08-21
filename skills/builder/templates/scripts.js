@@ -1,0 +1,283 @@
+/**
+ * Insightify v4 — Minimal JavaScript for Artifact-Style Documentation
+ * Only handles: theme toggle, Mermaid initialization, smooth scroll, copy code
+ */
+
+(function() {
+  'use strict';
+
+  // ==========================================================================
+  // Theme Management
+  // ==========================================================================
+
+  const THEME_KEY = 'insightify-theme';
+  const THEME_ATTR = 'data-theme';
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem(THEME_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function setStoredTheme(theme) {
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {}
+  }
+
+  function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function getEffectiveTheme() {
+    const stored = getStoredTheme();
+    if (stored === 'system' || stored === null) {
+      return getSystemTheme();
+    }
+    return stored;
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute(THEME_ATTR, theme);
+    setStoredTheme(theme);
+  }
+
+  function initTheme() {
+    const theme = getEffectiveTheme();
+    applyTheme(theme);
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', () => {
+      const stored = getStoredTheme();
+      if (stored === 'system' || stored === null) {
+        applyTheme(getSystemTheme());
+      }
+    });
+  }
+
+  function toggleTheme() {
+    const current = getStoredTheme() || 'system';
+    const themes = ['light', 'dark', 'system'];
+    const currentIndex = themes.indexOf(current);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextTheme = themes[nextIndex];
+    applyTheme(nextTheme === 'system' ? getSystemTheme() : nextTheme);
+  }
+
+  // ==========================================================================
+  // Mermaid Initialization
+  // ==========================================================================
+
+  function initMermaid() {
+    if (typeof mermaid !== 'undefined') {
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        securityLevel: 'loose',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+        fontSize: 14,
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis'
+        },
+        sequence: {
+          useMaxWidth: true
+        }
+      });
+
+      // Re-render when theme changes
+      const observer = new MutationObserver(() => {
+        mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: [THEME_ATTR] });
+    }
+  }
+
+  // ==========================================================================
+  // Smooth Scroll
+  // ==========================================================================
+
+  function initSmoothScroll() {
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+      if (href === '#') return;
+
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', href);
+      }
+    });
+  }
+
+  // ==========================================================================
+  // Copy Code Button (Progressive Enhancement)
+  // ==========================================================================
+
+  function initCopyCode() {
+    if (!navigator.clipboard) return;
+
+    const codeBlocks = document.querySelectorAll('.code-block');
+    codeBlocks.forEach(block => {
+      const button = document.createElement('button');
+      button.className = 'copy-button';
+      button.setAttribute('aria-label', 'Copy code');
+      button.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      `;
+      button.style.cssText = `
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 6px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity var(--transition-fast), background var(--transition-fast);
+        color: var(--color-text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      block.style.position = 'relative';
+      block.appendChild(button);
+
+      block.addEventListener('mouseenter', () => button.style.opacity = '1');
+      block.addEventListener('mouseleave', () => button.style.opacity = '0');
+
+      button.addEventListener('click', async () => {
+        const code = block.querySelector('code');
+        if (code) {
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            button.style.color = 'var(--color-success)';
+            button.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            `;
+            setTimeout(() => {
+              button.style.color = '';
+              button.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              `;
+            }, 2000);
+          } catch {
+            button.style.color = 'var(--color-error)';
+            setTimeout(() => button.style.color = '', 2000);
+          }
+        }
+      });
+    });
+  }
+
+  // ==========================================================================
+  // Sidebar Toggle (Mobile)
+  // ==========================================================================
+
+  function initSidebarToggle() {
+    const toggle = document.getElementById('sidebar-toggle');
+    const trigger = document.querySelector('.sidebar-trigger');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (trigger) {
+      trigger.addEventListener('click', () => {
+        toggle.checked = !toggle.checked;
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        toggle.checked = false;
+      });
+    }
+
+    // Close sidebar on navigation click (mobile)
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+          toggle.checked = false;
+        }
+      });
+    });
+  }
+
+  // ==========================================================================
+  // Active Navigation Highlight
+  // ==========================================================================
+
+  function initActiveNav() {
+    const sections = document.querySelectorAll('.doc-section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    }, {
+      rootMargin: '-60px 0px -66% 0px',
+      threshold: 0.1
+    });
+
+    sections.forEach(section => observer.observe(section));
+  }
+
+  // ==========================================================================
+  // Initialize All
+  // ==========================================================================
+
+  function init() {
+    initTheme();
+    initMermaid();
+    initSmoothScroll();
+    initCopyCode();
+    initSidebarToggle();
+    initActiveNav();
+
+    // Theme toggle button
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    // Expose for debugging
+    window.Insightify = {
+      theme: {
+        get: getEffectiveTheme,
+        set: applyTheme,
+        toggle: toggleTheme
+      }
+    };
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
