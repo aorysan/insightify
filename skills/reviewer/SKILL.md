@@ -1,13 +1,13 @@
 ---
 name: reviewer
-description: Stage 5 - Evaluate generated docs across 5 quality dimensions and generate report.
+description: Stage 3 - Evaluate generated docs across 7 quality dimensions and generate report.
 ---
 
 # Reviewer Skill
 
 ## Instructions
 
-1. Evaluate `[OUT_DIR]/docs/markdown/*` in parallel across 5 dimensions in `references/review-criteria.md`.
+1. Evaluate `[OUT_DIR]/docs/markdown/*` in parallel across 7 dimensions in `references/review-criteria.md`.
 2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
 3. If verdict is `changes_needed`, send specific page issues back to Writer.
 4. If iteration reaches 3, escalate remaining issues to user.
@@ -39,22 +39,32 @@ description: Stage 5 - Evaluate generated docs across 5 quality dimensions and g
 - 3: Adequate but could be clearer
 - 1: Missing examples, wall-of-text, unclear instructions
 
+**Type Safety** (TypeScript correctness):
+- 5: All interfaces valid, no `any` without justification, strict mode compatible
+- 3: Minor type issues, some `any` with comments
+- 1: Major type errors, missing generics, broken interfaces
+
+**Architecture Alignment** (matches reference artifact patterns):
+- 5: Follows all patterns (Zustand, TanStack Query, React Router v6, Tailwind, feature-based)
+- 3: Most patterns followed, minor deviations
+- 1: Major pattern violations, wrong architecture
+
 ## Verdict Thresholds
 
-- `approved`: All dimensions ≥3, no critical issues
+- `approved`: All 7 dimensions ≥3, no critical issues
 - `changes_needed`: Any dimension <3 OR any critical issue
 
 ## Issue Classification
 
-- **Critical**: Factual error, missing entire planned section, broken navigation
-- **Minor**: Typo, slightly inconsistent tone, suboptimal heading level
+- **Critical**: Factual error, missing entire planned section, broken navigation, TypeScript errors, architecture violations
+- **Minor**: Typo, slightly inconsistent tone, suboptimal heading level, missing citation
 
 ## Issue Format for Writer
 
 ```markdown
 ### Issue: [Short description]
 - **Page:** `[OUT_DIR]/docs/markdown/[filename].md`
-- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability]
+- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment]
 - **Severity:** [Critical|Minor]
 - **Issue:** [Description of what's wrong]
 - **Suggestion:** [How to fix it]
