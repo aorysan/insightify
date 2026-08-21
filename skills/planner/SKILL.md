@@ -19,8 +19,7 @@ description: Stage 1 - Ingest sources, extract knowledge into 14 categories, and
 | Extension | Parser | Notes |
 |-----------|--------|-------|
 | `.html`, `.htm` | `parsers/html-parser.js` | Strips nav/footer/scripts, preserves content structure |
-| `.js`, `.ts`, `.tsx`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
-| `.json` | `parsers/json-parser.js` | Extracts structure and types |
+| `.js`, `.ts`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
 | `.pdf` | `parsers/pdf-parser.js` | Binary buffer input via `pdf-parse` |
 | `.md`, `.txt`, `.rst` | Direct copy | Copy content as-is with frontmatter added |
 | URLs (`http://`, `https://`) | Fetch → HTML parser | Fetch page, then process as HTML |
@@ -99,15 +98,15 @@ The API supports up to 1000 concurrent connections.
 **Merge when:** same audience, one topic <300 words.
 **Split when:** distinct audiences, >3000 words, mixed conceptual/reference.
 **Priority:** high (getting started, core), medium (features), low (API, FAQ).
-**Dependency Graph:** No cycles; max 5 waves; wave 1 = standalone; max 2 deps/page.
+**Dependency Graph:** No cycles; max 5 waves; wave 1 = standalone; dependencies strictly reference prior waves.
 
 **Plan Template Outputs 14 Pages Across 5 Waves:**
 | Wave | Pages | Dependencies |
 |------|-------|--------------|
 | 1 | Executive Summary, Directory Structure, Global Data Models, Terminology & Glossary, Constraints & Limitations | None |
 | 2 | Component Architecture, State Management, UI Component Library | Wave 1 (Pages 2, 3) |
-| 3 | Routing & Layout Structure, API Interaction Patterns | Wave 2 (Pages 3, 4) |
-| 4 | Features & Business Logic, Cross-Cutting Concerns, Workflows & Procedures | Waves 2, 3 (Pages 3, 4, 5, 6, 8) |
+| 3 | Routing & Layout Structure, API Interaction Patterns | Waves 1, 2 (Pages 3, 4) |
+| 4 | Features & Business Logic, Cross-Cutting Concerns, Workflows & Procedures | Waves 1, 2, 3 (Pages 3, 4, 5, 6, 8) |
 | 5 | Appendix | All prior pages |
 
 ### Progress & Error Handling

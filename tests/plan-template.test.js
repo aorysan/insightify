@@ -119,18 +119,43 @@ describe('Plan Template (14 Pages, 5 Waves)', () => {
     assert.ok(wave5Section.includes('14. Appendix'));
   });
 
+  const EXPECTED_WRITING_ORDER = [
+    '1. Executive Summary',
+    '2. Directory Structure',
+    '3. Global Data Models',
+    '4. Terminology & Glossary',
+    '5. Constraints & Limitations',
+    '6. Component Architecture',
+    '7. State Management',
+    '8. UI Component Library',
+    '9. Routing & Layout Structure',
+    '10. API Interaction Patterns',
+    '11. Features & Business Logic',
+    '12. Cross-Cutting Concerns',
+    '13. Workflows & Procedures',
+    '14. Appendix'
+  ];
+
   test('plan-template.md specifies sequential writing order and approval checklist', () => {
     assert.strictEqual(fs.existsSync(templatePath), true, 'plan-template.md must exist');
 
-    assert.ok(templateContent.includes('## Writing Order (Sequential for Human Review)'));
-    EXPECTED_PAGES.forEach(page => {
-      assert.ok(templateContent.includes(page), `Writing order must list: ${page}`);
+    const writingOrderStartIndex = templateContent.indexOf('## Writing Order (Sequential for Human Review)');
+    const approvalChecklistIndex = templateContent.indexOf('## Approval Checklist');
+
+    assert.ok(writingOrderStartIndex !== -1, 'Writing Order section must exist');
+    assert.ok(approvalChecklistIndex !== -1, 'Approval Checklist section must exist');
+    assert.ok(writingOrderStartIndex < approvalChecklistIndex, 'Writing Order must precede Approval Checklist');
+
+    const writingOrderSection = templateContent.slice(writingOrderStartIndex, approvalChecklistIndex);
+
+    EXPECTED_WRITING_ORDER.forEach(page => {
+      assert.ok(writingOrderSection.includes(page), `Writing order section must list: ${page}`);
     });
 
-    assert.ok(templateContent.includes('## Approval Checklist'));
-    assert.ok(templateContent.includes('- [ ] All 14 pages planned with clear purpose and sources'));
-    assert.ok(templateContent.includes('- [ ] Dependency graph is acyclic and max 5 waves'));
-    assert.ok(templateContent.includes('- [ ] Priority distribution: 7 high, 3 medium, 4 low'));
+    const checklistSection = templateContent.slice(approvalChecklistIndex);
+    assert.ok(checklistSection.includes('- [ ] All 14 pages planned with clear purpose and sources'));
+    assert.ok(checklistSection.includes('- [ ] Dependency graph is acyclic and max 5 waves'));
+    assert.ok(checklistSection.includes('- [ ] Priority distribution: 7 high, 3 medium, 4 low'));
   });
 
   test('planner skill defines 14 categories, 5 waves, and user approval workflow in SKILL.md', () => {
