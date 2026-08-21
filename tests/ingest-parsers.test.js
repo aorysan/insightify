@@ -183,6 +183,25 @@ def sub(a, b):
     assert.ok(extracted.includes('enum Priority {'));
   });
 
+  test('code-parser handles regex literals with braces inside interfaces and advances lastIndex', () => {
+    const tsCode = `
+      export interface PatternConfig {
+        pattern: RegExp;
+        format: {
+          test: /\\{[a-z]+\\}/;
+        };
+      }
+      export interface NextInterface {
+        id: string;
+      }
+    `;
+    const extracted = parseCode(tsCode, 'ts');
+    assert.ok(extracted.includes('### PatternConfig'));
+    assert.ok(extracted.includes('interface PatternConfig {'));
+    assert.ok(extracted.includes('### NextInterface'));
+    assert.ok(extracted.includes('interface NextInterface {'));
+  });
+
   test('code-parser extracts react components and custom hooks', () => {
     const tsxCode = `
       import React from 'react';

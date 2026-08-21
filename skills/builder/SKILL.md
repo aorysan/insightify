@@ -108,7 +108,7 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
 ## Rendering Rules
 
 - **Markdown → HTML**: headings, paragraphs, code blocks, inline code, tables, lists, links, blockquotes (citations preserved with `source-citation` class).
-- **Mermaid Diagrams**: Render via `mermaid.initialize({startOnLoad: true, theme: 'base', securityLevel: 'loose'})` - diagrams in `<pre class="mermaid">` blocks.
+- **Mermaid Diagrams**: Render via `mermaid.initialize({startOnLoad: true, theme: 'base', securityLevel: 'loose'})` - diagrams in `<pre class="mermaid">` blocks. *Note: Loaded from external CDN (jsDelivr); offline environments display pre-formatted diagrams or require a locally bundled script.*
 - **Collapsible Trees**: Directory structure as nested `<details>/<summary>` with `open` on first level.
 - **Tabs**: Component registry with tabbed interface (Component | Props | Usage) using CSS-only `:checked` hack.
 - **Product Overview**: Grid cards from `product.md`; feature badges from `features.md` with source citations.

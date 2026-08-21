@@ -25,12 +25,6 @@ function escapeHtml(text) {
 export function renderMarkdown(md) {
   if (!md) return '';
 
-  // Configure marked for our needs
-  marked.setOptions({
-    gfm: true,
-    breaks: true
-  });
-
   // Custom renderer for citations, code blocks, mermaid, and tables
   const renderer = new marked.Renderer();
 
@@ -62,7 +56,7 @@ export function renderMarkdown(md) {
     return `<div class="table-wrapper"><table><thead>${head}</thead><tbody>${rows}</tbody></table></div>\n`;
   };
 
-  const html = marked.parse(md, { renderer });
+  const html = marked.parse(md, { renderer, gfm: true, breaks: true });
   return html;
 }
 
@@ -513,6 +507,10 @@ export function buildArtifact(options = {}) {
   const scripts = options.scripts || readTemplate('scripts.js');
   const htmlTemplate = options.htmlTemplate || readTemplate('index-html-template.html');
 
+  // Mermaid CDN dependency:
+  // Note: By default, Mermaid is loaded via jsDelivr CDN (<script src="https://cdn.jsdelivr.net/.../mermaid.min.js">).
+  // In offline or air-gapped environments, diagrams will display formatted raw markdown code blocks unless
+  // the script tag is replaced with a locally bundled Mermaid library.
   const renderedHtml = render(htmlTemplate, {
     TITLE: `${overview.name} - Technical Specification`,
     PRODUCT_NAME: overview.name,

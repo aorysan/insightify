@@ -242,15 +242,15 @@ WAVE 5 (Depends on All):
 1. Executive Summary
 2. Directory Structure
 3. Global Data Models
-4. Terminology & Glossary
-5. Constraints & Limitations
-6. Component Architecture
-7. State Management
-8. UI Component Library
-9. Routing & Layout Structure
-10. API Interaction Patterns
-11. Features & Business Logic
-12. Cross-Cutting Concerns
+11. Terminology & Glossary
+12. Constraints & Limitations
+4. Component Architecture
+5. State Management
+7. UI Component Library
+6. Routing & Layout Structure
+8. API Interaction Patterns
+9. Features & Business Logic
+10. Cross-Cutting Concerns
 13. Workflows & Procedures
 14. Appendix
 

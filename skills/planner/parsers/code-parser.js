@@ -34,12 +34,13 @@ function parseCode(codeString, lang) {
 
   // 3. TypeScript / JavaScript extraction
   if (['ts', 'tsx', 'js', 'jsx', 'javascript', 'typescript'].includes(lang)) {
-    // Helper to find matching closing brace accounting for comments and strings
+    // Helper to find matching closing brace accounting for comments, strings, and regex literals
     function extractBraceContent(str, openBraceIndex) {
       let depth = 0;
       let inString = null;
       let inLineComment = false;
       let inBlockComment = false;
+      let inRegex = false;
 
       for (let i = openBraceIndex; i < str.length; i++) {
         const char = str[i];
@@ -64,6 +65,16 @@ function parseCode(codeString, lang) {
           }
           continue;
         }
+        if (inRegex) {
+          if (char === '\\') {
+            i++; // skip escaped character in regex
+          } else if (char === '/') {
+            inRegex = false;
+          } else if (char === '\n') {
+            inRegex = false;
+          }
+          continue;
+        }
 
         if (char === '/' && next === '/') {
           inLineComment = true;
@@ -74,6 +85,20 @@ function parseCode(codeString, lang) {
           inBlockComment = true;
           i++;
           continue;
+        }
+        // Regex literal check: starts with / preceded by operators, punctuation, or block start
+        if (char === '/') {
+          let prevChar = '';
+          for (let j = i - 1; j >= openBraceIndex; j--) {
+            if (!/\s/.test(str[j])) {
+              prevChar = str[j];
+              break;
+            }
+          }
+          if (!prevChar || /[=:(,;[?!&|{+\-*%^~]/.test(prevChar)) {
+            inRegex = true;
+            continue;
+          }
         }
         if (char === '"' || char === "'" || char === '`') {
           inString = char;
@@ -130,6 +155,7 @@ function parseCode(codeString, lang) {
           signature,
           body: block.body.trim()
         });
+        interfaceHeaderRegex.lastIndex = block.endIndex + 1;
       }
     }
 
@@ -154,6 +180,7 @@ function parseCode(codeString, lang) {
           name,
           members: block.body.trim()
         });
+        enumHeaderRegex.lastIndex = block.endIndex + 1;
       }
     }
 

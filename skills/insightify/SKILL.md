@@ -47,18 +47,19 @@ The pipeline generates a **Technical Specification** matching the reference arti
 | `index.html` | Single artifact-style HTML with CSS-only sidebar, Mermaid diagrams, dark/light mode, print support |
 | `knowledge-base.md` | 14 concatenated knowledge categories with source citations |
 
-**Documentation Sections (14):**
-1. Executive Summary
-2. Directory Structure
-3. Global Data Models
-4. Component Architecture
-5. State Management
-6. Routing & Layout
-7. UI Component Library
-8. API Patterns
-9. Features & Business Logic
-10. Cross-Cutting Concerns
-11. Terminology & Glossary
-12. Constraints & Limitations
-13. Workflows & Procedures
-14. Appendix
+**Documentation Sections (14 Categories):**
+1. `product`
+2. `directory-structure`
+3. `data-models`
+4. `component-architecture`
+5. `state-management`
+6. `routing-structure`
+7. `ui-component-library`
+8. `api-patterns`
+9. `features`
+10. `cross-cutting`
+11. `terminology`
+12. `constraints`
+13. `workflows`
+14. `appendix`
+
