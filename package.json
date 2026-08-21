@@ -1,7 +1,7 @@
 {
   "name": "insightify",
   "version": "4.0.0",
-  "description": "Generate artifact-style documentation and a knowledge base from files and URLs",
+  "description": "Generate comprehensive React/Frontend technical specification documentation (artifact-style HTML + knowledge-base.md) from code repositories. 14-section spec with directory structure, TypeScript data models, component architecture, Zustand state management, React Router v6 routing, TanStack Query v5 API patterns, and Mermaid diagrams.",
   "main": "index.js",
   "author": {
     "name": "Aryo Adi Putro"
@@ -16,13 +16,20 @@
     "knowledge-base",
     "doc-generator",
     "insightify",
-    "artifact"
+    "artifact",
+    "react",
+    "frontend",
+    "typescript",
+    "technical-spec"
   ],
   "scripts": {
     "test": "node --test"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "marked": "^12.0.0",
+    "jsdom": "^24.0.0",
+    "mermaid": "^10.9.0"
   }
 }

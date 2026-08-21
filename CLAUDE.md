@@ -4,34 +4,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- **Run unit tests**: `npm test` (Runs native Node.js test runner)
-- **Install dependencies**: `npm install` (Uses standard npm; dependencies include `cheerio` and `pdf-parse`)
+- **Run unit tests**: `npm test` (Runs native Node.js test runner across all tests)
+- **Install dependencies**: `npm install` (Dependencies include `cheerio`, `pdf-parse`, `marked`, `jsdom`, `mermaid`)
 
-## Architecture Overview
+## Architecture Overview (v4.0.0)
 
-Insightify is a multi-platform documentation generator plugin structured as a 6-stage sequential pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach.
+Insightify is a multi-platform documentation generator plugin structured as a 4-stage pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach producing two primary deliverables:
+1. **Single Artifact HTML (`index.html`)**: Self-contained technical specification page with CSS sidebar, dark/light theme toggle, Mermaid diagram rendering, collapsible sections, and print styles.
+2. **Comprehensive Knowledge Base (`knowledge-base.md`)**: Complete reference document concatenating 14 structured knowledge categories with blockquote source citations.
 
 ### Pipeline Stages and Skills
 
-The entry point is `skills/insightify/SKILL.md`, which orchestrates six independent stage skills:
+The entry point is `skills/insightify/SKILL.md`, which orchestrates four independent stage skills:
 
-1. **Stage 1 (Ingest)**: `skills/ingest/SKILL.md` - Reads inputs (files, URLs) using parsers (`code-parser.js`, `html-parser.js`, `pdf-parser.js`) and outputs normalized markdown to `.insightify/sources/`.
-2. **Stage 2 (Extract)**: `skills/extract/SKILL.md` - Extracts structured product knowledge from sources into specific categories using LLM extraction schemas. Outputs to `.insightify/knowledge/`.
-3. **Stage 3 (Plan)**: `skills/plan/SKILL.md` - Analyzes knowledge and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
-4. **Stage 4 (Write)**: `skills/write/SKILL.md` - Generates markdown documentation pages under `docs/` in dependency-aware waves based on the approved plan.
-5. **Stage 5 (Review)**: `skills/review/SKILL.md` - Automatically reviews generated docs across 5 dimensions. If revisions are needed, sends targeted issues back to Stage 4 (max 3 iterations).
-6. **Stage 6 (Build)**: `skills/build/SKILL.md` - Transforms markdown into a VitePress-ready site (frontmatter, config, sidebar), finalizes the knowledge base, and outputs the final `package.json` and `README.md`.
+1. **Stage 1 (Planner)**: `skills/planner/SKILL.md`
+   - Ingests source code, markdown, HTML, and PDFs using parsers (`code-parser.js`, `json-parser.js`, `directory-scanner.js`, `html-parser.js`, `pdf-parser.js`).
+   - Extracts structured knowledge across 14 categories (`product`, `directory-structure`, `data-models`, `component-architecture`, `state-management`, `routing-structure`, `ui-component-library`, `api-patterns`, `features`, `cross-cutting`, `terminology`, `constraints`, `workflows`, `unanswered`).
+   - Generates a 14-page, 5-wave documentation plan (`.insightify/plan.md`) requiring user approval before writing.
+2. **Stage 2 (Writer)**: `skills/writer/SKILL.md`
+   - Generates markdown documentation pages under `docs/` in 5 dependency-aware waves using 14 specialized templates.
+3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md`
+   - Automatically evaluates generated docs across 7 quality dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment) on a 1-5 rubric.
+   - If revisions are needed, sends targeted issues back to Stage 2 (max 3 iterations).
+4. **Stage 4 (Builder)**: `skills/builder/SKILL.md`
+   - Assembles the single-page HTML artifact (`docs/index.html`) and the consolidated knowledge base (`docs/knowledge-base.md`) via `build-html.mjs`.
 
 ### Data Flow & State Management
 
 - All stages communicate through a temporary workspace directory (`.insightify/`) created relative to the target project.
 - **Stage skills operate in two modes**:
-  - **Orchestrated**: Called by `insightify.md` during a full run.
-  - **Standalone**: Called directly via their own commands (e.g., `/insightify-extract`) for manual execution.
+  - **Orchestrated**: Called by `skills/insightify/SKILL.md` during a full run.
+  - **Standalone**: Called directly via their own commands (e.g., `/insightify-planner`) for manual execution.
 - **Knowledge Traceability**: Every extracted fact in the Knowledge Base includes a blockquote citation tracing it back to the original source ID.
 
 ### External Dependencies
 
-- `pdf-parse`: For extracting text from PDF files in Stage 1.
-- `cheerio`: For parsing and cleaning HTML content in Stage 1.
+- `pdf-parse`: For extracting text from PDF files.
+- `cheerio`: For parsing and cleaning HTML content.
+- `marked`: For Markdown to HTML rendering.
+- `jsdom`: For DOM manipulation in builder scripts.
+- `mermaid`: For diagram rendering.
 - Node.js native features: Uses Node.js built-in `node:test` runner.
