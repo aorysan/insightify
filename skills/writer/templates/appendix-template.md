@@ -6,7 +6,6 @@ sources:
   - all knowledge categories
 ---
 
-# Appendix
 
 ## Overview
 

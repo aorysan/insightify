@@ -7,7 +7,6 @@ sources:
   - data-models.md
 ---
 
-# API Interaction Patterns
 
 ## Overview
 

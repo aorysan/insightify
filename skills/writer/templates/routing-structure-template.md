@@ -7,7 +7,6 @@ sources:
   - component-architecture.md
 ---
 
-# Routing & Layout Structure
 
 ## Overview
 

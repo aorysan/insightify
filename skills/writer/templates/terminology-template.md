@@ -6,7 +6,6 @@ sources:
   - terminology.md
 ---
 
-# Terminology & Glossary
 
 ## Overview
 

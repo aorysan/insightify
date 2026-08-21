@@ -6,7 +6,6 @@ sources:
   - cross-cutting.md
 ---
 
-# Cross-Cutting Concerns
 
 ## Overview
 

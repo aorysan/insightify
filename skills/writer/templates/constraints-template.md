@@ -7,7 +7,6 @@ sources:
   - unanswered.md
 ---
 
-# Constraints & Limitations
 
 ## Overview
 

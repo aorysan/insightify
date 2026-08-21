@@ -2,3 +2,4 @@ node_modules/
 .insightify/
 .worktrees/
 .superpowers/
+.claude/settings.local.json

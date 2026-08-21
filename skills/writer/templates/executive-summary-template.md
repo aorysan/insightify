@@ -8,7 +8,6 @@ sources:
   - cross-cutting.md
 ---
 
-# Executive Summary
 
 ## Project Vision & Value Proposition
 
