@@ -189,6 +189,50 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(js.includes('prefers-color-scheme'), 'Must check prefers-color-scheme media query');
   });
 
+  test('scripts.js separates localStorage persistence from DOM application and prevents system state corruption', () => {
+    const js = fs.readFileSync(path.join(templatesDir, 'scripts.js'), 'utf8');
+    const { JSDOM } = require('jsdom');
+
+    const dom = new JSDOM('<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>', {
+      runScripts: 'dangerously',
+      url: 'http://localhost'
+    });
+
+    dom.window.matchMedia = (query) => ({
+      matches: false, // system is light
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {}
+    });
+
+    dom.window.eval(js);
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+
+    // Initial state: not set in localStorage, DOM defaults to light
+    assert.strictEqual(dom.window.localStorage.getItem('insightify-theme'), null);
+    assert.strictEqual(dom.window.document.documentElement.getAttribute('data-theme'), 'light');
+
+    // Toggle 1: system -> light
+    dom.window.Insightify.theme.toggle();
+    assert.strictEqual(dom.window.localStorage.getItem('insightify-theme'), 'light');
+    assert.strictEqual(dom.window.document.documentElement.getAttribute('data-theme'), 'light');
+
+    // Toggle 2: light -> dark
+    dom.window.Insightify.theme.toggle();
+    assert.strictEqual(dom.window.localStorage.getItem('insightify-theme'), 'dark');
+    assert.strictEqual(dom.window.document.documentElement.getAttribute('data-theme'), 'dark');
+
+    // Toggle 3: dark -> system (must persist literal 'system' and not corrupt to 'light')
+    dom.window.Insightify.theme.toggle();
+    assert.strictEqual(dom.window.localStorage.getItem('insightify-theme'), 'system');
+    assert.strictEqual(dom.window.document.documentElement.getAttribute('data-theme'), 'light');
+
+    // Toggle 4: system -> light (cycles cleanly)
+    dom.window.Insightify.theme.toggle();
+    assert.strictEqual(dom.window.localStorage.getItem('insightify-theme'), 'light');
+    assert.strictEqual(dom.window.document.documentElement.getAttribute('data-theme'), 'light');
+  });
+
   test('scripts.js provides Mermaid diagram initialization and theme mutation observer', () => {
     const js = fs.readFileSync(path.join(templatesDir, 'scripts.js'), 'utf8');
 

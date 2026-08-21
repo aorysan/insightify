@@ -28,43 +28,57 @@
   }
 
   function getSystemTheme() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   }
 
-  function getEffectiveTheme() {
-    const stored = getStoredTheme();
-    if (stored === 'system' || stored === null) {
+  function getEffectiveTheme(theme) {
+    const target = theme || getStoredTheme() || 'system';
+    if (target === 'system') {
       return getSystemTheme();
     }
-    return stored;
+    return target;
+  }
+
+  function applyThemeToDom(effectiveTheme) {
+    document.documentElement.setAttribute(THEME_ATTR, effectiveTheme);
+  }
+
+  function setTheme(theme) {
+    const intended = theme || 'system';
+    setStoredTheme(intended);
+    const effective = getEffectiveTheme(intended);
+    applyThemeToDom(effective);
   }
 
   function applyTheme(theme) {
-    document.documentElement.setAttribute(THEME_ATTR, theme);
-    setStoredTheme(theme);
+    setTheme(theme);
   }
 
   function initTheme() {
-    const theme = getEffectiveTheme();
-    applyTheme(theme);
+    const stored = getStoredTheme() || 'system';
+    const effective = getEffectiveTheme(stored);
+    applyThemeToDom(effective);
 
     // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', () => {
-      const stored = getStoredTheme();
-      if (stored === 'system' || stored === null) {
-        applyTheme(getSystemTheme());
-      }
-    });
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', () => {
+        const currentStored = getStoredTheme();
+        if (currentStored === 'system' || currentStored === null) {
+          applyThemeToDom(getSystemTheme());
+        }
+      });
+    }
   }
 
   function toggleTheme() {
     const current = getStoredTheme() || 'system';
     const themes = ['light', 'dark', 'system'];
     const currentIndex = themes.indexOf(current);
-    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextIndex = (currentIndex === -1) ? 0 : (currentIndex + 1) % themes.length;
     const nextTheme = themes[nextIndex];
-    applyTheme(nextTheme === 'system' ? getSystemTheme() : nextTheme);
+    setTheme(nextTheme);
+    return nextTheme;
   }
 
   // ==========================================================================
@@ -267,8 +281,11 @@
     // Expose for debugging
     window.Insightify = {
       theme: {
-        get: getEffectiveTheme,
-        set: applyTheme,
+        get: getStoredTheme,
+        getStored: getStoredTheme,
+        getEffective: getEffectiveTheme,
+        getSystem: getSystemTheme,
+        set: setTheme,
         toggle: toggleTheme
       }
     };
