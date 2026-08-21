@@ -1,13 +1,13 @@
 ---
 name: planner
-description: Stage 1-3 - Ingest sources, extract knowledge, and generate documentation plan with user approval.
+description: Stage 1 - Ingest sources, extract knowledge into 14 categories, and generate documentation plan with user approval.
 ---
 
 # Planner Skill (Ingest → Extract → Plan)
 
 ## Instructions
 
-### Phase 1: Ingest (from former insightify-ingest)
+### Phase 1: Ingest
 
 1. Accept input files or URLs from parameters or prompt.
 2. For each source, execute the appropriate parser (HTML, Code, PDF, or Markdown/Text direct copy).
@@ -19,7 +19,8 @@ description: Stage 1-3 - Ingest sources, extract knowledge, and generate documen
 | Extension | Parser | Notes |
 |-----------|--------|-------|
 | `.html`, `.htm` | `parsers/html-parser.js` | Strips nav/footer/scripts, preserves content structure |
-| `.js`, `.ts`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
+| `.js`, `.ts`, `.tsx`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
+| `.json` | `parsers/json-parser.js` | Extracts structure and types |
 | `.pdf` | `parsers/pdf-parser.js` | Binary buffer input via `pdf-parse` |
 | `.md`, `.txt`, `.rst` | Direct copy | Copy content as-is with frontmatter added |
 | URLs (`http://`, `https://`) | Fetch → HTML parser | Fetch page, then process as HTML |
@@ -43,12 +44,28 @@ word_count: 1234
 
 Content headings normalized to start at H2 (`##`). Manifest format: table with Source ID, Path, Type, Status, Words.
 
-### Phase 2: Extract (from former insightify-extract)
+### Phase 2: Extract
 
 1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
-2. For each category in `references/extraction-schema.md`, analyze sources and extract structured facts.
+2. For each of the 14 categories in `references/extraction-schema.md`, analyze sources and extract structured facts.
 3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
 4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
+
+**Knowledge Categories (14):**
+1. `product.md` — Product identity, version, audience, tagline
+2. `directory-structure.md` — Folder tree, module boundaries, import conventions
+3. `data-models.md` — TypeScript interfaces, enums, Mermaid class diagrams
+4. `component-architecture.md` — Layout components, shell, feature components, composition tree
+5. `state-management.md` — Stores, selectors, middleware, persistence, testing patterns
+6. `routing-structure.md` — Route tree, guards, lazy loading, breadcrumbs, metadata
+7. `ui-component-library.md` — Component registry, design tokens, accessibility
+8. `api-patterns.md` — Client config, hooks, endpoints, error flow, mapping
+9. `features.md` — Feature catalog, Gherkin acceptance criteria, edge cases
+10. `cross-cutting.md` — Providers (Auth, Theme, i18n), ErrorBoundary, Logger, Analytics, FeatureFlags
+11. `terminology.md` — Glossary, acronyms, naming conventions
+12. `constraints.md` — Technical limits, performance budgets, security, known issues
+13. `workflows.md` — Dev workflows, CI/CD, deployment, release, incident response
+14. `unanswered.md` — Conflicts, ambiguities, missing info
 
 **Conflict Handling:** Keep both facts, flag in `unanswered.md`.
 **Confidence:** `high` (explicit), `medium` (inferred), `low` (ambiguous).
@@ -61,9 +78,9 @@ The API supports up to 1000 concurrent connections.
 > **Source:** source-003.md § API Limits
 ```
 
-### Phase 3: Plan (from former insightify-plan)
+### Phase 3: Plan
 
-1. Read `[OUT_DIR]/.insightify/knowledge/*.md`.
+1. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all 14 categories).
 2. Generate plan using `templates/plan-template.md`.
 3. Display summary:
    ```
@@ -82,7 +99,16 @@ The API supports up to 1000 concurrent connections.
 **Merge when:** same audience, one topic <300 words.
 **Split when:** distinct audiences, >3000 words, mixed conceptual/reference.
 **Priority:** high (getting started, core), medium (features), low (API, FAQ).
-**Dependency Graph:** No cycles; max 3 waves; wave 1 = standalone; max 2 deps/page.
+**Dependency Graph:** No cycles; max 5 waves; wave 1 = standalone; max 2 deps/page.
+
+**Plan Template Outputs 14 Pages Across 5 Waves:**
+| Wave | Pages | Dependencies |
+|------|-------|--------------|
+| 1 | Executive Summary, Directory Structure, Global Data Models, Terminology & Glossary, Constraints & Limitations | None |
+| 2 | Component Architecture, State Management, UI Component Library | Wave 1 (Pages 2, 3) |
+| 3 | Routing & Layout Structure, API Interaction Patterns | Wave 2 (Pages 3, 4) |
+| 4 | Features & Business Logic, Cross-Cutting Concerns, Workflows & Procedures | Waves 2, 3 (Pages 3, 4, 5, 6, 8) |
+| 5 | Appendix | All prior pages |
 
 ### Progress & Error Handling
 
