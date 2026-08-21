@@ -7,7 +7,7 @@ description: Stage 3 - Evaluate generated docs across 7 quality dimensions and g
 
 ## Instructions
 
-1. Evaluate `[OUT_DIR]/docs/markdown/*` in parallel across 7 dimensions in `references/review-criteria.md`.
+1. Evaluate `[OUT_DIR]/docs/markdown/*` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` in parallel across 7 dimensions in `references/review-criteria.md`.
 2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
 3. If verdict is `changes_needed`, send specific page issues back to Writer.
 4. If iteration reaches 3, escalate remaining issues to user.

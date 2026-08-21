@@ -80,6 +80,8 @@ describe('Review Criteria (7 Dimensions)', () => {
 
   test('reviewer skill defines instructions and output paths in SKILL.md', () => {
     assert.ok(skillContent.includes('[OUT_DIR]/docs/markdown/*'), 'Must evaluate markdown docs in docs/markdown/*');
+    assert.ok(skillContent.includes('[OUT_DIR]/.insightify/knowledge/*'), 'Must evaluate against knowledge base in .insightify/knowledge/*');
+    assert.ok(skillContent.includes('[OUT_DIR]/.insightify/plan.md'), 'Must evaluate against plan in .insightify/plan.md');
     assert.ok(skillContent.includes('references/review-criteria.md'), 'Must reference review-criteria.md');
     assert.ok(skillContent.includes('[OUT_DIR]/.insightify/review/review-report.md'), 'Must write report to .insightify/review/review-report.md');
     assert.ok(skillContent.includes('changes_needed'), 'Must handle changes_needed verdict');
