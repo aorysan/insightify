@@ -1,5 +1,5 @@
 /**
- * Insightify v4 — Minimal JavaScript for Artifact-Style Documentation
+ * Insightify v5 — Minimal JavaScript for Artifact-Style Documentation
  * Only handles: theme toggle, Mermaid initialization, smooth scroll, copy code
  */
 
@@ -150,42 +150,27 @@
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
       `;
-      button.style.cssText = `
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-sm);
-        padding: 6px;
-        cursor: pointer;
-        opacity: 0;
-        transition: opacity var(--transition-fast), background var(--transition-fast);
-        color: var(--color-text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `;
+      
 
-      block.style.position = 'relative';
+      
       block.appendChild(button);
 
-      block.addEventListener('mouseenter', () => button.style.opacity = '1');
-      block.addEventListener('mouseleave', () => button.style.opacity = '0');
+      
+      
 
       button.addEventListener('click', async () => {
         const code = block.querySelector('code');
         if (code) {
           try {
             await navigator.clipboard.writeText(code.textContent);
-            button.style.color = 'var(--color-success)';
+            button.classList.add('copied');
             button.innerHTML = `
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             `;
             setTimeout(() => {
-              button.style.color = '';
+              button.classList.remove('copied');
               button.innerHTML = `
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -194,44 +179,14 @@
               `;
             }, 2000);
           } catch {
-            button.style.color = 'var(--color-error)';
-            setTimeout(() => button.style.color = '', 2000);
+            button.classList.add('error');
+            setTimeout(() => button.classList.remove('error'), 2000);
           }
         }
       });
     });
   }
 
-  // ==========================================================================
-  // Sidebar Toggle (Mobile)
-  // ==========================================================================
-
-  function initSidebarToggle() {
-    const toggle = document.getElementById('sidebar-toggle');
-    const trigger = document.querySelector('.sidebar-trigger');
-    const overlay = document.querySelector('.sidebar-overlay');
-
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        toggle.checked = !toggle.checked;
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener('click', () => {
-        toggle.checked = false;
-      });
-    }
-
-    // Close sidebar on navigation click (mobile)
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 1024) {
-          toggle.checked = false;
-        }
-      });
-    });
-  }
 
   // ==========================================================================
   // Active Navigation Highlight
@@ -269,7 +224,6 @@
     initMermaid();
     initSmoothScroll();
     initCopyCode();
-    initSidebarToggle();
     initActiveNav();
 
     // Theme toggle button
