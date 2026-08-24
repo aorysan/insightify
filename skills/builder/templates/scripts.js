@@ -202,36 +202,6 @@
     });
   }
 
-  // ==========================================================================
-  // Sidebar Toggle (Mobile)
-  // ==========================================================================
-
-  function initSidebarToggle() {
-    const toggle = document.getElementById('sidebar-toggle');
-    const trigger = document.querySelector('.sidebar-trigger');
-    const overlay = document.querySelector('.sidebar-overlay');
-
-    if (trigger) {
-      trigger.addEventListener('click', () => {
-        toggle.checked = !toggle.checked;
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener('click', () => {
-        toggle.checked = false;
-      });
-    }
-
-    // Close sidebar on navigation click (mobile)
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 1024) {
-          toggle.checked = false;
-        }
-      });
-    });
-  }
 
   // ==========================================================================
   // Active Navigation Highlight
@@ -269,7 +239,6 @@
     initMermaid();
     initSmoothScroll();
     initCopyCode();
-    initSidebarToggle();
     initActiveNav();
 
     // Theme toggle button
