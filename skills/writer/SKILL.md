@@ -41,7 +41,7 @@ description: Stage 2 - Execute documentation plan by generating markdown docs in
 
 ## Template Selection (5 Base Templates)
 
-Replace the previous 14 individual templates logic. Use the following 5 base templates mapped from the extracted categories:
+Use the following 5 base templates mapped from the extracted categories:
 
 | Base Template | Description | Extracted Category Mappings (Examples) |
 |---------------|-------------|----------------------------------------|

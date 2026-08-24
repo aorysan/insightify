@@ -47,7 +47,11 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 
 1. Analyze the ingested sources to detect the project archetype.
 2. Supported archetypes: `frontend-spa`, `backend-api`, `system-design`, `general`.
-3. Map the detected archetype to its corresponding knowledge categories.
+3. Map the detected archetype to its corresponding knowledge categories:
+   - `frontend-spa`: 14 default categories (product, directory-structure, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered).
+   - `backend-api`: product, directory-structure, data-models, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered.
+   - `system-design`: product, architecture, constraints, terminology, unanswered.
+   - `general`: product, directory-structure, features, terminology, unanswered.
 
 ### Phase 2: Extract
 

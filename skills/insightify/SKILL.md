@@ -3,7 +3,7 @@ name: insightify
 description: Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
 ---
 
-# Insightify v4 Pipeline Orchestrator
+# Insightify v5 Pipeline Orchestrator
 
 When the user runs this skill, execute the 4-stage documentation pipeline sequentially. Do NOT skip any steps unless explicitly requested by the user.
 
@@ -12,7 +12,7 @@ When the user runs this skill, execute the 4-stage documentation pipeline sequen
 Support the following invocation patterns:
 - `/insightify` -> Interactive:
   - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume allows reusing previous state.
-  - If no --source, --config, or --resume flag is provided, the agent MUST use the  sk_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
+  - If no --source, --config, or --resume flag is provided, the agent MUST use the ask_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
 - `/insightify <url>` -> Use URL as first source, prompt for project name, then prompt for additional sources
 - `/insightify --project <name> --source <path>` -> Non-interactive
 - `/insightify --config <path>` -> Read from `insightify.config.json`
@@ -41,7 +41,7 @@ Support the following invocation patterns:
 - On fresh run (no --resume), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation.
 - Detect missing `[OUT_DIR]/.insightify/` on resume and offer to restart or resume from last completed step.
 
-## Output Specification (v4)
+## Output Specification (v5)
 
 The pipeline generates a **Technical Specification** matching the reference artifact structure:
 
