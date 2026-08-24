@@ -10,3 +10,4 @@ describe('Project Scaffolding', () => {
     assert.strictEqual(claudeManifest.version, '4.1.0');
   });
 });
+
