@@ -2,7 +2,8 @@ const cheerio = require('cheerio');
 
 function parseHtml(htmlString) {
   const $ = cheerio.load(htmlString);
-  $('nav, footer, header, script, style, .ads, .sidebar').remove();
+  $('nav, footer, script, style, .ads, .sidebar').remove();
+  $('body > header').remove();
 
   const title = $('h1').first().text().trim() || $('title').text().trim() || 'Untitled Page';
   const $content = $('main, article, body').first();
