@@ -374,4 +374,13 @@ def sub(a, b):
     assert.strictEqual(typeof text, 'string');
     assert.ok(text.includes('Sample PDF Document'));
   });
+
+  test('pdf-parser returns error markdown on invalid input instead of throwing', async () => {
+    const { parsePdf } = require('../skills/planner/parsers/pdf-parser');
+    const invalidBuffer = Buffer.from('not a valid pdf content');
+    const result = await parsePdf(invalidBuffer);
+    assert.ok(typeof result === 'string', 'Must return string, not throw');
+    assert.ok(result.includes('PDF Parse Error'), 'Must contain error heading');
+    assert.ok(result.includes('Error:'), 'Must contain error message');
+  });
 });
