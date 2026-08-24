@@ -607,3 +607,28 @@ pre code {
 .copy-button.error {
   color: var(--color-error);
 }
+
+
+
+/* --- Code Blocks --- */
+.code-block {
+  position: relative;
+  margin-bottom: var(--spacing-lg);
+}
+
+.code-block::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  border-bottom-left-radius: var(--radius-md);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-code-border);
+  border-top: none;
+  border-right: none;
+}
