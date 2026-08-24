@@ -44,10 +44,10 @@ description: Stage 3 - Evaluate generated docs across 7 quality dimensions and g
 - 3: Minor type issues, some `any` with comments
 - 1: Major type errors, missing generics, broken interfaces
 
-**Architecture Alignment** (matches reference artifact patterns):
-- 5: Follows all patterns (Zustand, TanStack Query, React Router v6, Tailwind, feature-based)
-- 3: Most patterns followed, minor deviations
-- 1: Major pattern violations, wrong architecture
+**Architecture Alignment** (matches extracted knowledge base):
+- 5: All documented patterns match the extracted knowledge base; no fabricated or assumed patterns
+- 3: Most patterns accurately reflected, minor gaps or slight assumptions
+- 1: Documentation describes patterns not found in the codebase, or misrepresents the architecture
 
 ## Verdict Thresholds
 
