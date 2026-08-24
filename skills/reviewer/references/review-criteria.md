@@ -6,7 +6,7 @@
 4. **Structure**: Heading levels must be incremental (H1 -> H2 -> H3). Links between pages must be valid.
 5. **Usability**: Clear code examples, readable prose targeted to the intended audience.
 6. **Type Safety**: TypeScript interfaces valid, no `any` without justification, strict mode compatible, generics properly used.
-7. **Architecture Alignment**: Matches reference artifact patterns — feature-based modular React, Zustand with persist/immer/devtools, React Router v6 with layout-driven routing and guards, TanStack Query v5 custom hooks, Tailwind CSS with design tokens and CVA variants.
+7. **Architecture Alignment**: Documentation accurately reflects the project's actual architectural patterns as extracted in the knowledge base (state management, routing, API layer, component structure, cross-cutting concerns).
 
 Report Verdicts:
 - `approved`: All 7 dimensions ≥3, no critical issues.
@@ -47,7 +47,7 @@ Safety Valve:
 - 3: Minor type issues, some `any` with comments
 - 1: Major type errors, missing generics, broken interfaces
 
-**Architecture Alignment** (matches reference artifact patterns):
-- 5: Follows all patterns (Zustand, TanStack Query, React Router v6, Tailwind, feature-based)
-- 3: Most patterns followed, minor deviations
-- 1: Major pattern violations, wrong architecture
+**Architecture Alignment** (matches extracted knowledge base):
+- 5: All documented patterns match the extracted knowledge base; no fabricated or assumed patterns
+- 3: Most patterns accurately reflected, minor gaps or slight assumptions
+- 1: Documentation describes patterns not found in the codebase, or misrepresents the architecture

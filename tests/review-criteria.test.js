@@ -50,7 +50,7 @@ describe('Review Criteria (7 Dimensions)', () => {
     assert.ok(criteriaContent.includes('Heading levels incremental, all internal links valid'));
     assert.ok(criteriaContent.includes('Clear code examples, approachable prose'));
     assert.ok(criteriaContent.includes('All interfaces valid, no `any` without justification, strict mode compatible'));
-    assert.ok(criteriaContent.includes('Follows all patterns (Zustand, TanStack Query, React Router v6, Tailwind, feature-based)'));
+    assert.ok(criteriaContent.includes('All documented patterns match the extracted knowledge base; no fabricated or assumed patterns'));
   });
 
   test('review-criteria.md defines verdict thresholds and safety valve', () => {
@@ -61,12 +61,12 @@ describe('Review Criteria (7 Dimensions)', () => {
     assert.ok(criteriaContent.includes('Max 3 iteration loops. After 3 loops, escalate remaining issues to user.'), 'Must limit iteration loops to 3');
   });
 
-  test('review-criteria.md specifies frontend architecture patterns for Architecture Alignment', () => {
-    assert.ok(criteriaContent.includes('feature-based modular React'), 'Must check feature-based modular React');
-    assert.ok(criteriaContent.includes('Zustand with persist/immer/devtools'), 'Must check Zustand middleware');
-    assert.ok(criteriaContent.includes('React Router v6 with layout-driven routing and guards'), 'Must check React Router v6');
-    assert.ok(criteriaContent.includes('TanStack Query v5 custom hooks'), 'Must check TanStack Query v5');
-    assert.ok(criteriaContent.includes('Tailwind CSS with design tokens and CVA variants'), 'Must check Tailwind CSS tokens & CVA');
+  test('review-criteria.md specifies architecture alignment against extracted knowledge base', () => {
+    assert.ok(criteriaContent.includes('actual architectural patterns as extracted in the knowledge base'), 'Must check actual architectural patterns from KB');
+    assert.ok(criteriaContent.includes('state management, routing, API layer, component structure, cross-cutting concerns'), 'Must check architecture categories');
+    assert.ok(criteriaContent.includes('matches extracted knowledge base'), 'Must check scoring rubric header');
+    assert.ok(criteriaContent.includes('All documented patterns match the extracted knowledge base'), 'Must check 5-score rubric');
+    assert.ok(criteriaContent.includes('Documentation describes patterns not found in the codebase'), 'Must check 1-score rubric');
   });
 
   test('reviewer skill defines 7 quality dimensions and stage 3 in SKILL.md', () => {

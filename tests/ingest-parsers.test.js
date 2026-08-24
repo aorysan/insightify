@@ -374,4 +374,30 @@ def sub(a, b):
     assert.strictEqual(typeof text, 'string');
     assert.ok(text.includes('Sample PDF Document'));
   });
+
+  test('pdf-parser returns error markdown on invalid input instead of throwing', async () => {
+    const { parsePdf } = require('../skills/planner/parsers/pdf-parser');
+    const invalidBuffer = Buffer.from('not a valid pdf content');
+    const result = await parsePdf(invalidBuffer);
+    assert.ok(typeof result === 'string', 'Must return string, not throw');
+    assert.ok(result.includes('PDF Parse Error'), 'Must contain error heading');
+    assert.ok(result.includes('Error:'), 'Must contain error message');
+  });
+
+  test('html-parser preserves content-level headers inside article but strips body-level header', () => {
+    const { parseHtml } = require('../skills/planner/parsers/html-parser');
+    const html = `<html><body>
+      <header><nav>Site Nav</nav><span>Logo</span></header>
+      <article>
+        <header><h2>Article Header</h2><p>By Author</p></header>
+        <p>Article content here.</p>
+      </article>
+    </body></html>`;
+    const result = parseHtml(html);
+    assert.ok(!result.includes('Site Nav'), 'Body-level header content stripped');
+    assert.ok(!result.includes('Logo'), 'Body-level header content stripped');
+    assert.ok(result.includes('Article Header'), 'Content-level header preserved');
+    assert.ok(result.includes('By Author'), 'Content-level header content preserved');
+    assert.ok(result.includes('Article content'), 'Article body preserved');
+  });
 });
