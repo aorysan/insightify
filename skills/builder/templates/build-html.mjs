@@ -26,7 +26,16 @@ export function renderMarkdown(md) {
   if (!md) return '';
 
   // Pre-process special directives (e.g., :::flow, :::state, :::grid)
-  let processedMd = md.replace(/^:::([a-z0-9-]+)\s*\r?\n([\s\S]*?)\r?\n:::/gm, '<div class="diagram-$1">\n\n$2\n\n</div>');
+  const directiveMap = {
+    'flow': 'flow-diagram',
+    'state': 'state-machine',
+    'grid': 'card-grid',
+    'policy-grid': 'policy-grid'
+  };
+  let processedMd = md.replace(/^:::([a-z0-9-]+)\s*\r?\n([\s\S]*?)\r?\n:::/gm, (match, dir, content) => {
+    const className = directiveMap[dir] || dir;
+    return `<div class="${className}">\n\n${content}\n\n</div>`;
+  });
 
   // Custom renderer for citations, code blocks, mermaid, and tables
   const renderer = new marked.Renderer();

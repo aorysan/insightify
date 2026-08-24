@@ -9,7 +9,7 @@ description: Stage 1 - Ingest sources, extract knowledge into categories based o
 
 ### Phase 1: Ingest
 
-1. Accept input files or URLs from parameters or prompt. Ensure ingest scripts and parsers strictly use relative paths or config variables instead of absolute paths like C:/Users/ThinkPad...
+1. Accept input files or URLs from parameters or prompt. Ensure ingest scripts and parsers strictly use relative paths or config variables instead of absolute paths.
 2. For each source, execute the appropriate parser (HTML, Code, PDF, or Markdown/Text direct copy).
 3. Generate normalized `[OUT_DIR]/.insightify/sources/source-XXX.md` with YAML metadata frontmatter.
 4. Write master source index `[OUT_DIR]/.insightify/sources/manifest.md`.
