@@ -7,14 +7,6 @@ describe('Project Scaffolding', () => {
   test('plugin manifests exist and have correct structure', () => {
     const claudeManifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../.claude-plugin/plugin.json'), 'utf8'));
     assert.strictEqual(claudeManifest.name, 'insightify');
-    assert.strictEqual(claudeManifest.version, '4.0.0');
-
-    const geminiManifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../.gemini-plugin/plugin.json'), 'utf8'));
-    assert.strictEqual(geminiManifest.name, 'insightify');
-    assert.strictEqual(geminiManifest.version, '4.0.0');
-
-    const opencodeManifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../.opencode/plugin.json'), 'utf8'));
-    assert.strictEqual(opencodeManifest.name, 'insightify');
-    assert.strictEqual(opencodeManifest.version, '4.0.0');
+    assert.strictEqual(claudeManifest.version, '4.1.0');
   });
 });

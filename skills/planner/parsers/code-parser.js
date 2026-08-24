@@ -306,7 +306,7 @@ function parseCode(codeString, lang) {
   // Build markdown representation strictly for interfaces, types, enums, components, hooks, imports
   let output = comments.join('\n\n');
   const hasDefinitions = extracted.interfaces.length > 0 || extracted.types.length > 0 || 
-                         extracted.enums.length > 0 || (extracted.jsxComponents?.length > 0 || extracted.components?.length > 0) || 
+                         extracted.enums.length > 0 || extracted.jsxComponents.length > 0 || 
                          extracted.hooks.length > 0;
   
   if (!output && !hasDefinitions) {
