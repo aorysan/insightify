@@ -1,6 +1,6 @@
 {
   "name": "insightify",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from code repositories. 14-section spec with directory structure, data models, component architecture, state management, routing, API patterns, and Mermaid diagrams.",
   "author": {
     "name": "Aryo Adi Putro"

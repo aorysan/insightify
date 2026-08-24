@@ -7,7 +7,7 @@ describe('Project Scaffolding', () => {
   test('plugin manifests exist and have correct structure', () => {
     const claudeManifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../.claude-plugin/plugin.json'), 'utf8'));
     assert.strictEqual(claudeManifest.name, 'insightify');
-    assert.strictEqual(claudeManifest.version, '4.1.0');
+    assert.strictEqual(claudeManifest.version, '4.1.1');
   });
 });
 
