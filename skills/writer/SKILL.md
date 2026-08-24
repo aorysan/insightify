@@ -1,6 +1,6 @@
 ---
 name: writer
-description: Stage 2 - Execute documentation plan by generating 14 markdown docs in 5 dependency-aware waves.
+description: Stage 2 - Execute documentation plan by generating markdown docs in dependency-aware waves based on detected archetype.
 ---
 
 # Writer Skill
@@ -39,47 +39,18 @@ description: Stage 2 - Execute documentation plan by generating 14 markdown docs
 - Fenced code blocks with language tags: ` ```js `, ` ```bash `, etc.
 - Mermaid diagrams for architecture, flow, state machines
 
-## Template Selection (14 Templates for 14 Pages)
+## Template Selection (5 Base Templates)
 
-| Page | Template | Knowledge Categories |
-|------|----------|---------------------|
-| 1. Executive Summary | `templates/executive-summary-template.md` | product, features, cross-cutting |
-| 2. Directory Structure | `templates/directory-structure-template.md` | directory-structure |
-| 3. Global Data Models | `templates/data-models-template.md` | data-models, api-patterns |
-| 4. Component Architecture | `templates/component-architecture-template.md` | component-architecture, ui-component-library |
-| 5. State Management | `templates/state-management-template.md` | state-management |
-| 6. Routing & Layout | `templates/routing-structure-template.md` | routing-structure, component-architecture |
-| 7. UI Component Library | `templates/ui-component-library-template.md` | ui-component-library |
-| 8. API Patterns | `templates/api-patterns-template.md` | api-patterns, data-models |
-| 9. Features & Business Logic | `templates/features-template.md` | features, workflows |
-| 10. Cross-Cutting Concerns | `templates/cross-cutting-template.md` | cross-cutting |
-| 11. Terminology & Glossary | `templates/terminology-template.md` | terminology |
-| 12. Constraints & Limitations | `templates/constraints-template.md` | constraints, unanswered |
-| 13. Workflows & Procedures | `templates/workflows-template.md` | workflows |
-| 14. Appendix | `templates/appendix-template.md` | all |
+Replace the previous 14 individual templates logic. Use the following 5 base templates mapped from the extracted categories:
+
+| Base Template | Description | Extracted Category Mappings (Examples) |
+|---------------|-------------|----------------------------------------|
+| `templates/overview-template.md` | High-level summaries and concepts | product, features, terminology |
+| `templates/catalog-template.md` | Inventories and component lists | ui-component-library, features |
+| `templates/architecture-template.md` | System design and structures | directory-structure, component-architecture, state-management, routing-structure |
+| `templates/reference-template.md` | API, data models, workflows | data-models, api-patterns, workflows, cross-cutting |
+| `templates/appendix-template.md` | Supplementary and constraints | constraints, unanswered, appendix |
 
 ## Wave Execution Order
 
-**Wave 1 (Independent):**
-- 1. Executive Summary
-- 2. Directory Structure
-- 3. Global Data Models
-- 11. Terminology & Glossary
-- 12. Constraints & Limitations
-
-**Wave 2 (Depends on Wave 1):**
-- 4. Component Architecture (depends on 2)
-- 5. State Management (depends on 3)
-- 7. UI Component Library (depends on 2)
-
-**Wave 3 (Depends on Wave 2):**
-- 6. Routing & Layout Structure (depends on 4)
-- 8. API Interaction Patterns (depends on 3)
-
-**Wave 4 (Depends on Waves 2-3):**
-- 9. Features & Business Logic (depends on 3, 4, 5)
-- 10. Cross-Cutting Concerns (depends on 5, 6)
-- 13. Workflows & Procedures (depends on 4, 5, 8)
-
-**Wave 5 (Depends on All Prior):**
-- 14. Appendix (depends on all prior pages)
+Follow the dynamic wave execution order specified in `[OUT_DIR]/.insightify/plan.md`. The exact pages and waves will depend on the detected project archetype.

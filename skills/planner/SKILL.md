@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Stage 1 - Ingest sources, extract knowledge into 14 categories, and generate documentation plan with user approval.
+description: Stage 1 - Ingest sources, extract knowledge into categories based on detected archetype, and generate documentation plan with user approval.
 ---
 
 # Planner Skill (Ingest → Extract → Plan)
@@ -43,14 +43,21 @@ word_count: 1234
 
 Content headings normalized to start at H2 (`##`). Manifest format: table with Source ID, Path, Type, Status, Words.
 
+### Phase 0: Project Type Detection
+
+1. Analyze the ingested sources to detect the project archetype.
+2. Supported archetypes: `frontend-spa`, `backend-api`, `system-design`, `general`.
+3. Map the detected archetype to its corresponding knowledge categories.
+
 ### Phase 2: Extract
 
 1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
-2. For each of the 14 categories in `references/extraction-schema.md`, analyze sources and extract structured facts.
+2. For each of the required categories in `references/extraction-schema.md` (based on archetype), analyze sources and extract structured facts.
 3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
 4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
 
-**Knowledge Categories (14):**
+**Knowledge Categories:**
+*(Note: The following 14 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 0).*
 1. `product.md` — Product identity, version, audience, tagline
 2. `directory-structure.md` — Folder tree, module boundaries, import conventions
 3. `data-models.md` — TypeScript interfaces, enums, Mermaid class diagrams
@@ -79,7 +86,7 @@ The API supports up to 1000 concurrent connections.
 
 ### Phase 3: Plan
 
-1. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all 14 categories).
+1. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all extracted categories).
 2. Generate plan using `templates/plan-template.md`.
 3. Display summary:
    ```
@@ -100,7 +107,7 @@ The API supports up to 1000 concurrent connections.
 **Priority:** high (getting started, core), medium (features), low (API, FAQ).
 **Dependency Graph:** No cycles; max 5 waves; wave 1 = standalone; dependencies strictly reference prior waves.
 
-**Plan Template Outputs 14 Pages Across 5 Waves:**
+**Plan Template Output Example (`frontend-spa`, 14 Pages Across 5 Waves):**
 | Wave | Pages | Dependencies |
 |------|-------|--------------|
 | 1 | Executive Summary, Directory Structure, Global Data Models, Terminology & Glossary, Constraints & Limitations | None |
