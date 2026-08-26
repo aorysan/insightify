@@ -25,6 +25,7 @@ description: Stage 2 - Execute documentation plan by generating markdown docs in
 - H1 (`#`): Reserved for the page title (set in frontmatter `title` field, not in body)
 - Content starts at H2 (`##`)
 - Heading levels incremental: H2 → H3 → H4, never skip levels
+- Feature pages: H2 = feature/page title, H3 = sub-feature/section headings; never skip levels
 
 ## Cross-References
 
@@ -37,7 +38,9 @@ description: Stage 2 - Execute documentation plan by generating markdown docs in
 - Every API endpoint: at least one request/response example
 - Every workflow: step-by-step code or command example
 - Fenced code blocks with language tags: ` ```js `, ` ```bash `, etc.
-- Mermaid diagrams for architecture, flow, state machines
+- Mermaid diagrams (fenced with ` ```mermaid ` language tag):
+  - Every user journey/workflow page: at least one ` ```mermaid flowchart ` showing steps and decision points
+  - State machine/entity lifecycle documentation: ` ```mermaid stateDiagram ` covering all states and transitions
 
 ## Template Selection (5 Base Templates)
 
