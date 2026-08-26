@@ -1,22 +1,22 @@
 ---
 name: builder
-description: Stage 4 - Render documentation as single artifact-style HTML with sidebar, Mermaid diagrams, dark/light mode, and assemble knowledge base.
+description: Stage 4 - Assemble Product-Knowledge-Base.md and render single artifact-style HTML preview.
 ---
 
 # Builder Skill
 
 ## Interfaces
 
-- **Consumes:** `[OUT_DIR]/docs/markdown/*.md`, `[OUT_DIR]/.insightify/knowledge/*.md`, `[OUT_DIR]/.insightify/plan.md`
-- **Produces:** `[OUT_DIR]/index.html` (single artifact document) and `[OUT_DIR]/knowledge-base.md` (concatenated)
+- **Consumes:** `[OUT_DIR]/docs/final/final-documentation.md`, `[OUT_DIR]/.insightify/knowledge/*.md`, `[OUT_DIR]/.insightify/plan.md`
+- **Produces:** `[OUT_DIR]/Product-Knowledge-Base.md` (primary output) and `[OUT_DIR]/index.html` (preview)
 
 ## Instructions
 
-1. Read all `[OUT_DIR]/docs/markdown/*.md` pages in plan writing order.
-2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (14 category files).
-3. Read `[OUT_DIR]/.insightify/plan.md` for metadata (title, audience, page order).
-4. Render `index.html` using `templates/index-html-template.html` and `templates/build-html.mjs`.
-5. Assemble `knowledge-base.md` from the 14 knowledge category files, and generate a Table of Contents at the top of the concatenated document.
+1. Read `[OUT_DIR]/docs/final/final-documentation.md` (the finalized documentation emitted by Reviewer).
+2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all category files emitted by Planner).
+3. Read `[OUT_DIR]/.insightify/plan.md` for metadata (title, audience, section order).
+4. Assemble `[OUT_DIR]/Product-Knowledge-Base.md` as the primary output consisting only of the finalized documentation (`final-documentation.md`), with an added Table of Contents at the top. The raw knowledge categories must remain untouched in their original `knowledge/` directory.
+5. Render `[OUT_DIR]/index.html` as an HTML preview of the single `Product-Knowledge-Base.md` using `templates/index-html-template.html` and `templates/build-html.mjs`.
 6. Copy `[OUT_DIR]/.insightify/sources/` → `[OUT_DIR]/docs/intake/`.
 7. Copy `[OUT_DIR]/.insightify/plan.md` → `[OUT_DIR]/docs/plan/plan.md`.
 8. Copy `[OUT_DIR]/.insightify/review/` → `[OUT_DIR]/docs/review/`.
@@ -24,10 +24,10 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
 10. Print completion summary:
     ```
     ✅ Insightify Build Complete!
-    📁 Output: [OUT_DIR]/index.html (single artifact-style page)
-    📚 Knowledge Base: [OUT_DIR]/knowledge-base.md
-    📂 Archive: [OUT_DIR]/docs/ (intake, plan, markdown, review)
-    To view: open index.html in browser
+    📚 Primary Output: [OUT_DIR]/Product-Knowledge-Base.md
+    📁 Preview: [OUT_DIR]/index.html (single artifact-style page)
+    📂 Archive: [OUT_DIR]/docs/ (intake, plan, markdown, final, review)
+    To view preview: open index.html in browser
     ⚠️  Warnings: [any validation issues]
     ```
 
@@ -88,7 +88,7 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
         {{PRODUCT_OVERVIEW}}
       </section>
 
-      <!-- 14 Documentation Sections in Plan Order -->
+      <!-- Documentation Sections (Rendered from Product-Knowledge-Base.md) -->
       {{DOC_SECTIONS}}
 
       <!-- Process / Pipeline diagram -->
@@ -112,7 +112,7 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
 - **Collapsible Trees**: Directory structure as nested `<details>/<summary>` with `open` on first level.
 - **Tabs**: Component registry with tabbed interface (Component | Props | Usage) using CSS-only `:checked` hack.
 - **Product Overview**: Grid cards from `product.md`; feature badges from `features.md` with source citations.
-- **Doc Sections**: Each page → `<section id="slug" class="doc-section">` with label + heading + content.
+- **Doc Sections**: Render the single `Product-Knowledge-Base.md` with section navigation generated from H2/H3 headings, structuring sections as `<section id="slug" class="doc-section">` with label + heading + content.
 - **Process Diagram**: 4-step flexbox (Planner → Writer → Reviewer → Builder) with In/Out labels.
 - **Styling**: 
   - Design tokens as CSS custom properties (`--color-bg`, `--color-text`, `--color-primary`, etc.)
@@ -124,11 +124,11 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
   - Mermaid initialization
   - Smooth scroll to anchor
   - Copy code button (optional, progressive enhancement)
-- **knowledge-base.md**: Generate a Table of Contents at the top, concatenate 14 category files with `## Category` headings, strip YAML frontmatter, preserve all `> **Source:**` citations.
+- **Product-Knowledge-Base.md**: Assemble as the primary output. Generate a Table of Contents at the top, followed by the finalized documentation. Do not concatenate raw knowledge categories. Strip YAML frontmatter, and preserve all `> **Source:**` citations.
 
 ## Templates
 
 - `templates/index-html-template.html` — Full HTML template with placeholders: `{{TITLE}}`, `{{PRODUCT_NAME}}`, `{{TAGLINE}}`, `{{VERSION}}`, `{{GENERATED_AT}}`, `{{SIDEBAR_NAV}}`, `{{PRODUCT_OVERVIEW}}`, `{{DOC_SECTIONS}}`, `{{PROCESS_DIAGRAM}}`, `{{STYLE}}`, `{{SCRIPTS}}`
-- `templates/build-html.mjs` — Exports: `renderMarkdown(md)`, `buildProductOverview(kbDir)`, `buildDocSections(docsDir, plan)`, `buildSidebarNav(plan)`, `buildProcessDiagram()`, `assembleKnowledgeBase(kbDir)`, `render(template, data)`, `readTemplate(templateName)`, `buildArtifact(options)`
+- `templates/build-html.mjs` — Exports: `renderMarkdown(md)`, `buildProductOverview(kbDir)`, `buildDocSections(docPath, plan)`, `buildSidebarNav(plan)`, `buildProcessDiagram()`, `assembleKnowledgeBase(kbDir)`, `render(template, data)`, `readTemplate(templateName)`, `buildArtifact(options)`
 - `templates/styles.css` — Complete inline CSS (design tokens, layout, components, print, dark/light themes)
 - `templates/scripts.js` — Minimal JS bundle (theme toggle with localStorage, Mermaid init with theme sync, smooth scroll, copy code button, sidebar mobile toggle, active nav highlight)

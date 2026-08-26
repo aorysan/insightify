@@ -3,7 +3,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-describe('Review Criteria (7 Dimensions)', () => {
+describe('Review Criteria (Quality Dimensions)', () => {
   const criteriaPath = path.join(__dirname, '../skills/reviewer/references/review-criteria.md');
   const skillPath = path.join(__dirname, '../skills/reviewer/SKILL.md');
 
@@ -26,17 +26,18 @@ describe('Review Criteria (7 Dimensions)', () => {
     'Structure',
     'Usability',
     'Type Safety',
-    'Architecture Alignment'
+    'Architecture Alignment',
+    'Business Alignment'
   ];
 
-  test('review-criteria.md exists and covers all 7 dimensions', () => {
+  test('review-criteria.md exists and covers all quality dimensions', () => {
     assert.strictEqual(fs.existsSync(criteriaPath), true, 'review-criteria.md must exist');
     EXPECTED_DIMENSIONS.forEach(dim => {
       assert.strictEqual(criteriaContent.includes(dim), true, `Must include dimension: ${dim}`);
     });
   });
 
-  test('review-criteria.md defines detailed scoring rubric (1, 3, 5) for all 7 dimensions', () => {
+  test('review-criteria.md defines detailed scoring rubric (1, 3, 5) for all quality dimensions', () => {
     assert.ok(criteriaContent.includes('## Scoring Rubric (1-5 per dimension)'), 'Must include scoring rubric header');
 
     EXPECTED_DIMENSIONS.forEach(dim => {
@@ -55,7 +56,7 @@ describe('Review Criteria (7 Dimensions)', () => {
 
   test('review-criteria.md defines verdict thresholds and safety valve', () => {
     assert.ok(criteriaContent.includes('Report Verdicts:'), 'Must specify Report Verdicts');
-    assert.ok(criteriaContent.includes('`approved`: All 7 dimensions ≥3, no critical issues.'), 'Must define approved criteria');
+    assert.ok(/`approved`: All \d+ dimensions ≥3, no critical issues\./.test(criteriaContent), 'Must define approved criteria');
     assert.ok(criteriaContent.includes('`changes_needed`: Any dimension <3 OR any critical issue.'), 'Must define changes_needed criteria');
     assert.ok(criteriaContent.includes('Safety Valve:'), 'Must define Safety Valve');
     assert.ok(criteriaContent.includes('Max 3 iteration loops. After 3 loops, escalate remaining issues to user.'), 'Must limit iteration loops to 3');
@@ -69,11 +70,11 @@ describe('Review Criteria (7 Dimensions)', () => {
     assert.ok(criteriaContent.includes('Documentation describes patterns not found in the codebase'), 'Must check 1-score rubric');
   });
 
-  test('reviewer skill defines 7 quality dimensions and stage 3 in SKILL.md', () => {
+  test('reviewer skill defines quality dimensions and stage 3 in SKILL.md', () => {
     assert.strictEqual(fs.existsSync(skillPath), true, 'reviewer SKILL.md must exist');
     assert.strictEqual(skillContent.includes('name: reviewer'), true, 'Must specify name: reviewer');
     assert.strictEqual(skillContent.includes('Stage 3'), true, 'Must specify Stage 3');
-    assert.strictEqual(skillContent.includes('7 quality dimensions') || skillContent.includes('7 dimensions'), true, 'Must mention 7 quality dimensions');
+    assert.strictEqual(/\d+ quality dimensions/.test(skillContent), true, 'Must mention numbered quality dimensions');
     assert.strictEqual(skillContent.includes('Type Safety'), true, 'Must mention Type Safety');
     assert.strictEqual(skillContent.includes('Architecture Alignment'), true, 'Must mention Architecture Alignment');
   });
@@ -94,7 +95,7 @@ describe('Review Criteria (7 Dimensions)', () => {
     });
 
     assert.ok(skillContent.includes('## Verdict Thresholds'), 'Must define verdict thresholds');
-    assert.ok(skillContent.includes('- `approved`: All 7 dimensions ≥3, no critical issues'), 'Must define approved threshold');
+    assert.ok(/- `approved`: All \d+ dimensions ≥3, no critical issues/.test(skillContent), 'Must define approved threshold');
     assert.ok(skillContent.includes('- `changes_needed`: Any dimension <3 OR any critical issue'), 'Must define changes_needed threshold');
 
     assert.ok(skillContent.includes('## Issue Classification'), 'Must define issue classification');
@@ -102,11 +103,11 @@ describe('Review Criteria (7 Dimensions)', () => {
     assert.ok(skillContent.includes('architecture violations'), 'Critical issues must include architecture violations');
   });
 
-  test('reviewer skill defines structured issue format for Writer with 7 dimensions in SKILL.md', () => {
+  test('reviewer skill defines structured issue format for Writer with all dimensions in SKILL.md', () => {
     assert.ok(skillContent.includes('## Issue Format for Writer'), 'Must define issue format for writer');
     assert.ok(skillContent.includes('### Issue: [Short description]'), 'Must include issue title');
     assert.ok(skillContent.includes('- **Page:** `[OUT_DIR]/docs/markdown/[filename].md`'), 'Must specify page path');
-    assert.ok(skillContent.includes('- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment]'), 'Must list all 7 dimensions');
+    assert.ok(skillContent.includes('- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment]'), 'Must list all dimensions');
     assert.ok(skillContent.includes('- **Severity:** [Critical|Minor]'), 'Must specify severity');
     assert.ok(skillContent.includes('- **Issue:** [Description of what\'s wrong]'), 'Must specify issue description');
     assert.ok(skillContent.includes('- **Suggestion:** [How to fix it]'), 'Must specify suggestion');

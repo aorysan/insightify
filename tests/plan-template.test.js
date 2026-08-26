@@ -158,7 +158,7 @@ describe('Plan Template (14 Pages, 5 Waves)', () => {
     assert.ok(checklistSection.includes('- [ ] Priority distribution: 7 high, 3 medium, 4 low'));
   });
 
-  test('planner skill defines 14 categories, 5 waves, and user approval workflow in SKILL.md', () => {
+  test('planner skill defines archetype-aware categories, 5 waves, and user approval workflow in SKILL.md', () => {
     assert.strictEqual(fs.existsSync(skillPath), true, 'planner SKILL.md must exist');
 
     const expectedKnowledgeCategories = [
@@ -182,9 +182,9 @@ describe('Plan Template (14 Pages, 5 Waves)', () => {
       assert.ok(skillContent.includes(cat), `SKILL.md must list category: ${cat}`);
     });
 
-    assert.ok(skillContent.includes('14 categories'), 'SKILL.md must mention 14 categories');
+    assert.ok(skillContent.includes('detected archetype'), 'SKILL.md must derive category set from detected archetype');
     assert.ok(skillContent.includes('max 5 waves'), 'SKILL.md must enforce max 5 waves');
-    assert.ok(skillContent.includes('Plan Template Outputs 14 Pages Across 5 Waves'), 'SKILL.md must have 5 waves table');
+    assert.ok(/Plan Template Output.*5 Waves/.test(skillContent), 'SKILL.md must have 5 waves table');
     assert.ok(skillContent.includes('Approve plan? [Y/n/revise]'), 'SKILL.md must specify user approval prompt');
   });
 });
