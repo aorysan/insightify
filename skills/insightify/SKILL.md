@@ -11,7 +11,7 @@ When the user runs this skill, execute the 4-stage documentation pipeline sequen
 
 Support the following invocation patterns:
 - `/insightify:insightify` -> Interactive:
-  - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume or --sync allow reusing previous state.
+  - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume, --sync, or --update allow reusing previous state.
   - If no --source, --config, --resume, --sync, or --update flag is provided, the agent MUST use the ask_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
 - `/insightify:insightify <url>` -> Use URL as first source, prompt for project name, then prompt for additional sources
 - `/insightify:insightify --project <name> --source <path>` -> Non-interactive
@@ -21,10 +21,17 @@ Support the following invocation patterns:
 - `/insightify:insightify --sync` -> Incremental update: re-run pipeline against an existing [OUT_DIR], re-ingesting sources and updating only stale/affected knowledge + pages. Prompt for OUT_DIR/project if not resolvable.
 - `/insightify:insightify --update <path-or-url>` -> Add/update a single source, then refresh dependent pages.
 
+### Incremental Update Modes (--sync / --update)
+
+- `[OUT_DIR]/.insightify/sources/manifest.md` is the source of truth for incremental runs.
+- `--sync`: re-ingest only sources whose content/churn changed since the manifest; re-extract affected knowledge categories; pass the affected-pages list downstream.
+- `--update <source>`: upsert a single manifest entry, re-extract its categories, refresh dependent pages.
+- Writer/Reviewer operate on the affected-pages list when invoked in sync/update mode; run the full pipeline otherwise.
+
 ## Pipeline Execution (4 Stages)
 
 1. **Planner:** Run `insightify:planner`.
-   - Progress: `⏳ Planner: ingesting sources, extracting 14 knowledge categories, generating plan...`
+   - Progress: `⏳ Planner: ingesting sources, extracting knowledge categories for detected archetype, generating plan...`
    - Error: If partial failure, log in manifest as `failed` and continue.
 2. **Writer:** Run `insightify:writer`. Generate 14 pages in 5 dependency-aware waves.
    - Progress: `⏳ Writer: Wave X/5 — [======--] A/B pages`
@@ -50,21 +57,7 @@ The pipeline generates a **Technical Specification** matching the reference arti
 | Output | Description |
 |--------|-------------|
 | `index.html` | Single artifact-style HTML with CSS-only sidebar, Mermaid diagrams, dark/light mode, print support |
-| `knowledge-base.md` | 14 concatenated knowledge categories with source citations |
+| `knowledge-base.md` | All knowledge categories emitted by Planner for the detected archetype, with source citations |
 
-**Documentation Sections (14 Categories):**
-1. `product`
-2. `directory-structure`
-3. `data-models`
-4. `component-architecture`
-5. `state-management`
-6. `routing-structure`
-7. `ui-component-library`
-8. `api-patterns`
-9. `features`
-10. `cross-cutting`
-11. `terminology`
-12. `constraints`
-13. `workflows`
-14. `unanswered`
+**Documentation Sections:** Planner emits the category set for the detected archetype (see Planner Phase 0); Builder concatenates exactly those category files under `(Categories)` headings.
 

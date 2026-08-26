@@ -50,7 +50,7 @@ description: Stage 3 - Evaluate generated docs across 8 quality dimensions and g
 - 1: Documentation describes patterns not found in the codebase, or misrepresents the architecture
 
 **Business Alignment** (matches business policies and user journeys):
-- 5: User journeys, state machines, and business policies are logically sound, accurately extracted, and well-represented
+- 5: User journeys, state machines, and business policies are logically sound, accurately extracted, and well-represented (user-journeys.md, business-policies.md, state-management.md / data-models.md)
 - 3: Minor logical gaps in user journeys or missing some business policies
 - 1: State machines or user journeys make no business sense, or business policies are entirely ignored
 

@@ -13,10 +13,10 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
 ## Instructions
 
 1. Read all `[OUT_DIR]/docs/markdown/*.md` pages in plan writing order.
-2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (14 category files).
+2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all category files emitted by Planner).
 3. Read `[OUT_DIR]/.insightify/plan.md` for metadata (title, audience, page order).
 4. Render `index.html` using `templates/index-html-template.html` and `templates/build-html.mjs`.
-5. Assemble `knowledge-base.md` from the 14 knowledge category files, and generate a Table of Contents at the top of the concatenated document.
+5. Assemble `knowledge-base.md` from the knowledge category files emitted by Planner, and generate a Table of Contents at the top of the concatenated document.
 6. Copy `[OUT_DIR]/.insightify/sources/` → `[OUT_DIR]/docs/intake/`.
 7. Copy `[OUT_DIR]/.insightify/plan.md` → `[OUT_DIR]/docs/plan/plan.md`.
 8. Copy `[OUT_DIR]/.insightify/review/` → `[OUT_DIR]/docs/review/`.
@@ -124,7 +124,7 @@ description: Stage 4 - Render documentation as single artifact-style HTML with s
   - Mermaid initialization
   - Smooth scroll to anchor
   - Copy code button (optional, progressive enhancement)
-- **knowledge-base.md**: Generate a Table of Contents at the top, concatenate 14 category files with `## Category` headings, strip YAML frontmatter, preserve all `> **Source:**` citations.
+- **knowledge-base.md**: Generate a Table of Contents at the top, concatenate all category files emitted by Planner with `## Category` headings, strip YAML frontmatter, preserve all `> **Source:**` citations.
 
 ## Templates
 

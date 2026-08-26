@@ -7,7 +7,7 @@
 5. **Usability**: Clear code examples, readable prose targeted to the intended audience.
 6. **Type Safety**: TypeScript interfaces valid, no `any` without justification, strict mode compatible, generics properly used.
 7. **Architecture Alignment**: Documentation accurately reflects the project's actual architectural patterns as extracted in the knowledge base (state management, routing, API layer, component structure, cross-cutting concerns).
-8. **Business Alignment**: User journeys, state machines, and business policies are logically sound and well-represented as extracted in the knowledge base (user journeys, state machines, business policies).
+8. **Business Alignment**: User journeys, state machines, and business policies are logically sound and well-represented as extracted in the knowledge base (user-journeys.md, business-policies.md, state-management.md / data-models.md).
 
 Report Verdicts:
 - `approved`: All 8 dimensions ≥3, no critical issues.
