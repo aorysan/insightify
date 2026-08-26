@@ -17,7 +17,7 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 
 1. **Stage 1 (Planner)**: `skills/planner/SKILL.md` - Ingests sources (files, URLs), extracts structured product knowledge (archetype-dependent knowledge categories), and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
 2. **Stage 2 (Writer)**: `skills/writer/SKILL.md` - Generates markdown documentation pages under `docs/markdown/` in 5 dependency-aware waves based on the approved plan.
-3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md` - Automatically reviews generated docs across 8 quality dimensions. If revisions are needed, sends targeted issues back to Writer (max 3 iterations).
+3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md` - Automatically reviews generated docs across 9 quality dimensions. If revisions are needed, sends targeted issues back to Writer (max 3 iterations).
 4. **Stage 4 (Builder)**: `skills/builder/SKILL.md` - Renders documentation as single artifact-style HTML (`index.html`) and assembles knowledge base (`knowledge-base.md`).
 
 ### Data Flow & State Management

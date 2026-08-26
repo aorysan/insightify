@@ -35,6 +35,7 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
   - `<div class="artifact-card">...</div>` for each discrete item inside a grid (title in bold or H4, then a 1–2 sentence description)
   - `<span class="badge">LABEL</span>` for small labels such as HTTP methods, statuses, versions
   - `<div class="status-indicator">TEXT</div>` for state/health lists, with modifiers `status-warning` and `status-error` (e.g., `<div class="status-indicator status-error">Deprecated</div>`)
+- **Hard rule — raw HTML only inside wrappers:** Within `grid-*`, `artifact-card`, `badge`, and `status-indicator` wrappers, use raw HTML only (`<strong>`, `<h4>`, plain text). Markdown syntax will not be rendered inside these raw HTML elements (marked emits literal asterisks for `**bold**`, etc.) — never nest markdown syntax in them.
 - Markdown stays the default for narrative flow; interleave the HTML wrappers above where structure beats prose — instead of raw markdown tables or bullet lists where appropriate.
 - These classes are styled by the Builder CSS; do not invent other class names.
 - Section heading numbers (`01`, `02`, ...) are added automatically by CSS counters — never hardcode them into headings.

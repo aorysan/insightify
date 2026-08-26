@@ -46,7 +46,7 @@ export function renderMarkdown(md) {
     const depth = typeof heading === 'object' ? heading.depth : level;
     
     if (depth === 2) {
-      return `<h2><span class="section-num"></span>${text}</h2>\n`;
+      return `<h2>${text}</h2>\n`;
     }
     return `<h${depth}>${text}</h${depth}>\n`;
   };

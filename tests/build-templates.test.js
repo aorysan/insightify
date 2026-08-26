@@ -646,6 +646,14 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(tpl.includes('{{SIDEBAR_NAV}}'), 'TOC nav placeholder must remain');
   });
 
+  test('styles.css flips floating TOC to the left of doc content via flex order', () => {
+    const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
+    const tocBlock = css.match(/\.toc-container\s*\{[^}]*\}/);
+    assert.ok(tocBlock, '.toc-container rule must exist');
+    assert.ok(/order:\s*-1/.test(tocBlock[0]),
+      '.toc-container must use order: -1 so the floating TOC renders LEFT of .doc-content');
+  });
+
   test('styles.css preserves legacy component classes referenced by pipeline output', () => {
     const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
 

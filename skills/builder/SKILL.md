@@ -80,23 +80,25 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
     </header>
 
     <article class="doc-content">
-      <!-- Product Overview -->
-      <section id="overview" class="doc-section">
-        <span class="section-label">Overview</span>
-        <h1>{{PRODUCT_NAME}}</h1>
-        <p class="tagline">{{TAGLINE}}</p>
-        {{PRODUCT_OVERVIEW}}
-      </section>
+      <div class="artifact-container">
+        <!-- Product Overview -->
+        <section id="overview" class="doc-section">
+          <span class="section-label">Overview</span>
+          <h1>{{PRODUCT_NAME}}</h1>
+          <p class="tagline">{{TAGLINE}}</p>
+          {{PRODUCT_OVERVIEW}}
+        </section>
 
-      <!-- Documentation Sections (Rendered from Product-Knowledge-Base.md) -->
-      {{DOC_SECTIONS}}
+        <!-- Documentation Sections (Rendered from Product-Knowledge-Base.md) -->
+        {{DOC_SECTIONS}}
 
-      <!-- Process / Pipeline diagram -->
-      <section id="pipeline" class="doc-section">
-        <span class="section-label">Process</span>
-        <h2>Documentation Pipeline</h2>
-        {{PROCESS_DIAGRAM}}
-      </section>
+        <!-- Process / Pipeline diagram -->
+        <section id="pipeline" class="doc-section">
+          <span class="section-label">Process</span>
+          <h2>Documentation Pipeline</h2>
+          {{PROCESS_DIAGRAM}}
+        </section>
+      </div>
     </article>
   </main>
 
@@ -117,7 +119,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 - **Styling**: 
   - Design tokens as CSS custom properties (`--color-bg`, `--color-text`, `--color-primary`, etc.)
   - Light/dark via `prefers-color-scheme` AND `[data-theme="light"]` / `[data-theme="dark"]`
-  - Google Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (code)
+  - Google Fonts: Inter (headings and body), JetBrains Mono (code)
   - Print stylesheet: hides sidebar, expands all details, shows URLs
 - **Minimal JavaScript** (only):
   - Theme toggle with localStorage persistence

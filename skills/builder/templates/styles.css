@@ -92,9 +92,9 @@
     --color-info: #60a5fa;
     --color-info-light: #1e3a5f;
 
-    --color-code-bg: #1e293b;
+    --color-code-bg: #141413;
     --color-code-text: #e2e8f0;
-    --color-code-border: #334155;
+    --color-code-border: #ffffff1a;
   }
 }
 
@@ -136,9 +136,9 @@
   --color-primary-hover: #3b82f6;
   --color-primary-light: #1e3a5f;
   --color-primary-text: #dbeafe;
-  --color-code-bg: #1e293b;
+  --color-code-bg: #141413;
   --color-code-text: #e2e8f0;
-  --color-code-border: #334155;
+  --color-code-border: #ffffff1a;
 }
 
 /* --- Reset & Base --- */
@@ -307,6 +307,7 @@ pre code {
 .toc-container {
   width: 250px;
   flex-shrink: 0;
+  order: -1; /* Spec §5: floating TOC renders LEFT of the doc content */
 }
 
 .floating-toc {
@@ -415,7 +416,12 @@ pre code {
 
 /* --- Print Styles --- */
 @media print {
-  
+
+  .toc-container,
+  .floating-toc {
+    display: none !important;
+  }
+
   .theme-toggle,
   .print-link,
   .header-actions {
@@ -512,14 +518,6 @@ pre code {
   background-color: var(--color-primary-light);
   color: var(--color-primary-text);
 }
-/* --- Custom Components --- */
-.section-num {
-  font-family: var(--font-heading);
-  color: var(--color-primary);
-  font-weight: 700;
-  margin-right: var(--spacing-sm);
-}
-
 /* --- Artifact Layout Utilities --- */
 .artifact-container {
   max-width: 900px;

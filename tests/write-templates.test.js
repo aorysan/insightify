@@ -259,6 +259,11 @@ describe('Writer Templates (14 Templates)', () => {
       'Artifact HTML Formatting must appear after Content Structure and before Cross-References');
 
     assert.ok(skill.includes('do not invent other class names'), 'Must restrict Writer to Builder CSS classes');
+
+    // Raw HTML only inside artifact wrappers (marked 12 does not render markdown nested in raw HTML)
+    assert.ok(skill.includes('use raw HTML only'), 'Wrapper guidance must mandate raw HTML only inside wrappers');
+    assert.ok(skill.includes('Markdown syntax will not be rendered'),
+      'Wrapper guidance must warn that markdown syntax will not be rendered inside raw HTML wrappers');
   });
 });
 

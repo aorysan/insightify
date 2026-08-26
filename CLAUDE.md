@@ -24,7 +24,7 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 2. **Stage 2 (Writer)**: `skills/writer/SKILL.md`
    - Generates markdown documentation pages under `docs/markdown/` in 5 dependency-aware waves using 14 specialized templates.
 3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md`
-   - Automatically evaluates generated docs across 8 quality dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment, Business Alignment) on a 1-5 rubric.
+   - Automatically evaluates generated docs across 9 quality dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment, Business Alignment, Scannability) on a 1-5 rubric.
    - If revisions are needed, sends targeted issues back to Stage 2 (max 3 iterations).
 4. **Stage 4 (Builder)**: `skills/builder/SKILL.md`
    - Assembles the single-page HTML artifact (`docs/index.html`) and the consolidated knowledge base (`docs/knowledge-base.md`) via `build-html.mjs`.
