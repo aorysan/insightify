@@ -10,9 +10,10 @@ description: Stage 1 - Ingest sources, extract knowledge into categories based o
 ### Phase 1: Ingest
 
 1. Accept input files or URLs from parameters or prompt. Ensure ingest scripts and parsers strictly use relative paths or config variables instead of absolute paths.
-2. For each source, execute the appropriate parser (HTML, Code, PDF, or Markdown/Text direct copy).
+2. For each source, execute the appropriate parser (HTML, Code, PDF, Native Schema, or Markdown/Text direct copy).
 3. Generate normalized `[OUT_DIR]/.insightify/sources/source-XXX.md` with YAML metadata frontmatter.
-4. Write master source index `[OUT_DIR]/.insightify/sources/manifest.md`.
+4. For each source that lives in a git repository, run `git log --name-only --pretty=format:` to compute file volatility/churn (commit frequency per path); record churn counts as metadata in source frontmatter and the manifest for extraction prioritization. Non-git sources: skip churn silently.
+5. Write master source index `[OUT_DIR]/.insightify/sources/manifest.md`.
 
 **Supported Input Types:**
 
@@ -21,6 +22,8 @@ description: Stage 1 - Ingest sources, extract knowledge into categories based o
 | `.html`, `.htm` | `parsers/html-parser.js` | Strips nav/footer/scripts, preserves content structure |
 | `.js`, `.ts`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
 | `.pdf` | `parsers/pdf-parser.js` | Binary buffer input via `pdf-parse` |
+| `.json`, `.yaml`, `.yml` (`openapi.json`, `swagger.yaml`) | Native schema parser | OpenAPI/Swagger specs (detect `openapi`/`swagger` root key): parse endpoints/models directly instead of raw-text ingestion |
+| `.sql` (`schema.sql`) | Native schema parser | SQL DDL: parse tables/columns/entities directly instead of raw-text ingestion |
 | `.md`, `.txt`, `.rst` | Direct copy | Copy content as-is with frontmatter added |
 | URLs (`http://`, `https://`) | Fetch → HTML parser | Fetch page, then process as HTML |
 | Other extensions | Skip | Log warning, mark as `skipped` in manifest |
@@ -38,44 +41,50 @@ parser: "code-parser"
 status: "success"
 ingested_at: "YYYY-MM-DDTHH:mm:ssZ"
 word_count: 1234
+churn: 42
 ---
 ```
 
-Content headings normalized to start at H2 (`##`). Manifest format: table with Source ID, Path, Type, Status, Words.
+Content headings normalized to start at H2 (`##`). Manifest format: table with Source ID, Path, Type, Status, Words, Churn.
 
 ### Phase 0: Project Type Detection
 
 1. Analyze the ingested sources to detect the project archetype.
 2. Supported archetypes: `frontend-spa`, `backend-api`, `system-design`, `general`.
 3. Map the detected archetype to its corresponding knowledge categories:
-   - `frontend-spa`: 14 default categories (product, directory-structure, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered).
-   - `backend-api`: product, directory-structure, data-models, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered.
-   - `system-design`: product, architecture, constraints, terminology, unanswered.
-   - `general`: product, directory-structure, features, terminology, unanswered.
+   - `frontend-spa`: 17 default categories (product, directory-structure, modularization, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, user-journeys, business-policies, cross-cutting, terminology, constraints, workflows, unanswered).
+   - `backend-api`: product, directory-structure, data-models, modularization, api-patterns, features, user-journeys, business-policies, cross-cutting, terminology, constraints, workflows, unanswered.
+   - `system-design`: product, architecture, user-journeys, business-policies, constraints, terminology, unanswered.
+   - `general`: product, directory-structure, features, business-policies, terminology, unanswered.
 
 ### Phase 2: Extract
 
 1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
-2. For each of the required categories in `references/extraction-schema.md` (based on archetype), analyze sources and extract structured facts.
+2. For each of the required categories for the detected archetype (defined in Phase 0; field-level schema in `references/extraction-schema.md`), analyze sources and extract structured facts.
 3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
 4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
 
+**Map-Reduce / Context Filtering:** Chunk large sources into segments; extract facts per chunk (map), then merge per category (reduce). Per category, feed only relevant chunks as context — filtered by category keywords and churn priority — instead of all content.
+
 **Knowledge Categories:**
-*(Note: The following 14 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 0).*
+*(Note: The following 17 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 0).*
 1. `product.md` — Product identity, version, audience, tagline
 2. `directory-structure.md` — Folder tree, module boundaries, import conventions
-3. `data-models.md` — TypeScript interfaces, enums, Mermaid class diagrams
-4. `component-architecture.md` — Layout components, shell, feature components, composition tree
-5. `state-management.md` — Stores, selectors, middleware, persistence, testing patterns
-6. `routing-structure.md` — Route tree, guards, lazy loading, breadcrumbs, metadata
-7. `ui-component-library.md` — Component registry, design tokens, accessibility
-8. `api-patterns.md` — Client config, hooks, endpoints, error flow, mapping
-9. `features.md` — Feature catalog, Gherkin acceptance criteria, edge cases
-10. `cross-cutting.md` — Providers (Auth, Theme, i18n), ErrorBoundary, Logger, Analytics, FeatureFlags
-11. `terminology.md` — Glossary, acronyms, naming conventions
-12. `constraints.md` — Technical limits, performance budgets, security, known issues
-13. `workflows.md` — Dev workflows, CI/CD, deployment, release, incident response
-14. `unanswered.md` — Conflicts, ambiguities, missing info
+3. `modularization.md` — Module boundaries, public interfaces, dependency direction, reuse patterns
+4. `data-models.md` — TypeScript interfaces, enums, Mermaid class diagrams
+5. `component-architecture.md` — Layout components, shell, feature components, composition tree
+6. `state-management.md` — Stores, selectors, middleware, persistence, testing patterns
+7. `routing-structure.md` — Route tree, guards, lazy loading, breadcrumbs, metadata
+8. `ui-component-library.md` — Component registry, design tokens, accessibility
+9. `api-patterns.md` — Client config, hooks, endpoints, error flow, mapping
+10. `features.md` — Feature catalog, Gherkin acceptance criteria, edge cases
+11. `user-journeys.md` — Personas, end-to-end task flows, touchpoints across features
+12. `business-policies.md` — Business rules, validation policies, SLAs, compliance requirements
+13. `cross-cutting.md` — Providers (Auth, Theme, i18n), ErrorBoundary, Logger, Analytics, FeatureFlags
+14. `terminology.md` — Glossary, acronyms, naming conventions
+15. `constraints.md` — Technical limits, performance budgets, security, known issues
+16. `workflows.md` — Dev workflows, CI/CD, deployment, release, incident response
+17. `unanswered.md` — Conflicts, ambiguities, missing info
 
 **Conflict Handling:** Keep both facts, flag in `unanswered.md`.
 **Confidence:** `high` (explicit), `medium` (inferred), `low` (ambiguous).
@@ -104,6 +113,8 @@ The API supports up to 1000 concurrent connections.
    - Y/Enter → save as `approved`, proceed (plan frontmatter: `status: approved`)
    - n → exit, save as `rejected`
    - revise → prompt "What changes?", regenerate, loop (max 3 cycles). Max 3 revision cycles.
+
+**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Before requesting final approval, interactively prompt the user to answer high-impact ambiguities (those that change plan structure or page content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
 
 **Page Sizing:** 500–2000 words ideal; >3000 split; <300 merge.
 **Merge when:** same audience, one topic <300 words.
