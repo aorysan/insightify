@@ -1,13 +1,13 @@
 ---
 name: reviewer
-description: Stage 3 - Evaluate generated docs across 7 quality dimensions and generate report.
+description: Stage 3 - Evaluate generated docs across 8 quality dimensions and generate report.
 ---
 
 # Reviewer Skill
 
 ## Instructions
 
-1. Evaluate `[OUT_DIR]/docs/markdown/*` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` in parallel across 7 dimensions in `references/review-criteria.md`.
+1. Evaluate `[OUT_DIR]/docs/markdown/*` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` in parallel across 8 dimensions in `references/review-criteria.md`.
 2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
 3. If verdict is `changes_needed`, send specific page issues back to Writer.
 4. If iteration reaches 3, escalate remaining issues to user.
@@ -49,9 +49,14 @@ description: Stage 3 - Evaluate generated docs across 7 quality dimensions and g
 - 3: Most patterns accurately reflected, minor gaps or slight assumptions
 - 1: Documentation describes patterns not found in the codebase, or misrepresents the architecture
 
+**Business Alignment** (matches business policies and user journeys):
+- 5: User journeys, state machines, and business policies are logically sound, accurately extracted, and well-represented
+- 3: Minor logical gaps in user journeys or missing some business policies
+- 1: State machines or user journeys make no business sense, or business policies are entirely ignored
+
 ## Verdict Thresholds
 
-- `approved`: All 7 dimensions ≥3, no critical issues
+- `approved`: All 8 dimensions ≥3, no critical issues
 - `changes_needed`: Any dimension <3 OR any critical issue
 
 ## Issue Classification
@@ -64,7 +69,7 @@ description: Stage 3 - Evaluate generated docs across 7 quality dimensions and g
 ```markdown
 ### Issue: [Short description]
 - **Page:** `[OUT_DIR]/docs/markdown/[filename].md`
-- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment]
+- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment]
 - **Severity:** [Critical|Minor]
 - **Issue:** [Description of what's wrong]
 - **Suggestion:** [How to fix it]
