@@ -10,27 +10,27 @@ When the user runs this skill, execute the 4-stage documentation pipeline sequen
 ## CLI Argument Parsing & Invocation
 
 Support the following invocation patterns:
-- `/insightify` -> Interactive:
+- `/insightify:insightify` -> Interactive:
   - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume allows reusing previous state.
   - If no --source, --config, or --resume flag is provided, the agent MUST use the ask_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
-- `/insightify <url>` -> Use URL as first source, prompt for project name, then prompt for additional sources
-- `/insightify --project <name> --source <path>` -> Non-interactive
-- `/insightify --config <path>` -> Read from `insightify.config.json`
-- `/insightify --dry-run` -> Show execution plan without running
-- `/insightify --resume [--from-step N]` -> Resume from last completed step or specified step (1=planner, 2=writer, 3=reviewer, 4=builder)
+- `/insightify:insightify <url>` -> Use URL as first source, prompt for project name, then prompt for additional sources
+- `/insightify:insightify --project <name> --source <path>` -> Non-interactive
+- `/insightify:insightify --config <path>` -> Read from `insightify.config.json`
+- `/insightify:insightify --dry-run` -> Show execution plan without running
+- `/insightify:insightify --resume [--from-step N]` -> Resume from last completed step or specified step (1=planner, 2=writer, 3=reviewer, 4=builder)
 
 ## Pipeline Execution (4 Stages)
 
-1. **Planner:** Run `planner`.
+1. **Planner:** Run `insightify:planner`.
    - Progress: `⏳ Planner: ingesting sources, extracting 14 knowledge categories, generating plan...`
    - Error: If partial failure, log in manifest as `failed` and continue.
-2. **Writer:** Run `writer`. Generate 14 pages in 5 dependency-aware waves.
+2. **Writer:** Run `insightify:writer`. Generate 14 pages in 5 dependency-aware waves.
    - Progress: `⏳ Writer: Wave X/5 — [======--] A/B pages`
    - Error: If single page fails, log error, continue other pages, report failed pages.
-3. **Reviewer:** Run `reviewer`.
+3. **Reviewer:** Run `insightify:reviewer`.
    - Progress: `⏳ Reviewer: [========] X/7 dimensions (iteration 1/3)`
    - Error: If review loop exceeds 3 iterations, stop and report to user.
-4. **Builder:** Run `builder`. Print success summary.
+4. **Builder:** Run `insightify:builder`. Print success summary.
    - Progress: `⏳ Builder: rendering artifact-style index.html and knowledge-base.md...`
 
 ## Workspace Constraints
