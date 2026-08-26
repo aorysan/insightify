@@ -3,7 +3,7 @@ name: insightify
 description: Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
 ---
 
-# Insightify v5 Pipeline Orchestrator
+# Insightify v6 Pipeline Orchestrator
 
 When the user runs this skill, execute the 4-stage documentation pipeline sequentially. Do NOT skip any steps unless explicitly requested by the user.
 
@@ -18,6 +18,8 @@ Support the following invocation patterns:
 - `/insightify:insightify --config <path>` -> Read from `insightify.config.json`
 - `/insightify:insightify --dry-run` -> Show execution plan without running
 - `/insightify:insightify --resume [--from-step N]` -> Resume from last completed step or specified step (1=planner, 2=writer, 3=reviewer, 4=builder)
+- `/insightify:insightify --sync` -> Incremental update: re-run pipeline against an existing [OUT_DIR], re-ingesting sources and updating only stale/affected knowledge + pages. Prompt for OUT_DIR/project if not resolvable.
+- `/insightify:insightify --update <path-or-url>` -> Add/update a single source, then refresh dependent pages.
 
 ## Pipeline Execution (4 Stages)
 
@@ -28,7 +30,7 @@ Support the following invocation patterns:
    - Progress: `⏳ Writer: Wave X/5 — [======--] A/B pages`
    - Error: If single page fails, log error, continue other pages, report failed pages.
 3. **Reviewer:** Run `insightify:reviewer`.
-   - Progress: `⏳ Reviewer: [========] X/7 dimensions (iteration 1/3)`
+   - Progress: `⏳ Reviewer: [========] X/8 dimensions (iteration 1/3)`
    - Error: If review loop exceeds 3 iterations, stop and report to user.
 4. **Builder:** Run `insightify:builder`. Print success summary.
    - Progress: `⏳ Builder: rendering artifact-style index.html and knowledge-base.md...`
@@ -41,7 +43,7 @@ Support the following invocation patterns:
 - On fresh run (no --resume), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation.
 - Detect missing `[OUT_DIR]/.insightify/` on resume and offer to restart or resume from last completed step.
 
-## Output Specification (v5)
+## Output Specification (v6)
 
 The pipeline generates a **Technical Specification** matching the reference artifact structure:
 
