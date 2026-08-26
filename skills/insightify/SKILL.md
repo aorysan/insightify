@@ -11,8 +11,8 @@ When the user runs this skill, execute the 4-stage documentation pipeline sequen
 
 Support the following invocation patterns:
 - `/insightify:insightify` -> Interactive:
-  - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume allows reusing previous state.
-  - If no --source, --config, or --resume flag is provided, the agent MUST use the ask_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
+  - You MUST stop execution and prompt the user for project name AND sources. Do NOT infer, reuse, or auto-detect sources from conversation history, existing [OUT_DIR], or workspace files. Only --resume or --sync allow reusing previous state.
+  - If no --source, --config, --resume, --sync, or --update flag is provided, the agent MUST use the ask_question tool (or equivalent interactive prompt) to collect at least one source path/URL before proceeding to Planner.
 - `/insightify:insightify <url>` -> Use URL as first source, prompt for project name, then prompt for additional sources
 - `/insightify:insightify --project <name> --source <path>` -> Non-interactive
 - `/insightify:insightify --config <path>` -> Read from `insightify.config.json`
@@ -40,7 +40,7 @@ Support the following invocation patterns:
 - Output directory: `OUT_DIR = "insights/<project-name>/"`. All pipeline stages MUST operate within this `OUT_DIR`.
 - All intermediate data in `[OUT_DIR]/.insightify/`.
 - Final output: `[OUT_DIR]/index.html`, `[OUT_DIR]/knowledge-base.md`, `[OUT_DIR]/docs/` (archive), `[OUT_DIR]/.insightify/` (workspace).
-- On fresh run (no --resume), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation.
+- On fresh run (no --resume, --sync, or --update), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation. (--sync and --update target an existing OUT_DIR and refresh it incrementally without the overwrite prompt.)
 - Detect missing `[OUT_DIR]/.insightify/` on resume and offer to restart or resume from last completed step.
 
 ## Output Specification (v6)
