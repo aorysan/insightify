@@ -517,4 +517,142 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(kb.includes('Insightify v9.9.9'), 'Custom version in KB header');
     assert.ok(!kb.includes('v4.0.0'), 'Old hardcoded version gone');
   });
+
+  test('styles.css adopts claude-artifact light and dark design tokens', () => {
+    const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
+
+    // Old warm gold palette fully replaced
+    assert.strictEqual(css.includes('#faf8f5'), false, 'Warm bg #faf8f5 must be replaced');
+    assert.strictEqual(css.includes('#8b6914'), false, 'Gold accent #8b6914 must be replaced');
+    assert.strictEqual(css.includes('Georgia'), false, 'Georgia serif must be removed');
+
+    const rootBlock = css.slice(css.indexOf(':root'), css.indexOf('/* Dark theme */'));
+    const mediaDarkBlock = css.slice(
+      css.indexOf('@media (prefers-color-scheme: dark)'),
+      css.indexOf('/* Explicit theme override */')
+    );
+    const overrideStart = css.indexOf('/* Explicit theme override */');
+    const lightOverride = css.slice(overrideStart, css.indexOf('[data-theme="dark"]'));
+    const darkOverride = css.slice(
+      css.indexOf('[data-theme="dark"]', overrideStart),
+      css.indexOf('/* --- Reset & Base --- */')
+    );
+
+    // Light tokens in :root AND [data-theme="light"]
+    [
+      '--color-bg: #f9f9f7',
+      '--color-bg-secondary: #f1f1ee',
+      '--color-bg-tertiary: #e8e8e4',
+      '--color-surface: #ffffff',
+      '--color-border: #e5e7eb',
+      '--color-border-strong: #d1d5db',
+      '--color-primary: #2563eb',
+      '--color-primary-hover: #1d4ed8',
+      '--color-primary-light: #dbeafe',
+      '--color-primary-text: #1e40af',
+      '--color-heading: #111827'
+    ].forEach(token => {
+      assert.ok(rootBlock.includes(token), `:root must define ${token}`);
+      assert.ok(lightOverride.includes(token), `[data-theme="light"] must define ${token}`);
+    });
+
+    // Dark tokens in prefers-color-scheme block AND [data-theme="dark"] block
+    [
+      '--color-bg: #0b0b0b',
+      '--color-bg-secondary: #141413',
+      '--color-bg-tertiary: #232322',
+      '--color-surface: #1a1a19',
+      '--color-surface-hover: #232322',
+      '--color-border: #ffffff1a',
+      '--color-border-strong: #ffffff2e',
+      '--color-primary: #60a5fa',
+      '--color-primary-hover: #3b82f6',
+      '--color-primary-light: #1e3a5f',
+      '--color-primary-text: #dbeafe',
+      '--color-heading: #f8fafc'
+    ].forEach(token => {
+      assert.ok(mediaDarkBlock.includes(token), `prefers-color-scheme dark block must define ${token}`);
+      assert.ok(darkOverride.includes(token), `[data-theme="dark"] must define ${token}`);
+    });
+  });
+
+  test('styles.css defines Inter headings, numbered H2 counters, and artifact utilities', () => {
+    const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
+
+    // Typography: Inter everywhere, no serif headings
+    assert.ok(css.includes("--font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"),
+      'Heading font stack must be Inter-based sans-serif');
+
+    // Numbered H2 via CSS counters
+    assert.ok(css.includes('.doc-content { counter-reset: doc-section; }'), 'Must reset counter on .doc-content');
+    assert.ok(css.includes('.doc-section > h2::before'), 'Must style h2::before numbering');
+    assert.ok(css.includes('counter-increment: doc-section'), 'Must increment doc-section counter');
+    assert.ok(css.includes('counter(doc-section, decimal-leading-zero)'),
+      'Counter must use decimal-leading-zero so section 10+ renders "10"');
+    assert.ok(css.includes('content: counter(doc-section, decimal-leading-zero)'), 'Numbering colored via content rule');
+
+    // Utility classes
+    ['.artifact-container', '.artifact-card', '.grid-2', '.grid-3', '.badge',
+     '.status-indicator', '.status-indicator.status-warning', '.status-indicator.status-error'
+    ].forEach(cls => {
+      assert.ok(css.includes(cls), `Must define ${cls}`);
+    });
+    assert.ok(/\.artifact-container\s*\{[^}]*max-width:\s*900px/.test(css), 'artifact-container max-width 900px');
+    assert.ok(/\.artifact-card\s*\{[^}]*var\(--color-surface\)/.test(css), 'artifact-card uses surface background');
+    assert.ok(/\.grid-2\s*\{[^}]*repeat\(2,\s*1fr\)/.test(css), 'grid-2 two columns');
+    assert.ok(/\.grid-3\s*\{[^}]*repeat\(3,\s*1fr\)/.test(css), 'grid-3 three columns');
+
+    // Grids collapse to single column at 640px
+    const mobileBlock = css.slice(css.lastIndexOf('@media (max-width: 640px)'));
+    assert.ok(mobileBlock.includes('.grid-2') && mobileBlock.includes('.grid-3'),
+      'Both grids must collapse at 640px');
+    assert.ok(mobileBlock.includes('grid-template-columns: 1fr'), 'Collapsed grids single column');
+
+    // Badge pill styling
+    assert.ok(/\.badge\s*\{[^}]*border-radius:\s*var\(--radius-full\)/.test(css), 'Badge is a pill');
+    assert.ok(/\.badge\s*\{[^}]*background-color:\s*var\(--color-primary-light\)/.test(css), 'Badge uses primary-light background');
+
+    // Status indicator dot + modifiers
+    assert.ok(/\.status-indicator::before\s*\{[^}]*width:\s*8px/.test(css), 'Status dot is 8px round');
+    assert.ok(/\.status-indicator::before\s*\{[^}]*background:\s*var\(--color-success\)/.test(css),
+      'Status dot defaults to success color');
+    assert.ok(css.includes('--color-warning'), 'Warning token used by status modifier');
+    assert.ok(css.includes('--color-error'), 'Error token used by status modifier');
+  });
+
+  test('index-html-template.html wraps central column in artifact-container and drops Georgia font', () => {
+    const tpl = fs.readFileSync(path.join(templatesDir, 'index-html-template.html'), 'utf8');
+
+    // Fonts: Inter + JetBrains Mono kept, Georgia removed
+    assert.ok(tpl.includes('family=Inter'), 'Must load Inter font');
+    assert.ok(tpl.includes('JetBrains+Mono'), 'Must load JetBrains Mono font');
+    assert.strictEqual(tpl.includes('Georgia'), false, 'Georgia must be removed from font link');
+
+    // artifact-container wraps content INSIDE article.doc-content; TOC aside stays outside
+    const iArticle = tpl.indexOf('<article class="doc-content">');
+    const iWrap = tpl.indexOf('<div class="artifact-container">');
+    const iCloseArticle = tpl.indexOf('</article>');
+    const iAside = tpl.indexOf('<aside class="toc-container">');
+
+    assert.ok(iArticle > -1, 'Must keep article.doc-content');
+    assert.ok(iWrap > -1, 'Must include artifact-container wrapper');
+    assert.ok(iArticle < iWrap && iWrap < iCloseArticle,
+      'artifact-container must open inside article.doc-content');
+    assert.ok(iCloseArticle < iAside,
+      'TOC aside must stay outside the constrained central column');
+
+    // Floating TOC untouched
+    assert.ok(tpl.includes('<nav class="floating-toc">'), 'floating-toc must remain');
+    assert.ok(tpl.includes('{{SIDEBAR_NAV}}'), 'TOC nav placeholder must remain');
+  });
+
+  test('styles.css preserves legacy component classes referenced by pipeline output', () => {
+    const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
+
+    ['.premium-meta-header', '.page-header', '.section-label', '.card-grid', '.state-machine',
+     '.flow-diagram', '.info-block', '.policy-grid', '.code-block', '.copy-button', '.toc-container', '.floating-toc'
+    ].forEach(cls => {
+      assert.ok(css.includes(cls), `Legacy component ${cls} must survive redesign`);
+    });
+  });
 });
