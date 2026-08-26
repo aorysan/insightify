@@ -27,7 +27,8 @@ describe('Review Criteria (Quality Dimensions)', () => {
     'Usability',
     'Type Safety',
     'Architecture Alignment',
-    'Business Alignment'
+    'Business Alignment',
+    'Scannability'
   ];
 
   test('review-criteria.md exists and covers all quality dimensions', () => {
@@ -107,7 +108,7 @@ describe('Review Criteria (Quality Dimensions)', () => {
     assert.ok(skillContent.includes('## Issue Format for Writer'), 'Must define issue format for writer');
     assert.ok(skillContent.includes('### Issue: [Short description]'), 'Must include issue title');
     assert.ok(skillContent.includes('- **Page:** `[OUT_DIR]/docs/markdown/[filename].md`'), 'Must specify page path');
-    assert.ok(skillContent.includes('- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment]'), 'Must list all dimensions');
+    assert.ok(skillContent.includes('- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment|Scannability]'), 'Must list all dimensions');
     assert.ok(skillContent.includes('- **Severity:** [Critical|Minor]'), 'Must specify severity');
     assert.ok(skillContent.includes('- **Issue:** [Description of what\'s wrong]'), 'Must specify issue description');
     assert.ok(skillContent.includes('- **Suggestion:** [How to fix it]'), 'Must specify suggestion');
