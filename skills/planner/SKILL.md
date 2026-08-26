@@ -100,13 +100,12 @@ The API supports up to 1000 concurrent connections.
 ### Phase 3: Plan
 
 1. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all extracted categories).
-2. Generate plan using `templates/plan-template.md`.
+2. Generate a single comprehensive Documentation Plan that outlines the structure of the unified Product Knowledge Base using `templates/plan-template.md` (saved to `[OUT_DIR]/.insightify/plan.md`).
 3. Display summary:
    ```
    📝 Documentation Plan: [Project Name]
    🎯 Audience: [Primary & Secondary]
-   📄 Pages: [Total count, breakdown by priority]
-   🔄 Dependencies: [Number of waves]
+   📄 Document: Product Knowledge Base ([Section count] sections)
    📊 Est. words: [Estimation]
    ```
 4. Ask approval: "Approve plan? [Y/n/revise]"
@@ -114,22 +113,11 @@ The API supports up to 1000 concurrent connections.
    - n → exit, save as `rejected`
    - revise → prompt "What changes?", regenerate, loop (max 3 cycles). Max 3 revision cycles.
 
-**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Before requesting final approval, interactively prompt the user to answer high-impact ambiguities (those that change plan structure or page content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
+**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Before requesting final approval, interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
 
-**Page Sizing:** 500–2000 words ideal; >3000 split; <300 merge.
-**Merge when:** same audience, one topic <300 words.
-**Split when:** distinct audiences, >3000 words, mixed conceptual/reference.
-**Priority:** high (getting started, core), medium (features), low (API, FAQ).
-**Dependency Graph:** No cycles; max 5 waves; wave 1 = standalone; dependencies strictly reference prior waves.
-
-**Plan Template Output Example (`frontend-spa`, 14 Pages Across 5 Waves):**
-| Wave | Pages | Dependencies |
-|------|-------|--------------|
-| 1 | Executive Summary, Directory Structure, Global Data Models, Terminology & Glossary, Constraints & Limitations | None |
-| 2 | Component Architecture, State Management, UI Component Library | Wave 1 (Pages 2, 3) |
-| 3 | Routing & Layout Structure, API Interaction Patterns | Waves 1, 2 (Pages 3, 4) |
-| 4 | Features & Business Logic, Cross-Cutting Concerns, Workflows & Procedures | Waves 1, 2, 3 (Pages 3, 4, 5, 6, 8) |
-| 5 | Appendix | All prior pages |
+**Document Structure:**
+- The plan outlines a single unified Product Knowledge Base document containing structured sections corresponding to the extracted knowledge categories for the detected archetype.
+- Each section specifies its purpose, target audience, key topics, and source knowledge files mapped from `[OUT_DIR]/.insightify/knowledge/`.
 
 ### Progress & Error Handling
 
