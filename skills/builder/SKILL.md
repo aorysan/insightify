@@ -15,7 +15,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 1. Read `[OUT_DIR]/docs/final/final-documentation.md` (the finalized documentation emitted by Reviewer).
 2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all category files emitted by Planner).
 3. Read `[OUT_DIR]/.insightify/plan.md` for metadata (title, audience, section order).
-4. Assemble `[OUT_DIR]/Product-Knowledge-Base.md` as the primary output by combining the finalized documentation with extracted knowledge categories, including a generated Table of Contents at the top and preserving all source citations.
+4. Assemble `[OUT_DIR]/Product-Knowledge-Base.md` as the primary output consisting only of the finalized documentation (`final-documentation.md`), with an added Table of Contents at the top. The raw knowledge categories must remain untouched in their original `knowledge/` directory.
 5. Render `[OUT_DIR]/index.html` as an HTML preview of the single `Product-Knowledge-Base.md` using `templates/index-html-template.html` and `templates/build-html.mjs`.
 6. Copy `[OUT_DIR]/.insightify/sources/` → `[OUT_DIR]/docs/intake/`.
 7. Copy `[OUT_DIR]/.insightify/plan.md` → `[OUT_DIR]/docs/plan/plan.md`.
@@ -112,7 +112,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 - **Collapsible Trees**: Directory structure as nested `<details>/<summary>` with `open` on first level.
 - **Tabs**: Component registry with tabbed interface (Component | Props | Usage) using CSS-only `:checked` hack.
 - **Product Overview**: Grid cards from `product.md`; feature badges from `features.md` with source citations.
-- **Doc Sections**: Render the single `Product-Knowledge-Base.md` (or `final-documentation.md`) with section navigation generated from H2/H3 headings, structuring sections as `<section id="slug" class="doc-section">` with label + heading + content.
+- **Doc Sections**: Render the single `Product-Knowledge-Base.md` with section navigation generated from H2/H3 headings, structuring sections as `<section id="slug" class="doc-section">` with label + heading + content.
 - **Process Diagram**: 4-step flexbox (Planner → Writer → Reviewer → Builder) with In/Out labels.
 - **Styling**: 
   - Design tokens as CSS custom properties (`--color-bg`, `--color-text`, `--color-primary`, etc.)
@@ -124,7 +124,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
   - Mermaid initialization
   - Smooth scroll to anchor
   - Copy code button (optional, progressive enhancement)
-- **Product-Knowledge-Base.md**: Assemble as the primary output. Generate a Table of Contents at the top, concatenate finalized documentation and all extracted categories with `## Category` headings, strip YAML frontmatter, and preserve all `> **Source:**` citations.
+- **Product-Knowledge-Base.md**: Assemble as the primary output. Generate a Table of Contents at the top, followed by the finalized documentation. Do not concatenate raw knowledge categories. Strip YAML frontmatter, and preserve all `> **Source:**` citations.
 
 ## Templates
 

@@ -358,86 +358,68 @@ function parsePlanPages(planInput) {
 /**
  * Build documentation sections from markdown pages
  */
-export function buildDocSections(docsDir, plan = {}) {
-  let pages = parsePlanPages(plan);
-
-  // Fallback: read docsDir files if no pages found in plan
-  if (pages.length === 0 && docsDir && fs.existsSync(docsDir)) {
-    const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.md')).sort();
-    pages = files.map(file => ({
-      file,
-      title: file.replace(/^\d+-/, '').replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      slug: file.replace('.md', '').replace(/^\d+-/, '')
-    }));
-  }
-
+export function buildDocSections(docPath) {
+  if (!docPath || !fs.existsSync(docPath)) return '';
+  const md = fs.readFileSync(docPath, 'utf-8');
+  
+  const sections = md.split(/(?=^##\s+)/m);
   let sectionsHtml = '';
-  for (const page of pages) {
-    const fileName = typeof page === 'string' ? page : (page.file || `${page.slug}.md`);
-    let filePath = docsDir ? path.join(docsDir, fileName) : '';
-
-    if ((!filePath || !fs.existsSync(filePath)) && docsDir && fs.existsSync(docsDir)) {
-      const slug = fileName.replace('.md', '').replace(/^\d+-/, '');
-      const candidate = fs.readdirSync(docsDir).find(f => f.replace('.md', '').replace(/^\d+-/, '') === slug || f === `${slug}.md`);
-      if (candidate) {
-        filePath = path.join(docsDir, candidate);
-      }
-    }
-
-    if (!filePath || !fs.existsSync(filePath)) continue;
-
-    const md = fs.readFileSync(filePath, 'utf-8');
-    const { frontmatter, content } = parseMarkdownWithFrontmatter(md);
-
-    const slug = fileName.replace('.md', '').replace(/^\d+-/, '');
-    const label = frontmatter.category || (typeof page === 'object' ? page.category : null) || 'Documentation';
-    const title = frontmatter.title || (typeof page === 'object' ? page.title : null) || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    const cleanedContent = content.replace(/^\s*#\s+[^\n]+\n*/, '');
-
-    sectionsHtml += `
+  
+  for (const section of sections) {
+    if (!section.trim()) continue;
+    
+    const match = section.match(/^##\s+(.+)$/m);
+    if (match) {
+      const title = match[1].trim();
+      if (title.toLowerCase() === 'table of contents') continue;
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const sectionContent = section.substring(match[0].length);
+      
+      sectionsHtml += `
       <section id="${escapeHtml(slug)}" class="doc-section">
-        <span class="section-label">${escapeHtml(label)}</span>
         <h2>${escapeHtml(title)}</h2>
-        ${renderMarkdown(cleanedContent)}
+        ${renderMarkdown(sectionContent.trim())}
       </section>
-    `;
+      `;
+    } else {
+      sectionsHtml += renderMarkdown(section);
+    }
   }
-
+  
   return sectionsHtml;
 }
 
 /**
- * Build sidebar navigation from plan
+ * Build sidebar navigation from document
  */
-export function buildSidebarNav(plan = {}) {
-  const pages = parsePlanPages(plan);
-
+export function buildSidebarNav(docPath) {
   let navHtml = '<ul class="nav-list">';
   navHtml += `
     <li class="nav-item">
       <a href="#overview" class="nav-link">Overview</a>
     </li>
   `;
-
-  for (const page of pages) {
-    const fileName = typeof page === 'string' ? page : (page.file || page.slug || page.title);
-    const slug = (fileName || '').replace('.md', '').replace(/^\d+-/, '');
-    const label = (typeof page === 'object' && page.title) ? page.title : slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    navHtml += `
-      <li class="nav-item">
-        <a href="#${escapeHtml(slug)}" class="nav-link">${escapeHtml(label)}</a>
-      </li>
-    `;
+  
+  if (docPath && fs.existsSync(docPath)) {
+    const md = fs.readFileSync(docPath, 'utf-8');
+    const sections = md.match(/^##\s+(.+)$/gm) || [];
+    for (const section of sections) {
+      const title = section.replace(/^##\s+/, '').trim();
+      if (title.toLowerCase() === 'table of contents') continue;
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      navHtml += `
+        <li class="nav-item">
+          <a href="#${escapeHtml(slug)}" class="nav-link">${escapeHtml(title)}</a>
+        </li>
+      `;
+    }
   }
 
-  // Add pipeline link
   navHtml += `
     <li class="nav-item">
       <a href="#pipeline" class="nav-link">Documentation Pipeline</a>
     </li>
-  `;
-
-  navHtml += '</ul>';
+  </ul>`;
   return navHtml;
 }
 
@@ -500,30 +482,13 @@ export function buildProcessDiagram() {
 }
 
 /**
- * Assemble knowledge base from 14 category files
+ * Assemble knowledge base from finalized documentation
  */
-export function assembleKnowledgeBase(kbDir, options = {}) {
-  const categories = [
-    'product',
-    'directory-structure',
-    'data-models',
-    'component-architecture',
-    'state-management',
-    'routing-structure',
-    'ui-component-library',
-    'api-patterns',
-    'features',
-    'cross-cutting',
-    'terminology',
-    'constraints',
-    'workflows',
-    'unanswered'
-  ];
-
+export function assembleKnowledgeBase(finalDocPath, options = {}) {
   let projectName = 'Project';
-  if (kbDir && fs.existsSync(path.join(kbDir, 'product.md'))) {
+  if (options.kbDir && fs.existsSync(path.join(options.kbDir, 'product.md'))) {
     try {
-      const prodContent = fs.readFileSync(path.join(kbDir, 'product.md'), 'utf-8');
+      const prodContent = fs.readFileSync(path.join(options.kbDir, 'product.md'), 'utf-8');
       const { frontmatter } = parseMarkdownWithFrontmatter(prodContent);
       if (frontmatter.name) projectName = frontmatter.name;
     } catch {}
@@ -533,29 +498,30 @@ export function assembleKnowledgeBase(kbDir, options = {}) {
   let kbMd = `# Knowledge Base: ${projectName}\n\n`;
   kbMd += `*Generated by Insightify v${pluginVersion}*\n\n`;
 
-  const categoryContents = [];
+  if (!finalDocPath || !fs.existsSync(finalDocPath)) return kbMd;
+
+  const content = fs.readFileSync(finalDocPath, 'utf-8');
+  // Strip frontmatter
+  let body = content;
+  const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (frontmatterMatch) {
+    body = frontmatterMatch[2];
+  }
+
   const toc = [];
-
-  for (const category of categories) {
-    const filePath = kbDir ? path.join(kbDir, `${category}.md`) : '';
-    if (!filePath || !fs.existsSync(filePath)) continue;
-
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const { frontmatter, content: body } = parseMarkdownWithFrontmatter(content);
-
-    const title = frontmatter.title || category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const sections = body.match(/^##\s+(.+)$/gm) || [];
+  for (const section of sections) {
+    const title = section.replace(/^##\s+/, '').trim();
+    if (title.toLowerCase() === 'table of contents') continue;
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    
     toc.push(`- [${title}](#${slug})`);
-    categoryContents.push(`## ${title}\n\n${body.trim()}\n\n---\n\n`);
   }
 
   if (toc.length > 0) {
     kbMd += `## Table of Contents\n\n${toc.join('\n')}\n\n---\n\n`;
   }
 
-  kbMd += categoryContents.join('');
-
+  kbMd += body.trim();
   return kbMd;
 }
 
@@ -584,21 +550,17 @@ export function readTemplate(templateName) {
  */
 export function buildArtifact(options = {}) {
   const kbDir = options.kbDir || path.join(options.outDir || '.', '.insightify/knowledge');
-  const docsDir = options.docsDir || path.join(options.outDir || '.', 'docs/markdown');
+  const docPath = options.docPath || path.join(options.outDir || '.', 'docs/final/final-documentation.md');
   const plan = options.plan || (options.planFile && fs.existsSync(options.planFile) ? fs.readFileSync(options.planFile, 'utf-8') : null) || {};
 
   const overview = buildProductOverview(kbDir);
-  const docSections = buildDocSections(docsDir, plan);
-  const sidebarNav = buildSidebarNav(plan);
+  const docSections = buildDocSections(docPath);
+  const sidebarNav = buildSidebarNav(docPath);
   const processDiagram = buildProcessDiagram();
   const styles = options.styles || readTemplate('styles.css');
   const scripts = options.scripts || readTemplate('scripts.js');
   const htmlTemplate = options.htmlTemplate || readTemplate('index-html-template.html');
 
-  // Mermaid CDN dependency:
-  // Note: By default, Mermaid is loaded via jsDelivr CDN (<script src="https://cdn.jsdelivr.net/.../mermaid.min.js">).
-  // In offline or air-gapped environments, diagrams will display formatted raw markdown code blocks unless
-  // the script tag is replaced with a locally bundled Mermaid library.
   const insightifyVersion = options.insightifyVersion || '5.0.0';
   const renderedHtml = render(htmlTemplate, {
     TITLE: `${overview.name} - Technical Specification`,
@@ -615,12 +577,12 @@ export function buildArtifact(options = {}) {
     INSIGHTIFY_VERSION: insightifyVersion
   });
 
-  const knowledgeBase = assembleKnowledgeBase(kbDir, { insightifyVersion });
+  const knowledgeBase = assembleKnowledgeBase(docPath, { kbDir, insightifyVersion });
 
   if (options.outDir) {
     fs.mkdirSync(options.outDir, { recursive: true });
     fs.writeFileSync(path.join(options.outDir, 'index.html'), renderedHtml, 'utf-8');
-    fs.writeFileSync(path.join(options.outDir, 'knowledge-base.md'), knowledgeBase, 'utf-8');
+    fs.writeFileSync(path.join(options.outDir, 'Product-Knowledge-Base.md'), knowledgeBase, 'utf-8');
   }
 
   return { html: renderedHtml, knowledgeBase };
