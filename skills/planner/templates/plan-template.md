@@ -1,4 +1,4 @@
-﻿---
+---
 project: "<Project Name>"
 generated_at: "<ISO Timestamp>"
 status: "approved"
@@ -24,9 +24,9 @@ output_format: "artifact-html"
 
 ## Section Dependencies
 
-`	ext
+``text
 {{WAVES_LIST}}
-`
+``
 
 ## Writing Order (Sequential for Human Review)
 

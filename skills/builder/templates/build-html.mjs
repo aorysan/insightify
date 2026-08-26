@@ -362,7 +362,12 @@ export function buildDocSections(docPath) {
   if (!docPath || !fs.existsSync(docPath)) return '';
   const md = fs.readFileSync(docPath, 'utf-8');
   
-  const sections = md.split(/(?=^##\s+)/m);
+  let { content: body } = parseMarkdownWithFrontmatter(md);
+  
+  // Strip leading H1 since HTML already renders the title
+  body = body.replace(/^#\s+.+?(?:\r?\n)+/, '');
+  
+  const sections = body.split(/(?=^##\s+)/m);
   let sectionsHtml = '';
   
   for (const section of sections) {
