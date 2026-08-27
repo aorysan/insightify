@@ -1,13 +1,13 @@
 ---
 name: reviewer
-description: Stage 3 - Evaluate generated documentation across 8 quality dimensions, generate report, and output finalized document.
+description: Stage 3 - Evaluate generated documentation across 9 quality dimensions, generate report, and output finalized document.
 ---
 
 # Reviewer Skill
 
 ## Instructions
 
-1. Evaluate `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` across 8 dimensions in `references/review-criteria.md`.
+1. Evaluate `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` across 9 dimensions in `references/review-criteria.md`.
 2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
 3. If verdict is `changes_needed`, send specific issues back to Writer or apply targeted fixes.
 4. If iteration reaches 3, escalate remaining issues to user.
@@ -55,9 +55,14 @@ description: Stage 3 - Evaluate generated documentation across 8 quality dimensi
 - 3: Minor logical gaps in user journeys or missing some business policies
 - 1: State machines or user journeys make no business sense, or business policies are entirely ignored
 
+**Scannability** (density and structure):
+- 5: High density throughout; processes/endpoints/architecture rendered as cards, grids, or tables; paragraphs ≤3 sentences; instantly scannable headings
+- 3: Mostly structured but several prose-heavy sections or bullet walls remain
+- 1: Wall-of-text output; low scannability; ignores card/grid formatting guidance
+
 ## Verdict Thresholds
 
-- `approved`: All 8 dimensions ≥3, no critical issues
+- `approved`: All 9 dimensions ≥3, no critical issues
 - `changes_needed`: Any dimension <3 OR any critical issue
 
 ## Issue Classification
@@ -70,7 +75,7 @@ description: Stage 3 - Evaluate generated documentation across 8 quality dimensi
 ```markdown
 ### Issue: [Short description]
 - **Location:** `[OUT_DIR]/docs/markdown/documentation.md` (Section: [Section Name])
-- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment]
+- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment|Scannability]
 - **Severity:** [Critical|Minor]
 - **Issue:** [Description of what's wrong]
 - **Suggestion:** [How to fix it]

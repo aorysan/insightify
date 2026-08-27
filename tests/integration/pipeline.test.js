@@ -6,7 +6,7 @@ const { parseHtml } = require('../../skills/planner/parsers/html-parser');
 const { parseCode } = require('../../skills/planner/parsers/code-parser');
 const { scanDirectory } = require('../../skills/planner/parsers/directory-scanner');
 
-describe('Integration: Documentation Pipeline v4', () => {
+describe('Integration: Documentation Pipeline v6', () => {
   const fixturesDir = path.join(__dirname, '../fixtures');
 
   test('ingests HTML fixture and strips navigation boilerplate', () => {

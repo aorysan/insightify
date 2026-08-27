@@ -37,7 +37,7 @@ Support the following invocation patterns:
    - Progress: `⏳ Writer: Wave X/5 — [======--] A/B pages`
    - Error: If single page fails, log error, continue other pages, report failed pages.
 3. **Reviewer:** Run `insightify:reviewer`.
-   - Progress: `⏳ Reviewer: [========] X/8 dimensions (iteration 1/3)`
+   - Progress: `⏳ Reviewer: [========] X/9 dimensions (iteration 1/3)`
    - Error: If review loop exceeds 3 iterations, stop and report to user.
 4. **Builder:** Run `insightify:builder`. Print success summary.
    - Progress: `⏳ Builder: rendering artifact-style index.html and knowledge-base.md...`

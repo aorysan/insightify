@@ -7,7 +7,7 @@
   {{STYLE}}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="premium-meta-header">
@@ -36,23 +36,25 @@
 
     <div class="content-wrapper">
       <article class="doc-content">
-        <!-- Product Overview -->
-        <section id="overview" class="doc-section">
-          <span class="section-label">Overview</span>
-          <h1>{{PRODUCT_NAME}}</h1>
-          <p class="tagline">{{TAGLINE}}</p>
-          {{PRODUCT_OVERVIEW}}
-        </section>
+        <div class="artifact-container">
+          <!-- Product Overview -->
+          <section id="overview" class="doc-section">
+            <span class="section-label">Overview</span>
+            <h1>{{PRODUCT_NAME}}</h1>
+            <p class="tagline">{{TAGLINE}}</p>
+            {{PRODUCT_OVERVIEW}}
+          </section>
 
-        <!-- 14 Documentation Sections in Plan Order -->
-        {{DOC_SECTIONS}}
+          <!-- 14 Documentation Sections in Plan Order -->
+          {{DOC_SECTIONS}}
 
-        <!-- Process / Pipeline diagram -->
-        <section id="pipeline" class="doc-section">
-          <span class="section-label">Process</span>
-          <h2>Documentation Pipeline</h2>
-          {{PROCESS_DIAGRAM}}
-        </section>
+          <!-- Process / Pipeline diagram -->
+          <section id="pipeline" class="doc-section">
+            <span class="section-label">Process</span>
+            <h2>Documentation Pipeline</h2>
+            {{PROCESS_DIAGRAM}}
+          </section>
+        </div>
       </article>
 
       <aside class="toc-container">

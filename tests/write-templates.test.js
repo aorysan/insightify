@@ -237,5 +237,33 @@ describe('Writer Templates (14 Templates)', () => {
     // Output target
     assert.ok(skill.includes('docs/markdown/'), 'Must reference docs/markdown/ output path');
   });
+
+  test('writer SKILL.md contains Artifact HTML Formatting section with builder utility classes', () => {
+    const skill = fs.readFileSync(path.join(__dirname, '../skills/writer/SKILL.md'), 'utf8');
+    assert.ok(skill.includes('## Artifact HTML Formatting'), 'SKILL.md must contain an Artifact HTML Formatting section');
+
+    const utilityClasses = ['artifact-card', 'grid-2', 'grid-3', 'badge', 'status-indicator'];
+    utilityClasses.forEach(cls => {
+      assert.ok(skill.includes(cls), `Artifact HTML Formatting must reference ${cls}`);
+    });
+
+    assert.ok(skill.includes('status-warning'), 'status-indicator guidance must include status-warning modifier');
+    assert.ok(skill.includes('status-error'), 'status-indicator guidance must include status-error modifier');
+
+    // Section must sit after Content Structure and before Cross-References
+    const contentIdx = skill.indexOf('## Content Structure');
+    const artifactIdx = skill.indexOf('## Artifact HTML Formatting');
+    const crossRefIdx = skill.indexOf('## Cross-References');
+    assert.ok(contentIdx !== -1 && artifactIdx !== -1 && crossRefIdx !== -1, 'Required sections must exist');
+    assert.ok(contentIdx < artifactIdx && artifactIdx < crossRefIdx,
+      'Artifact HTML Formatting must appear after Content Structure and before Cross-References');
+
+    assert.ok(skill.includes('do not invent other class names'), 'Must restrict Writer to Builder CSS classes');
+
+    // Raw HTML only inside artifact wrappers (marked 12 does not render markdown nested in raw HTML)
+    assert.ok(skill.includes('use raw HTML only'), 'Wrapper guidance must mandate raw HTML only inside wrappers');
+    assert.ok(skill.includes('Markdown syntax will not be rendered'),
+      'Wrapper guidance must warn that markdown syntax will not be rendered inside raw HTML wrappers');
+  });
 });
 

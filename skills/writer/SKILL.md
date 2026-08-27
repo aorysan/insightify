@@ -27,6 +27,19 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 - Heading levels incremental: H2 → H3 → H4, never skip levels
 - Feature / sub-section headings: H3 = feature or sub-section title, H4 = detail sections; never skip levels
 
+## Artifact HTML Formatting
+
+- High information density: no long prose paragraphs or bullet walls. Every paragraph is at most 3 sentences. Optimize for scannability with short paragraphs, cards, grids, and tables.
+- Use structural HTML wrappers for dense, enumerable information (architecture components, API endpoint lists, process steps, configuration options):
+  - `<div class="grid-2">...</div>` and `<div class="grid-3">...</div>` as layout wrappers containing two/three columns of cards
+  - `<div class="artifact-card">...</div>` for each discrete item inside a grid (title in bold or H4, then a 1–2 sentence description)
+  - `<span class="badge">LABEL</span>` for small labels such as HTTP methods, statuses, versions
+  - `<div class="status-indicator">TEXT</div>` for state/health lists, with modifiers `status-warning` and `status-error` (e.g., `<div class="status-indicator status-error">Deprecated</div>`)
+- **Hard rule — raw HTML only inside wrappers:** Within `grid-*`, `artifact-card`, `badge`, and `status-indicator` wrappers, use raw HTML only (`<strong>`, `<h4>`, plain text). Markdown syntax will not be rendered inside these raw HTML elements (marked emits literal asterisks for `**bold**`, etc.) — never nest markdown syntax in them.
+- Markdown stays the default for narrative flow; interleave the HTML wrappers above where structure beats prose — instead of raw markdown tables or bullet lists where appropriate.
+- These classes are styled by the Builder CSS; do not invent other class names.
+- Section heading numbers (`01`, `02`, ...) are added automatically by CSS counters — never hardcode them into headings.
+
 ## Cross-References
 
 - Use section anchor links: `[Section Title](#section-title)`
