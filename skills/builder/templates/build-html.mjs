@@ -450,11 +450,11 @@ export function buildProcessDiagram() {
         <div class="step-number">2</div>
         <div class="step-content">
           <h3>Writer</h3>
-          <p>Generate 14 markdown pages in 5 dependency-aware waves</p>
+          <p>Generate document sections independently in parallel</p>
           <div class="step-io">
             <span class="input">Knowledge Base + Plan</span>
             <span class="arrow">→</span>
-            <span class="output">14 Markdown Pages</span>
+            <span class="output">Documentation Document</span>
           </div>
         </div>
       </div>
