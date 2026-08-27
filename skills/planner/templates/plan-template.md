@@ -22,11 +22,13 @@ output_format: "artifact-html"
 
 {{SECTION_LIST}}
 
-## Section Dependencies
+## Parallel Rendering
 
-``text
-{{WAVES_LIST}}
-``
+Sections will be rendered independently in parallel.
+
+```text
+{{PARALLEL_SECTIONS_LIST}}
+```
 
 ## Writing Order (Sequential for Human Review)
 

@@ -33,9 +33,9 @@ Support the following invocation patterns:
 1. **Planner:** Run `insightify:planner`.
    - Progress: `⏳ Planner: ingesting sources, extracting knowledge categories for detected archetype, generating plan...`
    - Error: If partial failure, log in manifest as `failed` and continue.
-2. **Writer:** Run `insightify:writer`. Generate 14 pages in 5 dependency-aware waves.
-   - Progress: `⏳ Writer: Wave X/5 — [======--] A/B pages`
-   - Error: If single page fails, log error, continue other pages, report failed pages.
+2. **Writer:** Run `insightify:writer`. Generate document sections independently in parallel.
+   - Progress: `⏳ Writer: [======--] A/B sections (max 5 parallel)`
+   - Error: If single section fails, log error, continue other sections, report failed sections.
 3. **Reviewer:** Run `insightify:reviewer`.
    - Progress: `⏳ Reviewer: [========] X/9 dimensions (iteration 1/3)`
    - Error: If review loop exceeds 3 iterations, stop and report to user.

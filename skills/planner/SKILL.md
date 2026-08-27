@@ -61,6 +61,8 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 
 1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
 2. For each of the required categories for the detected archetype (defined in Phase 0; field-level schema in `references/extraction-schema.md`), analyze sources and extract structured facts.
+   - **Parallel Extraction:** Assign sub-agents in parallel to extract the various knowledge categories from the available sources.
+   - **Concurrency Limit:** Maintain a maximum concurrency limit of 5 sub-agents at a time.
 3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
 4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
 
@@ -108,12 +110,9 @@ The API supports up to 1000 concurrent connections.
    📄 Document: Product Knowledge Base ([Section count] sections)
    📊 Est. words: [Estimation]
    ```
-4. Ask approval: "Approve plan? [Y/n/revise]"
-   - Y/Enter → save as `approved`, proceed (plan frontmatter: `status: approved`)
-   - n → exit, save as `rejected`
-   - revise → prompt "What changes?", regenerate, loop (max 3 cycles). Max 3 revision cycles.
+4. Automatically save the plan as `approved` and proceed to Writer. Do NOT ask the user for plan approval here.
 
-**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Before requesting final approval, interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
+**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
 
 **Document Structure:**
 - The plan outlines a single unified Product Knowledge Base document containing structured sections corresponding to the extracted knowledge categories for the detected archetype.

@@ -205,35 +205,14 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('<Project Name>'), 'Must use standardized placeholder for project name');
   });
 
-  test('writer skill lists all 14 templates and exact 5 waves in SKILL.md', () => {
+  test('writer skill instructs sub-agents to render sections independently in parallel with max concurrency 5', () => {
     const skill = fs.readFileSync(path.join(__dirname, '../skills/writer/SKILL.md'), 'utf8');
-    expectedTemplates.forEach(t => {
-      assert.ok(skill.includes(t), `SKILL.md must reference ${t}`);
-    });
-
-    // 5 waves structure
-    assert.ok(skill.includes('Wave 1 (Independent):'), 'Must define Wave 1');
-    assert.ok(skill.includes('Wave 2 (Depends on Wave 1):'), 'Must define Wave 2');
-    assert.ok(skill.includes('Wave 3 (Depends on Wave 2):'), 'Must define Wave 3');
-    assert.ok(skill.includes('Wave 4 (Depends on Waves 2-3):'), 'Must define Wave 4');
-    assert.ok(skill.includes('Wave 5 (Depends on All Prior):'), 'Must define Wave 5');
-
-    // Page mapping in waves
-    assert.ok(skill.includes('1. Executive Summary'));
-    assert.ok(skill.includes('2. Directory Structure'));
-    assert.ok(skill.includes('3. Global Data Models'));
-    assert.ok(skill.includes('4. Component Architecture'));
-    assert.ok(skill.includes('5. State Management'));
-    assert.ok(skill.includes('6. Routing & Layout Structure'));
-    assert.ok(skill.includes('7. UI Component Library'));
-    assert.ok(skill.includes('8. API Interaction Patterns'));
-    assert.ok(skill.includes('9. Features & Business Logic'));
-    assert.ok(skill.includes('10. Cross-Cutting Concerns'));
-    assert.ok(skill.includes('11. Terminology & Glossary'));
-    assert.ok(skill.includes('12. Constraints & Limitations'));
-    assert.ok(skill.includes('13. Workflows & Procedures'));
-    assert.ok(skill.includes('14. Appendix'));
-
+    
+    assert.ok(skill.includes('sub-agents'), 'SKILL.md must mention sub-agents');
+    assert.ok(skill.includes('independently in parallel'), 'SKILL.md must instruct to render independently in parallel');
+    assert.ok(skill.includes('maximum concurrency of 5'), 'SKILL.md must specify maximum concurrency of 5');
+    assert.ok(skill.includes('stitch them together'), 'SKILL.md must instruct to stitch them together');
+    
     // Output target
     assert.ok(skill.includes('docs/markdown/'), 'Must reference docs/markdown/ output path');
   });
