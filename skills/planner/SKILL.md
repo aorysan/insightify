@@ -108,12 +108,8 @@ The API supports up to 1000 concurrent connections.
    📄 Document: Product Knowledge Base ([Section count] sections)
    📊 Est. words: [Estimation]
    ```
-4. Ask approval: "Approve plan? [Y/n/revise]"
-   - Y/Enter → save as `approved`, proceed (plan frontmatter: `status: approved`)
-   - n → exit, save as `rejected`
-   - revise → prompt "What changes?", regenerate, loop (max 3 cycles). Max 3 revision cycles.
 
-**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Before requesting final approval, interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
+**Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
 
 **Document Structure:**
 - The plan outlines a single unified Product Knowledge Base document containing structured sections corresponding to the extracted knowledge categories for the detected archetype.

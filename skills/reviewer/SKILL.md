@@ -12,6 +12,10 @@ description: Stage 3 - Evaluate generated documentation across 9 quality dimensi
 3. If verdict is `changes_needed`, send specific issues back to Writer or apply targeted fixes.
 4. If iteration reaches 3, escalate remaining issues to user.
 5. If approved or after applying fixes, explicitly output the finalized document to `[OUT_DIR]/docs/final/final-documentation.md` so the user and Builder can see the definitive result.
+6. Ask approval: "Approve doc? [Y/n/revise]"
+   - Y/Enter → save as `approved`, proceed to the `builder` phase.
+   - n → exit, save as `rejected`.
+   - revise → prompt "What changes?". Implement a Fast-Fix Loop: direct feedback back to the `writer` or apply targeted fixes directly in the `reviewer` before moving to the `builder` phase. Loop (max 3 cycles).
 
 ## Scoring Rubric (1-5 per dimension)
 

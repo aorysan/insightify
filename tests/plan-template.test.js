@@ -185,6 +185,5 @@ describe('Plan Template (14 Pages, 5 Waves)', () => {
     assert.ok(skillContent.includes('detected archetype'), 'SKILL.md must derive category set from detected archetype');
     assert.ok(skillContent.includes('max 5 waves'), 'SKILL.md must enforce max 5 waves');
     assert.ok(/Plan Template Output.*5 Waves/.test(skillContent), 'SKILL.md must have 5 waves table');
-    assert.ok(skillContent.includes('Approve plan? [Y/n/revise]'), 'SKILL.md must specify user approval prompt');
   });
 });

@@ -81,13 +81,14 @@ describe('Review Criteria (Quality Dimensions)', () => {
   });
 
   test('reviewer skill defines instructions and output paths in SKILL.md', () => {
-    assert.ok(skillContent.includes('[OUT_DIR]/docs/markdown/*'), 'Must evaluate markdown docs in docs/markdown/*');
+    assert.ok(skillContent.includes('[OUT_DIR]/docs/markdown/documentation.md'), 'Must evaluate markdown docs in docs/markdown/documentation.md');
     assert.ok(skillContent.includes('[OUT_DIR]/.insightify/knowledge/*'), 'Must evaluate against knowledge base in .insightify/knowledge/*');
     assert.ok(skillContent.includes('[OUT_DIR]/.insightify/plan.md'), 'Must evaluate against plan in .insightify/plan.md');
     assert.ok(skillContent.includes('references/review-criteria.md'), 'Must reference review-criteria.md');
     assert.ok(skillContent.includes('[OUT_DIR]/.insightify/review/review-report.md'), 'Must write report to .insightify/review/review-report.md');
     assert.ok(skillContent.includes('changes_needed'), 'Must handle changes_needed verdict');
     assert.ok(skillContent.includes('escalate remaining issues to user'), 'Must escalate on 3 iterations');
+    assert.ok(skillContent.includes('Approve doc? [Y/n/revise]'), 'SKILL.md must specify user approval prompt for final document');
   });
 
   test('reviewer skill defines scoring rubric and issue classifications in SKILL.md', () => {
@@ -107,7 +108,7 @@ describe('Review Criteria (Quality Dimensions)', () => {
   test('reviewer skill defines structured issue format for Writer with all dimensions in SKILL.md', () => {
     assert.ok(skillContent.includes('## Issue Format for Writer'), 'Must define issue format for writer');
     assert.ok(skillContent.includes('### Issue: [Short description]'), 'Must include issue title');
-    assert.ok(skillContent.includes('- **Page:** `[OUT_DIR]/docs/markdown/[filename].md`'), 'Must specify page path');
+    assert.ok(skillContent.includes('- **Location:** `[OUT_DIR]/docs/markdown/documentation.md`'), 'Must specify page path');
     assert.ok(skillContent.includes('- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment|Scannability]'), 'Must list all dimensions');
     assert.ok(skillContent.includes('- **Severity:** [Critical|Minor]'), 'Must specify severity');
     assert.ok(skillContent.includes('- **Issue:** [Description of what\'s wrong]'), 'Must specify issue description');
