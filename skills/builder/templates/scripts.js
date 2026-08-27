@@ -1,5 +1,5 @@
 /**
- * Insightify v5 — Minimal JavaScript for Artifact-Style Documentation
+ * Insightify v6 — Minimal JavaScript for Artifact-Style Documentation
  * Only handles: theme toggle, Mermaid initialization, smooth scroll, copy code
  */
 
