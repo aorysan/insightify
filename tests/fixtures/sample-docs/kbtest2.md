@@ -1,4 +1,0 @@
----
-title: "KB Test"
----
-Content

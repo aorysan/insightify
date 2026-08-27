@@ -110,6 +110,7 @@ The API supports up to 1000 concurrent connections.
    📄 Document: Product Knowledge Base ([Section count] sections)
    📊 Est. words: [Estimation]
    ```
+4. Automatically save the plan as `approved` and proceed to Writer. Do NOT ask the user for plan approval here.
 
 **Ambiguity Resolution:** During planning, compile unresolved questions from extraction into `[OUT_DIR]/.insightify/knowledge/unanswered.md`. Interactively prompt the user to answer high-impact ambiguities (those that change plan structure or document content); record answers as cited facts in affected knowledge files and mark them resolved in `unanswered.md`.
 

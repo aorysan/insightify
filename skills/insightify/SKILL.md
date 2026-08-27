@@ -34,7 +34,7 @@ Support the following invocation patterns:
    - Progress: `⏳ Planner: ingesting sources, extracting knowledge categories for detected archetype, generating plan...`
    - Error: If partial failure, log in manifest as `failed` and continue.
 2. **Writer:** Run `insightify:writer`. Generate document sections independently in parallel.
-   - Progress: `⏳ Writer: [======--] A/B sections`
+   - Progress: `⏳ Writer: [======--] A/B sections (max 5 parallel)`
    - Error: If single section fails, log error, continue other sections, report failed sections.
 3. **Reviewer:** Run `insightify:reviewer`.
    - Progress: `⏳ Reviewer: [========] X/9 dimensions (iteration 1/3)`

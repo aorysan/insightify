@@ -1,5 +1,5 @@
 ---
-title: "KB Test"
+title: "Executive Summary"
+category: "product"
 ---
-> **Source:** source-001.md
-KB Content
+Summary content here.
