@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - **Run unit tests**: `npm test` (Runs native Node.js test runner across all tests)
+- **Run a single test file**: `node --test tests/orchestrator.test.js`
 - **Install dependencies**: `npm install` (Dependencies include `cheerio`, `pdf-parse`, `marked`, `jsdom`, `mermaid`)
 
 ## Architecture Overview (v6.1.0)
@@ -45,3 +46,13 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 - `jsdom`: For DOM manipulation in builder scripts.
 - `mermaid`: For diagram rendering.
 - Node.js native features: Uses Node.js built-in `node:test` runner.
+
+### Incremental Update Modes
+
+The pipeline supports two incremental modes for refreshing existing output:
+- `--sync`: Re-ingests only sources whose content/churn changed since the manifest; re-extracts affected knowledge categories; passes affected-pages list downstream.
+- `--update <source>`: Upserts a single manifest entry, re-extracts its categories, refreshes dependent pages.
+
+### Tests
+
+Tests are in `tests/` and cover: parsers, directory scanner, extraction schema, scaffolding, templates, orchestrator, and a full pipeline integration test.

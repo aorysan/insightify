@@ -1,38 +1,50 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents (like Antigravity and others) when working with code in this repository.
+This file provides guidance to AI coding agents when working with code in this repository.
 
 ## Commands
 
-- **Run unit tests**: `npm test` (Runs native Node.js test runner)
-- **Install dependencies**: `npm install` (Uses standard npm; dependencies include `cheerio`, `pdf-parse`, `marked`, `jsdom`, and `mermaid`)
+- **Run tests**: `npm test` (runs `node --test`, discovers `tests/**/*.test.js`)
+- **Install dependencies**: `npm install`
+- No lint, typecheck, or format commands exist. No CI workflows.
 
-## Architecture Overview
+## What This Is
 
-Insightify is a multi-platform documentation generator plugin structured as a 4-stage sequential pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach.
+Insightify is a **Claude Code plugin** (v6.1.0) that generates technical documentation from codebases. It produces two artifacts: a self-contained HTML spec page and a knowledge-base markdown file.
 
-### Pipeline Stages and Skills
+The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md files) that an LLM executes step-by-step. The only executable JS code is parsers and the builder template engine.
 
-The entry point is `skills/insightify/SKILL.md`, which orchestrates four independent stage skills:
+## Architecture
 
-1. **Stage 1 (Planner)**: `skills/planner/SKILL.md` - Ingests sources (files, URLs), extracts structured product knowledge (archetype-dependent knowledge categories), and generates a documentation plan (`.insightify/plan.md`) requiring user approval.
-2. **Stage 2 (Writer)**: `skills/writer/SKILL.md` - Generates markdown documentation pages under `docs/markdown/` in 5 dependency-aware waves based on the approved plan.
-3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md` - Automatically reviews generated docs across 9 quality dimensions. If revisions are needed, sends targeted issues back to Writer (max 3 iterations).
-4. **Stage 4 (Builder)**: `skills/builder/SKILL.md` - Renders documentation as single artifact-style HTML (`index.html`) and assembles knowledge base (`knowledge-base.md`).
+4-stage sequential pipeline orchestrated by `skills/insightify/SKILL.md`:
 
-### Data Flow & State Management
+1. **Planner** (`skills/planner/SKILL.md`) — Ingests sources, extracts knowledge, generates plan
+2. **Writer** (`skills/writer/SKILL.md`) — Generates 14 markdown doc pages from templates
+3. **Reviewer** (`skills/reviewer/SKILL.md`) — Reviews across 9 quality dimensions, max 3 iterations
+4. **Builder** (`skills/builder/SKILL.md`) — Renders final HTML artifact + knowledge base
 
-- All stages communicate through a temporary workspace directory (`.insightify/`) created relative to the target project.
-- **Stage skills operate in two modes**:
-  - **Orchestrated**: Called by `insightify.md` during a full run.
-  - **Standalone**: Called directly via their own commands (e.g., `/insightify-planner`, `/writer`, `/reviewer`, `/builder`) for manual execution.
-- **Knowledge Traceability**: Every extracted fact in the Knowledge Base includes a blockquote citation tracing it back to the original source ID.
+Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orchestrated mode.
 
-### External Dependencies
+## Key Structural Facts
 
-- `pdf-parse`: For extracting text from PDF files in Stage 1 (Planner).
-- `cheerio`: For parsing and cleaning HTML content in Stage 1 (Planner).
-- `marked`: For converting Markdown to HTML in Stage 4 (Builder).
-- `jsdom`: For DOM manipulation and script testing in Stage 4 (Builder).
-- `mermaid`: For diagram support in the HTML documentation.
-- Node.js native features: Uses Node.js built-in `node:test` runner.
+- **Skill definitions** (`skills/*/SKILL.md`) are the primary source of truth. Tests validate their content structure extensively.
+- **14 knowledge categories** (product, directory-structure, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered).
+- **Parsers** (`skills/planner/parsers/*.js`) are CommonJS — `code-parser.js`, `html-parser.js`, `json-parser.js`, `pdf-parser.js`, `directory-scanner.js`.
+- **Builder** (`skills/builder/templates/build-html.mjs`) is ESM. Tests import it via dynamic `import()`.
+- **Writer templates** (`skills/writer/templates/*.md`) — 14 markdown templates with YAML frontmatter.
+- **Output** goes to `insights/<project-name>/` relative to the target project.
+- **Workspace** for intermediate data: `[OUT_DIR]/.insightify/`.
+
+## Testing
+
+- Tests validate SKILL.md content (required sections, keywords, structure) — not just behavior.
+- `tests/build-templates.test.js` is the largest suite (~27 tests). Uses `jsdom` for DOM/JS runtime testing of `scripts.js`.
+- `tests/fixtures/sample-14-kb/` is a generated fixture (14 `.md` files with frontmatter) used by build tests.
+- Some tests in `build-templates.test.js` are commented out (template placeholder assertions) — these are intentional skips, not failures.
+
+## Conventions
+
+- This is a **plugin repo**, not a library or app. Changes to SKILL.md files change agent behavior, not runtime code.
+- `plugin.json` and `.claude-plugin/plugin.json` must stay version-synced with `package.json`.
+- No TypeScript. No bundler. No dev server.
+- Dependencies: `cheerio`, `pdf-parse`, `marked`, `jsdom`, `mermaid`.
