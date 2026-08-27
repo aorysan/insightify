@@ -61,6 +61,8 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 
 1. Read all `[OUT_DIR]/.insightify/sources/*.md` files.
 2. For each of the required categories for the detected archetype (defined in Phase 0; field-level schema in `references/extraction-schema.md`), analyze sources and extract structured facts.
+   - **Parallel Extraction:** Assign sub-agents in parallel to extract the various knowledge categories from the available sources.
+   - **Concurrency Limit:** Maintain a maximum concurrency limit of 5 sub-agents at a time.
 3. Include blockquote source citations (`> **Source:** source-XXX.md § Section Name`) for every fact.
 4. Write output to `[OUT_DIR]/.insightify/knowledge/`.
 

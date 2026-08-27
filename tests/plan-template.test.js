@@ -186,4 +186,9 @@ describe('Plan Template (14 Pages, 5 Waves)', () => {
     assert.ok(skillContent.includes('max 5 waves'), 'SKILL.md must enforce max 5 waves');
     assert.ok(/Plan Template Output.*5 Waves/.test(skillContent), 'SKILL.md must have 5 waves table');
   });
+  test('planner skill enforces parallel extraction with a maximum concurrency of 5', () => {
+    assert.strictEqual(fs.existsSync(skillPath), true, 'planner SKILL.md must exist');
+    assert.ok(skillContent.includes('parallel'), 'SKILL.md must specify parallel extraction');
+    assert.ok(skillContent.includes('concurrency limit of 5'), 'SKILL.md must specify a max concurrency limit of 5');
+  });
 });
