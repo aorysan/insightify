@@ -205,11 +205,12 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('<Project Name>'), 'Must use standardized placeholder for project name');
   });
 
-  test('writer skill instructs sub-agents to render sections independently in parallel', () => {
+  test('writer skill instructs sub-agents to render sections independently in parallel with max concurrency 5', () => {
     const skill = fs.readFileSync(path.join(__dirname, '../skills/writer/SKILL.md'), 'utf8');
     
     assert.ok(skill.includes('sub-agents'), 'SKILL.md must mention sub-agents');
     assert.ok(skill.includes('independently in parallel'), 'SKILL.md must instruct to render independently in parallel');
+    assert.ok(skill.includes('maximum concurrency of 5'), 'SKILL.md must specify maximum concurrency of 5');
     assert.ok(skill.includes('stitch them together'), 'SKILL.md must instruct to stitch them together');
     
     // Output target
