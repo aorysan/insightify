@@ -114,4 +114,9 @@ describe('Review Criteria (Quality Dimensions)', () => {
     assert.ok(skillContent.includes('- **Issue:** [Description of what\'s wrong]'), 'Must specify issue description');
     assert.ok(skillContent.includes('- **Suggestion:** [How to fix it]'), 'Must specify suggestion');
   });
+
+  test('reviewer skill dictates distributing evaluations to concurrent sub-agents', () => {
+    assert.ok(skillContent.includes('sub-agents running concurrently'), 'Must mandate concurrent sub-agents for evaluation');
+    assert.ok(skillContent.includes('Merge the results/reports from the concurrently running sub-agents'), 'Must mandate merging sub-agent reports');
+  });
 });

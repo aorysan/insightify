@@ -7,12 +7,14 @@ description: Stage 3 - Evaluate generated documentation across 9 quality dimensi
 
 ## Instructions
 
-1. Evaluate `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` across 9 dimensions in `references/review-criteria.md`.
-2. Write report to `[OUT_DIR]/.insightify/review/review-report.md`.
-3. If verdict is `changes_needed`, send specific issues back to Writer or apply targeted fixes.
-4. If iteration reaches 3, escalate remaining issues to user.
-5. If approved or after applying fixes, explicitly output the finalized document to `[OUT_DIR]/docs/final/final-documentation.md` so the user and Builder can see the definitive result.
-6. Ask approval: "Approve doc? [Y/n/revise]"
+1. Distribute the evaluation of `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` to **multiple sub-agents running concurrently**. Assign specific dimensions from the 9 quality dimensions in `references/review-criteria.md` to each sub-agent.
+2. Wait for all concurrent sub-agents to complete their independent evaluations.
+3. Merge the results/reports from the concurrently running sub-agents into a single comprehensive review report.
+4. Write the merged report to `[OUT_DIR]/.insightify/review/review-report.md`.
+5. If verdict is `changes_needed`, send specific issues back to Writer or apply targeted fixes.
+6. If iteration reaches 3, escalate remaining issues to user.
+7. If approved or after applying fixes, explicitly output the finalized document to `[OUT_DIR]/docs/final/final-documentation.md` so the user and Builder can see the definitive result.
+8. Ask approval: "Approve doc? [Y/n/revise]"
    - Y/Enter → save as `approved`, proceed to the `builder` phase.
    - n → exit, save as `rejected`.
    - revise → prompt "What changes?". Implement a Fast-Fix Loop: direct feedback back to the `writer` or apply targeted fixes directly in the `reviewer` before moving to the `builder` phase. Loop (max 3 cycles).
