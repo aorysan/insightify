@@ -10,7 +10,7 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## What This Is
 
-Insightify is a **Claude Code plugin** (v6.1.0) that generates technical documentation from codebases. It produces two artifacts: a self-contained HTML spec page and a knowledge-base markdown file.
+Insightify is a **Claude Code plugin** (v6.2.0) that generates technical documentation from codebases. It produces two artifacts: a self-contained HTML spec page and a knowledge-base markdown file.
 
 The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md files) that an LLM executes step-by-step. The only executable JS code is parsers and the builder template engine.
 
