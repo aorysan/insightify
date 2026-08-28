@@ -1,3 +1,5 @@
+const { extractAst } = require('./ast-extractor');
+
 function parseCode(codeString, lang) {
   const comments = [];
   const extracted = {
@@ -359,6 +361,13 @@ function parseCode(codeString, lang) {
       const specifier = parts.join(' ');
       output += `\n- From \`${i.source}\`${specifier ? ': ' + specifier : ''}`;
     });
+  }
+
+  const astResult = extractAst(codeString, lang);
+  if (astResult.status === 'success' && (astResult.imports.length > 0 || astResult.exports.length > 0)) {
+      output += '\n\n<ast-dependencies>\n';
+      output += JSON.stringify({ imports: astResult.imports, exports: astResult.exports }, null, 2);
+      output += '\n</ast-dependencies>';
   }
 
   return output;
