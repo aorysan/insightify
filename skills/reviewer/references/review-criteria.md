@@ -1,4 +1,4 @@
-# Documentation Review Criteria (9 Dimensions)
+# Documentation Review Criteria (10 Dimensions)
 
 1. **Accuracy**: Compare `[OUT_DIR]/docs/markdown/*` against `[OUT_DIR]/.insightify/knowledge/*`. All claims must match knowledge facts.
 2. **Completeness**: Compare `[OUT_DIR]/docs/markdown/*` against `[OUT_DIR]/.insightify/plan.md`. All planned sections must be present.
@@ -9,9 +9,10 @@
 7. **Architecture Alignment**: Documentation accurately reflects the project's actual architectural patterns as extracted in the knowledge base (state management, routing, API layer, component structure, cross-cutting concerns).
 8. **Business Alignment**: User journeys, state machines, and business policies are logically sound and well-represented as extracted in the knowledge base (user-journeys.md, business-policies.md, state-management.md / data-models.md).
 9. **Scannability**: High information density with minimal long prose paragraphs. Dense, enumerable information (architecture, endpoints, processes) is structured as cards, grids, or tables rather than bullet lists or paragraph walls.
+10. **Brevity**: Product-level abstraction maintained (~500 lines target, strictly <700 lines). No raw TypeScript interface/type dumps, no localStorage/environment variable dumps, no redundant duplicate sections (anchors used), shallow directory trees (≤2 levels), and concise diagram explanations (≤1 sentence per step/node).
 
 Report Verdicts:
-- `approved`: All 9 dimensions ≥3, no critical issues.
+- `approved`: All 10 dimensions ≥3, no critical issues.
 - `changes_needed`: Any dimension <3 OR any critical issue.
 
 Safety Valve:
@@ -60,6 +61,11 @@ Safety Valve:
 - 1: State machines or user journeys make no business sense, or business policies are entirely ignored
 
 **Scannability** (density and structure):
-- 5: High density throughout; processes/endpoints/architecture rendered as cards, grids, or tables; paragraphs ≤3 sentences; instantly scannable headings
+- 5: High density throughout; processes/endpoints/architecture rendered as cards, grids, or tables; paragraphs ≤1 sentence; instantly scannable headings
 - 3: Mostly structured but several prose-heavy sections or bullet walls remain
 - 1: Wall-of-text output; low scannability; ignores card/grid formatting guidance
+
+**Brevity** (product-level abstraction & conciseness):
+- 5: Product-level focus throughout (~500 lines target); strictly no TS interface/type dumps or env variable listings; concise Mermaid explanations (≤1 sentence/step); shallow directory tree (≤2 levels).
+- 3: Mostly product-focused with some leaks of implementation details, slightly verbose diagram explanations, or length between 500-700 lines.
+- 1: Implementation dump, full TypeScript interface/type dumps, localStorage/env variable listings, multi-sentence narrative prose after diagrams, or total length exceeding 700 lines.

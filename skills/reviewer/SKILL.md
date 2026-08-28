@@ -1,13 +1,13 @@
 ---
 name: reviewer
-description: Stage 3 - Evaluate generated documentation across 9 quality dimensions, generate report, and output finalized document.
+description: Stage 3 - Evaluate generated documentation across 10 quality dimensions, generate report, and output finalized document.
 ---
 
 # Reviewer Skill
 
 ## Instructions
 
-1. Distribute the evaluation of `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` to **multiple sub-agents running concurrently**. Assign specific dimensions from the 9 quality dimensions in `references/review-criteria.md` to each sub-agent.
+1. Distribute the evaluation of `[OUT_DIR]/docs/markdown/documentation.md` against `[OUT_DIR]/.insightify/knowledge/*` and `[OUT_DIR]/.insightify/plan.md` to **multiple sub-agents running concurrently**. Assign specific dimensions from the 10 quality dimensions in `references/review-criteria.md` to each sub-agent.
 2. Wait for all concurrent sub-agents to complete their independent evaluations.
 3. Merge the results/reports from the concurrently running sub-agents into a single comprehensive review report.
 4. Write the merged report to `[OUT_DIR]/.insightify/review/review-report.md`.
@@ -66,23 +66,29 @@ description: Stage 3 - Evaluate generated documentation across 9 quality dimensi
 - 3: Mostly structured but several prose-heavy sections or bullet walls remain
 - 1: Wall-of-text output; low scannability; ignores card/grid formatting guidance
 
+**Brevity** (conciseness & abstraction level):
+- 5: Product-level focus throughout (~500 lines target), strictly no TS interface dumps or env variable dumps, concise diagram explanations (≤1 sentence/step), shallow directory tree (≤2 levels)
+- 3: Mostly concise with minor leaks of implementation details, slightly verbose diagram explanations, or length between 500-700 lines
+- 1: Implementation dump, full TypeScript interface/type dumps, localStorage/env variable dumps, numbering prose after diagrams, or length exceeding 700 lines
+
 ## Verdict Thresholds
 
-- `approved`: All 9 dimensions ≥3, no critical issues
+- `approved`: All 10 dimensions ≥3, no critical issues
 - `changes_needed`: Any dimension <3 OR any critical issue
 
 ## Issue Classification
 
 - **Critical**: Factual error, missing entire planned section, broken navigation, TypeScript errors, architecture violations
 - **Critical**: Dense prose — any paragraph exceeding 1 sentence or wall-of-text blocks
-- **Minor**: Typo, slightly inconsistent tone, suboptimal heading level, missing citation
+- **Critical**: Brevity violations — full TypeScript interface/type dumps, localStorage/env variable dumps, numbering prose after diagrams, or total length exceeding 700 lines
+- **Minor**: Typo, slightly inconsistent tone, suboptimal heading level, missing citation, document length between 500-700 lines
 
 ## Issue Format for Writer
 
 ```markdown
 ### Issue: [Short description]
 - **Location:** `[OUT_DIR]/docs/markdown/documentation.md` (Section: [Section Name])
-- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment|Scannability]
+- **Dimension:** [Accuracy|Completeness|Consistency|Structure|Usability|Type Safety|Architecture Alignment|Business Alignment|Scannability|Brevity]
 - **Severity:** [Critical|Minor]
 - **Issue:** [Description of what's wrong]
 - **Suggestion:** [How to fix it]

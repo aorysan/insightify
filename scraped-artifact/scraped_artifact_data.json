@@ -1,0 +1,88 @@
+{
+  "source_url": "https://claude.ai/code/artifact/d4a1b3fd-2069-437c-822d-5df697a97e3d",
+  "uuid": "d4a1b3fd-2069-437c-822d-5df697a97e3d",
+  "title": "Sistem Antrian MPP",
+  "subtitle": "Blueprint sistem · v1 · 28 Juli 2026",
+  "summary": "Empat diagram: perjalanan pemohon end-to-end, arsitektur sistem, siklus status nomor antrian, dan alur kerja petugas loket. Aturan yang dipakai: pemohon memilih instansi dan jenis layanan sejak pendaftaran sehingga syarat dokumen diketahui dari rumah; walk-in diizinkan; satu instansi bisa punya beberapa loket; kuota per tanggal per instansi; panggil 3x lalu skip; layanan kedua aktif setelah yang pertama selesai.",
+  "sections": [
+    {
+      "id": "01",
+      "label": "01 Journey",
+      "title": "End-to-end journey — daftar → check-in → dilayani",
+      "type": "journey_matrix"
+    },
+    {
+      "id": "02",
+      "label": "02 Arsitektur",
+      "title": "Arsitektur sistem",
+      "type": "tiered_architecture"
+    },
+    {
+      "id": "03",
+      "label": "03 State",
+      "title": "Siklus status nomor antrian",
+      "type": "state_machine"
+    },
+    {
+      "id": "04",
+      "label": "04 Loket",
+      "title": "Alur petugas loket & rantai pemanggilan",
+      "type": "operator_workflow"
+    },
+    {
+      "id": "05",
+      "label": "05 Catatan",
+      "title": "Catatan teknis & kebijakan sistem",
+      "type": "policy_grid"
+    },
+    {
+      "id": "06",
+      "label": "06 Feature list",
+      "title": "Daftar fitur & modul pengerjaan",
+      "type": "feature_table"
+    },
+    {
+      "id": "07",
+      "label": "07 UI Website",
+      "title": "Gambaran UI — website MPP & pendaftaran antrian",
+      "type": "wireframe_mobile"
+    },
+    {
+      "id": "08",
+      "label": "08 UI Kiosk",
+      "title": "Gambaran UI — kiosk di lobi MPP",
+      "type": "wireframe_kiosk"
+    },
+    {
+      "id": "09",
+      "label": "09 UI Loket",
+      "title": "Gambaran UI — web apps petugas loket & front office",
+      "type": "wireframe_desktop"
+    },
+    {
+      "id": "10",
+      "label": "10 UI TV",
+      "title": "Gambaran UI — tiga layar TV di ruang tunggu",
+      "type": "wireframe_tv"
+    }
+  ],
+  "design_tokens": {
+    "palette": {
+      "background": "#f2f0eb",
+      "surface": "#fffefb",
+      "surface_card": "#ffffff",
+      "surface_highlight": "#f6f9ff",
+      "surface_dark": "#14130f",
+      "border": "#ddd9d0",
+      "border_highlight": "#cddaf2",
+      "text_primary": "#1a1917",
+      "text_secondary": "#57534b",
+      "text_muted": "#7a756c",
+      "accent": "oklch(0.55 0.11 250)"
+    },
+    "typography": {
+      "sans": "IBM Plex Sans, sans-serif",
+      "mono": "IBM Plex Mono, monospace"
+    }
+  }
+}

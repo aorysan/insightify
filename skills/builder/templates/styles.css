@@ -36,9 +36,9 @@
   --color-code-text: #1e293b;
   --color-code-border: #e2e8f0;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
+  --font-heading: 'IBM Plex Sans', -apple-system, sans-serif;
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -321,35 +321,21 @@ pre code {
   overflow-y: auto;
 }
 
-.toc-title {
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
-  margin-bottom: var(--spacing-sm);
-  font-family: var(--font-sans);
-}
-
-.nav-list { list-style: none; padding-left: 0; }
-.nav-item { margin-bottom: var(--spacing-xs); }
+.toc-title { display: none; }
+.nav-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 24px; }
 .nav-link {
-  display: block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  transition: all var(--transition-fast);
-  text-decoration: none;
+  display: flex; align-items: center; justify-content: flex-end;
+  text-decoration: none; font-family: var(--font-mono); font-size: 14px;
+  color: var(--color-text-muted); font-weight: 600; text-transform: capitalize;
+  transition: color var(--transition-fast);
 }
-.nav-link:hover {
-  background-color: var(--color-surface-hover);
-  color: var(--color-text);
+.nav-link::after {
+  content: ""; display: block; margin-left: 16px; width: 48px; height: 2px;
+  background-color: var(--color-border-strong);
+  transition: background-color var(--transition-fast), width var(--transition-fast);
 }
-.nav-link.active {
-  color: var(--color-primary);
-  font-weight: 600;
-  background-color: var(--color-primary-light);
-}
+.nav-link.active, .nav-link:hover { color: var(--color-text); }
+.nav-link.active::after, .nav-link:hover::after { background-color: #ff4a4a; }
 
 .doc-section {
   margin-bottom: var(--spacing-2xl);

@@ -22,6 +22,14 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 - Voice: active voice preferred ("Run the command" not "The command should be run")
 - Avoid jargon without explanation — if a term is in `knowledge/terminology.md`, link or define it on first use
 
+## Conciseness & Abstraction Level
+
+- **Target Length**: The generated documentation must be concise, targeting a maximum of ~500 lines total.
+- **Product-Level Abstraction**: Focus strictly on product and business capabilities. NO full TypeScript interface/type dumps (summarize key fields only); NO localStorage or environment variable dumps.
+- **No Redundant Sections**: Do NOT duplicate architecture, configuration, or data definitions across sections. Use anchor links (`[Section Title](#section-title)`) to cross-reference existing sections.
+- **Concise Diagram Explanations**: Mermaid flows must be followed by at most 1 sentence per step or node—avoid long narrative paragraphs explaining diagrams.
+- **Shallow Directory Trees**: Directory structures must be limited strictly to the top 2 levels max.
+
 ## Content Structure
 
 - H1 (`#`): Reserved for the document title at the top of the file
@@ -49,9 +57,10 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 
 ## Code Examples
 
-- Every API endpoint: at least one request/response example
-- Every workflow: step-by-step code or command example
+- Primary/critical endpoints only: provide concise request/response examples for core endpoints only, not every endpoint.
+- Forbid code-block walls: avoid consecutive or overly long code blocks; keep snippets short, focused, and minimal.
+- Workflows: step-by-step code or command example where necessary.
 - Fenced code blocks with language tags: ` ```js `, ` ```bash `, etc.
 - Mermaid diagrams (fenced with ` ```mermaid ` language tag):
-  - Every user journey/workflow section: at least one ` ```mermaid flowchart ` showing steps and decision points
-  - State machine/entity lifecycle documentation: ` ```mermaid stateDiagram ` covering all states and transitions
+  - User journey/workflow sections: ` ```mermaid flowchart ` showing steps and decision points.
+  - State machine/entity lifecycle documentation: ` ```mermaid stateDiagram ` covering all states and transitions.

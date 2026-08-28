@@ -171,11 +171,11 @@ function extractArchitectureHighlights(kbDir, techStack) {
   }
 
   const kbSources = [
-    { file: 'component-architecture.md', label: 'Component Architecture' },
-    { file: 'state-management.md', label: 'State Management' },
-    { file: 'routing-structure.md', label: 'Routing' },
+    { file: 'architecture.md', label: 'Architecture' },
+    { file: 'state-and-data.md', label: 'State & Data' },
+    { file: 'design-system.md', label: 'Design System' },
     { file: 'api-patterns.md', label: 'API Patterns' },
-    { file: 'cross-cutting.md', label: 'Cross-Cutting Concerns' }
+    { file: 'business-policies.md', label: 'Business Policies' }
   ];
 
   for (const { file, label } of kbSources) {
@@ -225,20 +225,10 @@ function extractArchitectureHighlights(kbDir, techStack) {
  */
 export function buildProductOverview(kbDir) {
   let productMd = '';
-  let featuresMd = '';
-  let crossCuttingMd = '';
 
   if (kbDir && fs.existsSync(kbDir)) {
     try {
       productMd = fs.readFileSync(path.join(kbDir, 'product.md'), 'utf-8');
-    } catch {}
-
-    try {
-      featuresMd = fs.readFileSync(path.join(kbDir, 'features.md'), 'utf-8');
-    } catch {}
-
-    try {
-      crossCuttingMd = fs.readFileSync(path.join(kbDir, 'cross-cutting.md'), 'utf-8');
     } catch {}
   }
 
@@ -438,7 +428,7 @@ export function buildProcessDiagram() {
         <div class="step-number">1</div>
         <div class="step-content">
           <h3>Planner</h3>
-          <p>Ingest sources → Extract 14 knowledge categories → Generate documentation plan</p>
+          <p>Ingest sources → Extract 10 knowledge categories → Generate documentation plan</p>
           <div class="step-io">
             <span class="input">Sources (files, URLs)</span>
             <span class="arrow">→</span>
@@ -462,7 +452,7 @@ export function buildProcessDiagram() {
         <div class="step-number">3</div>
         <div class="step-content">
           <h3>Reviewer</h3>
-          <p>Evaluate across 7 dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment)</p>
+          <p>Evaluate across 10 dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment, Business Alignment, Scannability, Brevity)</p>
           <div class="step-io">
             <span class="input">Markdown Pages</span>
             <span class="arrow">→</span>
