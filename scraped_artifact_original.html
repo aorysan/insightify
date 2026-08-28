@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Antrian MPP - Technical Blueprint (Scraped)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #f2f0eb;
+      color: #1a1917;
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+    a { color: oklch(0.52 0.11 250); text-decoration: none; }
+    a:hover { color: oklch(0.42 0.11 250); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+
+<div style="font-family: 'IBM Plex Sans', Helvetica, sans-serif; color: #1a1917; background: #f2f0eb; padding: 56px 48px 96px; display: flex; flex-direction: column; gap: 64px; align-items: center; text-wrap: pretty;">
+
+  <header style="width: 1400px; display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid #d6d2c9; padding-bottom: 28px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #7a756c;">Blueprint sistem · v1 · 28 Juli 2026</div>
+    <h1 style="margin: 0; font-size: 42px; font-weight: 600; letter-spacing: -0.02em;">Sistem Antrian MPP</h1>
+    <p style="margin: 0; max-width: 820px; font-size: 16px; line-height: 1.6; color: #57534b;">Empat diagram: perjalanan pemohon end-to-end, arsitektur sistem, siklus status nomor antrian, dan alur kerja petugas loket. Aturan yang dipakai: pemohon memilih instansi <i>dan</i> jenis layanan sejak pendaftaran sehingga syarat dokumen diketahui dari rumah; walk-in diizinkan; satu instansi bisa punya beberapa loket; kuota per tanggal per instansi; panggil 3x lalu skip; layanan kedua aktif setelah yang pertama selesai.</p>
+  </header>
+
+  <section data-screen-label="01 Journey" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">01</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">End-to-end journey — daftar → check-in → dilayani</h2>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 28px 24px; display: grid; grid-template-columns: 132px repeat(5, 1fr); gap: 1px; background-color: #fffefb;">
+
+      <div style="grid-column: 1 / -1; display: grid; grid-template-columns: 132px repeat(5, 1fr); gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e6e2d9; margin-bottom: 16px;">
+        <div></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Fase 1 · Pendaftaran</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Fase 2 · Konfirmasi</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Fase 3 · Kedatangan</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Fase 4 · Pemanggilan</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Fase 5 · Pasca layanan</div>
+      </div>
+
+      <div style="grid-column: 1 / -1; display: grid; grid-template-columns: 132px repeat(5, 1fr); gap: 12px; align-items: stretch; padding: 14px 0; border-bottom: 1px dashed #e6e2d9;">
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-right: 12px;">
+          <div style="font-size: 14px; font-weight: 600;">Pemohon</div>
+          <div style="font-size: 11px; color: #8a857b; font-family: 'IBM Plex Mono', monospace;">WA / Web / Kiosk</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #f6f9ff; border: 1px solid #cddaf2; border-left: 3px solid oklch(0.55 0.11 250); border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>A. WhatsApp</b><br>Chat AI agent → biodata (nama, NIK, HP), pilih instansi → jenis layanan → tanggal</div>
+          <div style="background: #f6f9ff; border: 1px solid #cddaf2; border-left: 3px solid oklch(0.55 0.11 250); border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>B. Web</b><br>Isi form, pilih instansi &amp; jenis layanan, kalender kuota</div>
+          <div style="background: #fdf8ef; border: 1px solid #ecdfc4; border-left: 3px solid oklch(0.62 0.11 70); border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>C. Walk-in</b><br>Datang langsung, pilih jenis layanan di kiosk, lewati fase 1–2</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Terima QR + detail booking + <b>daftar syarat dokumen</b> via WA &amp; email</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Reminder H-1 + pengingat dokumen yang harus dibawa</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Scan QR di kiosk → check-in + cetak tiket nomor (tertera jenis layanan)</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Verifikasi dokumen di meja front office</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Menunggu · lihat TV, dengar suara panggilan</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Notifikasi WA saat 3 nomor sebelum giliran</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Menuju loket yang dipanggil</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Isi survei kepuasan (link WA)</div>
+          <div style="background: #f4faf6; border: 1px solid #cde5d5; border-left: 3px solid oklch(0.55 0.09 155); border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>Layanan lanjutan?</b><br>Nomor layanan ke-2 diaktifkan otomatis</div>
+        </div>
+      </div>
+
+      <div style="grid-column: 1 / -1; display: grid; grid-template-columns: 132px repeat(5, 1fr); gap: 12px; align-items: stretch; padding: 14px 0; border-bottom: 1px dashed #e6e2d9;">
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-right: 12px;">
+          <div style="font-size: 14px; font-weight: 600;">Sistem</div>
+          <div style="font-size: 11px; color: #8a857b; font-family: 'IBM Plex Mono', monospace;">Backend antrian</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Tampilkan katalog jenis layanan + syarat dokumennya</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Cek kuota tanggal × instansi → tanggal penuh di-disable</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Verifikasi kontak: OTP WhatsApp / tautan email</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Buat <code style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">booking</code> status <b>BOOKED</b></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Generate QR (token sekali pakai, terikat tanggal)</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Kirim WA (template berisi checklist dokumen) + email</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Validasi token: benar / kedaluwarsa / sudah dipakai</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Terbitkan nomor antrian per instansi → status <b>WAITING</b></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Bagi antrian ke loket yang idle (round-robin dalam satu layanan)</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Push realtime ke TV + trigger TTS</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Catat waktu tunggu &amp; waktu layanan → laporan SLA</div>
+          <div style="background: #fbfaf7; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Kirim konfirmasi selesai + link survei</div>
+        </div>
+      </div>
+
+      <div style="grid-column: 1 / -1; display: grid; grid-template-columns: 132px repeat(5, 1fr); gap: 12px; align-items: stretch; padding-top: 14px;">
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-right: 12px;">
+          <div style="font-size: 14px; font-weight: 600;">Petugas MPP</div>
+          <div style="font-size: 11px; color: #8a857b; font-family: 'IBM Plex Mono', monospace;">FO + loket + admin</div>
+        </div>
+        <div style="display: flex; align-items: center; font-size: 12px; color: #a8a49a; font-family: 'IBM Plex Mono', monospace;">— kuota &amp; jadwal diatur admin</div>
+        <div style="display: flex; align-items: center; font-size: 12px; color: #a8a49a; font-family: 'IBM Plex Mono', monospace;">—</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fdf8ef; border: 1px solid #ecdfc4; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>Front office</b> verifikasi identitas &amp; dokumen memakai checklist <b>jenis layanan</b> yang dipilih; tandai lengkap / kurang</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fdf8ef; border: 1px solid #ecdfc4; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>Loket</b> tekan <i>Panggil berikutnya</i> → layani → selesai</div>
+          <div style="background: #fdf8ef; border: 1px solid #ecdfc4; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;">Recall / skip / transfer bila perlu</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #fdf8ef; border: 1px solid #ecdfc4; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45;"><b>Admin</b> pantau beban loket, broadcast pengumuman, unduh laporan</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Struktur katalog layanan</div>
+        <div style="font-size: 13px; line-height: 1.6; color: #57534b; max-width: 1000px;">Pemohon memilih dua tingkat sejak pendaftaran: <b>instansi</b>, lalu <b>jenis layanan</b>. Syarat dokumen menempel pada jenis layanan, sehingga pemohon sudah tahu apa yang harus dibawa dari rumah — dan checklist petugas front office memakai daftar yang sama.</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 250px 30px 1fr 30px 1.15fr; gap: 0; align-items: stretch;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Tingkat 1 · Instansi</div>
+          <div style="border: 1px solid #cddaf2; background: #f6f9ff; border-left: 3px solid oklch(0.55 0.11 250); border-radius: 4px; padding: 12px 14px; font-size: 13.5px; font-weight: 600;">Dukcapil <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 400; color: #7a756c;">prefix A</span></div>
+          <div style="border: 1px solid #e2ded5; background: #fbfaf7; border-radius: 4px; padding: 12px 14px; font-size: 13.5px; color: #57534b;">Samsat <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a857b;">prefix B</span></div>
+          <div style="border: 1px solid #e2ded5; background: #fbfaf7; border-radius: 4px; padding: 12px 14px; font-size: 13.5px; color: #57534b;">KUA <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8a857b;">prefix C</span></div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <div style="display: flex; align-items: center; width: 100%;">
+            <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+            <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Tingkat 2 · Jenis layanan</div>
+          <div style="border: 1px solid #cddaf2; background: #f6f9ff; border-radius: 4px; padding: 12px 14px; font-size: 13px;">Perbaikan nama pada akta</div>
+          <div style="border: 1px solid #e2ded5; background: #fbfaf7; border-radius: 4px; padding: 12px 14px; font-size: 13px;">Pembuatan Kartu Keluarga</div>
+          <div style="border: 1px solid #e2ded5; background: #fbfaf7; border-radius: 4px; padding: 12px 14px; font-size: 13px;">Cetak ulang KTP</div>
+          <div style="font-size: 11.5px; color: #8a857b; font-family: 'IBM Plex Mono', monospace;">…dst per instansi</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <div style="display: flex; align-items: center; width: 100%;">
+            <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+            <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Melekat pada jenis layanan</div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 4px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 13px; font-weight: 600;">Syarat dokumen — Perbaikan nama pada akta</div>
+            <div style="font-size: 12.5px; line-height: 1.7; color: #57534b;">1. Akta yang akan diperbaiki (asli + fotokopi)<br>2. Kartu Keluarga<br>3. KTP pemohon<br>4. Dokumen pendukung ejaan nama yang benar<br>5. Surat pernyataan</div>
+          </div>
+          <div style="border: 1px dashed #ddd9d0; border-radius: 4px; padding: 12px 14px; font-size: 12.5px; line-height: 1.55; color: #57534b;">Ditampilkan di web &amp; dikirim lewat WA/email, dipakai ulang sebagai checklist front office, dan menyimpan estimasi durasi layanan untuk perhitungan waktu tunggu.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="02 Arsitektur" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">02</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Arsitektur sistem</h2>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 0;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Kanal pemohon</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+          <div style="border: 1px solid #cddaf2; background: #f6f9ff; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">WhatsApp Bot</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">WA Business API + AI agent (NLU pengumpul biodata, pemilih instansi &amp; jenis layanan, pembaca syarat dokumen, cek kuota). Fallback ke menu tombol bila jawaban ambigu.</div>
+          </div>
+          <div style="border: 1px solid #cddaf2; background: #f6f9ff; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Website publik MPP</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Satu website: profil MPP (tentang, daftar layanan, syarat dokumen, jam &amp; lokasi, pengumuman) + pendaftaran antrian dengan kalender kuota realtime dan cek status booking. Mobile-first.</div>
+          </div>
+          <div style="border: 1px solid #cddaf2; background: #f6f9ff; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Email</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Pengiriman QR sebagai lampiran/inline, sebagai cadangan bila WA gagal terkirim.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; padding: 8px 0;">
+        <div style="width: 1px; height: 26px; background: #c9c4b9;"></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 5px; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: #faf9f5;">
+          <div style="display: flex; align-items: baseline; gap: 10px;">
+            <div style="font-size: 16px; font-weight: 700;">Core Antrian Service</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7a756c;">API + WebSocket + worker</div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Katalog Layanan</b><br>instansi, jenis layanan, syarat dokumen, estimasi durasi</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Booking &amp; Kuota</b><br>slot per tanggal × instansi, hari libur, ambang walk-in (alert)</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Ticket Engine</b><br>penomoran, state machine, round-robin loket</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>QR &amp; Check-in</b><br>token sekali pakai, validasi tanggal, OTP WA/email</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Notifikasi</b><br>QR, checklist dokumen, reminder H-1, giliran, survei</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Realtime Hub</b><br>pub/sub ke TV, kiosk, web loket</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Auth &amp; RBAC</b><br>admin, supervisor, FO, petugas loket</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Reporting</b><br>waktu tunggu, waktu layan per jenis layanan, SLA, survei</div>
+            <div style="border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 12px; font-size: 12.5px; line-height: 1.45;"><b>Audit log</b><br>jejak skip, transfer, override</div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; padding-top: 4px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Data</div>
+            <div style="flex: 1; display: flex; gap: 10px;">
+              <div style="flex: 1; border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 10px 12px; font-size: 12.5px;">PostgreSQL — instansi, jenis layanan, syarat dokumen, booking, ticket, loket, user</div>
+              <div style="flex: 1; border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 10px 12px; font-size: 12.5px;">Redis — counter nomor, state antrian aktif, pub/sub</div>
+              <div style="flex: 1; border: 1px solid #ddd9d0; background: #fffefb; border-radius: 4px; padding: 10px 12px; font-size: 12.5px;">Object storage — QR, media TV, lampiran</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border: 1px dashed #c9c4b9; border-radius: 5px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Integrasi eksternal</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; background: #fbfaf7;">WhatsApp Business API (Meta / BSP)</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; background: #fbfaf7;">LLM provider untuk AI agent</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; background: #fbfaf7;">SMTP / email service</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; background: #fbfaf7;">Sistem instansi (Dukcapil / Samsat / KUA) — opsional, tahap 2</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; padding: 8px 0;">
+        <div style="width: 1px; height: 26px; background: #c9c4b9;"></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Perangkat di lokasi MPP</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Kiosk</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Scanner QR + thermal printer. Dua mode: <b>scan QR</b> (booking) dan <b>ambil nomor walk-in</b>.</div>
+          </div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Mini PC → 3 TV</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">1 browser, 3 jendela display (URL berbeda per kelompok instansi). Audio TTS keluar dari mini PC — <b>satu antrean suara</b>, tidak tumpang tindih.</div>
+          </div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Web loket</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Login petugas, pilih loket, tombol panggil/recall/skip/transfer/selesai.</div>
+          </div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 15px; font-weight: 600;">Dashboard admin</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Beban antrian realtime, kuota &amp; jam operasional, laporan SLA, broadcast, user &amp; hak akses.</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 4px;">
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 12px 14px; font-size: 12.5px; background: #fbfaf7;"><b>TV 1</b> — Dukcapil &amp; layanan kependudukan</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 12px 14px; font-size: 12.5px; background: #fbfaf7;"><b>TV 2</b> — Samsat, KUA, perizinan</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 12px 14px; font-size: 12.5px; background: #fbfaf7;"><b>TV 3</b> — running text, pengumuman, video info</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="03 State" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">03</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Siklus status nomor antrian</h2>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 28px;">
+
+      <div style="display: flex; align-items: center; gap: 0; flex-wrap: nowrap;">
+        <div style="flex: 1; border: 2px solid oklch(0.55 0.11 250); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #f6f9ff;">BOOKED</div>
+        <div style="width: 54px; display: flex; align-items: center;">
+          <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+          <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+        </div>
+        <div style="flex: 1; border: 2px solid oklch(0.55 0.11 250); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #f6f9ff;">CHECKED_IN</div>
+        <div style="width: 54px; display: flex; align-items: center;">
+          <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+          <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+        </div>
+        <div style="flex: 1; border: 2px solid oklch(0.55 0.11 250); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #f6f9ff;">WAITING</div>
+        <div style="width: 54px; display: flex; align-items: center;">
+          <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+          <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+        </div>
+        <div style="flex: 1; border: 2px solid oklch(0.62 0.11 70); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #fdf8ef;">CALLED</div>
+        <div style="width: 54px; display: flex; align-items: center;">
+          <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+          <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+        </div>
+        <div style="flex: 1; border: 2px solid oklch(0.62 0.11 70); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #fdf8ef;">SERVING</div>
+        <div style="width: 54px; display: flex; align-items: center;">
+          <div style="flex: 1; height: 1px; background: #b6b1a6;"></div>
+          <div style="width: 0; height: 0; border-left: 6px solid #b6b1a6; border-top: 4px solid transparent; border-bottom: 4px solid transparent;"></div>
+        </div>
+        <div style="flex: 1; border: 2px solid oklch(0.55 0.09 155); border-radius: 5px; padding: 14px 12px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; background: #f4faf6;">DONE</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">BOOKED → EXPIRED</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Hari layanan berakhir tanpa check-in. QR mati, kuota tidak dikembalikan (tercatat sebagai no-show).</div>
+        </div>
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">BOOKED → CANCELLED</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Pemohon batal via WA/web. Kuota dilepas kembali ke kalender.</div>
+        </div>
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">WALK_IN → WAITING</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Nomor lahir langsung di kiosk, melewati BOOKED dan CHECKED_IN.</div>
+        </div>
+        <div style="border: 1px solid #ecdfc4; border-radius: 5px; padding: 14px 16px; background: #fdf8ef; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">CALLED → CALLED (recall)</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Petugas memanggil ulang. Hitungan naik: panggilan ke-1, ke-2, ke-3. Setiap recall memicu suara &amp; kedip di TV.</div>
+        </div>
+        <div style="border: 1px solid #f0d5d2; border-radius: 5px; padding: 14px 16px; background: #fdf6f5; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: oklch(0.5 0.14 25);">CALLED → SKIPPED</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Setelah panggilan ke-3 tanpa kehadiran. Loket lanjut ke nomor berikutnya; nomor masuk daftar terlewat.</div>
+        </div>
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">SKIPPED → CALLED</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Recall manual oleh petugas bila orangnya muncul kembali. Reset hitungan panggilan.</div>
+        </div>
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">SERVING → TRANSFERRED</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Salah layanan / perlu loket lain. Nomor baru diterbitkan di layanan tujuan, ditempatkan di depan antrean.</div>
+        </div>
+        <div style="border: 1px solid #cde5d5; border-radius: 5px; padding: 14px 16px; background: #f4faf6; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">DONE → WAITING (layanan ke-2)</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Booking multi-layanan: nomor berikutnya berstatus <b>QUEUED_NEXT</b> dan otomatis jadi WAITING saat layanan pertama DONE.</div>
+        </div>
+        <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600;">SERVING → HOLD</div>
+          <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Dokumen tidak lengkap. Ditahan sementara, petugas lanjut nomor lain, bisa dipanggil lagi hari itu.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; padding-top: 4px; border-top: 1px solid #e6e2d9; padding-top: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #57534b;"><span style="width: 12px; height: 12px; border: 2px solid oklch(0.55 0.11 250); background: #f6f9ff; border-radius: 2px;"></span>Sebelum dilayani</div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #57534b;"><span style="width: 12px; height: 12px; border: 2px solid oklch(0.62 0.11 70); background: #fdf8ef; border-radius: 2px;"></span>Di loket</div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #57534b;"><span style="width: 12px; height: 12px; border: 2px solid oklch(0.55 0.09 155); background: #f4faf6; border-radius: 2px;"></span>Selesai</div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #57534b;"><span style="width: 12px; height: 12px; border: 2px solid oklch(0.5 0.14 25); background: #fdf6f5; border-radius: 2px;"></span>Gagal / terlewat</div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="04 Loket" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">04</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Alur petugas loket &amp; rantai pemanggilan</h2>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: grid; grid-template-columns: 1fr 340px; gap: 32px;">
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c; margin-bottom: 4px;">Langkah di web loket</div>
+
+        <div style="display: flex; gap: 14px; align-items: stretch;">
+          <div style="width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #1a1917; color: #fffefb; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">1</div>
+            <div style="flex: 1; width: 1px; background: #ddd9d0;"></div>
+          </div>
+          <div style="flex: 1; border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Login &amp; buka sesi loket</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Petugas pilih loket (mis. Dukcapil — Loket 2). Loket berstatus <b>OPEN</b> dan mulai menerima alokasi nomor.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; align-items: stretch;">
+          <div style="width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #1a1917; color: #fffefb; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">2</div>
+            <div style="flex: 1; width: 1px; background: #ddd9d0;"></div>
+          </div>
+          <div style="flex: 1; border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Tekan <i>Panggil berikutnya</i></div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Sistem mengambil nomor terdepan dari antrean layanan itu (FIFO, dibagi ke loket yang idle), status jadi <b>CALLED</b>. Tombol terkunci sampai nomor diselesaikan.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; align-items: stretch;">
+          <div style="width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: oklch(0.62 0.11 70); color: #fffefb; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">3</div>
+            <div style="flex: 1; width: 1px; background: #ddd9d0;"></div>
+          </div>
+          <div style="flex: 1; border: 1px solid #ecdfc4; border-radius: 5px; padding: 14px 16px; background: #fdf8ef; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">Pemanggilan tersiar</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b; margin-bottom: 10px;">Satu event ke Realtime Hub → tiga efek sekaligus:</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div style="border: 1px solid #e2ded5; background: #fffefb; border-radius: 4px; padding: 10px; font-size: 12px; line-height: 1.4;">TV terkait menampilkan nomor + loket, baris berkedip</div>
+              <div style="border: 1px solid #e2ded5; background: #fffefb; border-radius: 4px; padding: 10px; font-size: 12px; line-height: 1.4;">Mini PC melafalkan “Nomor A-014, silakan ke Loket 2” — masuk antrean suara</div>
+              <div style="border: 1px solid #e2ded5; background: #fffefb; border-radius: 4px; padding: 10px; font-size: 12px; line-height: 1.4;">WA terkirim ke pemohon yang 3 nomor lagi</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; align-items: stretch;">
+          <div style="width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #1a1917; color: #fffefb; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">4</div>
+            <div style="flex: 1; width: 1px; background: #ddd9d0;"></div>
+          </div>
+          <div style="flex: 1; border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Pemohon datang?</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="border: 1px solid #cde5d5; background: #f4faf6; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; line-height: 1.45;"><b>Ya</b> → tekan <i>Mulai layani</i>, status <b>SERVING</b>, timer layanan jalan</div>
+              <div style="border: 1px solid #f0d5d2; background: #fdf6f5; border-radius: 4px; padding: 10px 12px; font-size: 12.5px; line-height: 1.45;"><b>Tidak</b> → <i>Recall</i> (maks 3x). Setelah panggilan ke-3 → <b>SKIPPED</b>, lanjut nomor berikutnya</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 14px; align-items: stretch;">
+          <div style="width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: oklch(0.55 0.09 155); color: #fffefb; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">5</div>
+          </div>
+          <div style="flex: 1; border: 1px solid #cde5d5; border-radius: 5px; padding: 14px 16px; background: #f4faf6;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Selesaikan</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #57534b;">Pilih hasil: <b>Selesai</b> · <b>Tahan</b> (dokumen kurang) · <b>Transfer</b> ke layanan lain. Waktu tunggu &amp; waktu layanan tercatat, survei terkirim, dan nomor layanan ke-2 (bila ada) diaktifkan.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="border: 1px solid #ddd9d0; border-radius: 5px; padding: 18px; background: #faf9f5; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Aksi di panel loket</div>
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Panggil berikutnya</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">WAITING → CALLED</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Recall</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">panggil ulang, maks 3</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Mulai layani</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">CALLED → SERVING</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Skip</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">→ SKIPPED</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Transfer</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">nomor baru di layanan lain</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding-bottom: 7px; border-bottom: 1px dashed #e2ded5;"><b>Tahan</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">→ HOLD</span></div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px;"><b>Tutup loket</b><span style="color: #8a857b; font-family: 'IBM Plex Mono', monospace; font-size: 11px;">stop alokasi, istirahat</span></div>
+          </div>
+        </div>
+
+        <div style="border: 1px solid #ddd9d0; border-radius: 5px; padding: 18px; background: #faf9f5; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Aturan pembagian nomor</div>
+          <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Satu layanan = satu antrean tunggal dengan prefix sendiri (mis. <code style="font-family: 'IBM Plex Mono', monospace;">A</code> Dukcapil, <code style="font-family: 'IBM Plex Mono', monospace;">B</code> Samsat). Loket-loket di bawah layanan itu menarik dari antrean yang sama — bukan antrean per loket. Loket yang paling lama idle mendapat prioritas tarik, sehingga beban terbagi rata tanpa nomor terlewat.</div>
+          <div style="font-size: 12.5px; line-height: 1.6; color: #57534b; border-top: 1px dashed #e2ded5; padding-top: 10px;"><b>Mode urutan</b> diatur admin per instansi: <b>FIFO</b> (urut waktu check-in, booking &amp; walk-in bercampur) atau <b>Booking prioritas</b> (walk-in hanya dipanggil saat tidak ada booking menunggu). Nomor reset harian pukul 00:00.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="05 Catatan" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+      <div style="display: flex; align-items: baseline; gap: 16px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">05</span>
+        <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Catatan teknis &amp; kebijakan sistem</h2>
+      </div>
+      <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 28px 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 32px;">
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Rasio kuota booking vs walk-in</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Diatur dinamis per instansi di admin, tapi <b>tidak memblokir</b> — sistem hanya memunculkan alert di dashboard saat porsi walk-in melewati ambang.</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Urutan booking vs walk-in</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Mode antrean dapat dipilih admin per instansi: <b>FIFO</b> (urut waktu check-in) atau <b>Booking prioritas</b> (booking selalu di depan walk-in).</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Anti-penyalahgunaan pendaftaran</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Verifikasi kepemilikan kontak: OTP nomor WhatsApp, atau tautan verifikasi email. Booking baru terbit setelah kontak terverifikasi.</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Suara pemanggilan</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">TTS bahasa Indonesia <b>offline</b> di mini PC (tidak bergantung internet) + nada pendek sebelum panggilan, jeda minimal 2 detik antar panggilan.</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Reset penomoran</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Reset harian per instansi pukul 00:00. Nomor yang masih WAITING saat MPP tutup ditandai EXPIRED, tidak dibawa ke hari berikutnya.</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 14px; font-weight: 600;">Kuota &amp; penomoran pada katalog dua tingkat</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Kuota dan prefix nomor tetap di tingkat <b>instansi</b> (mis. A-014 Dukcapil). Jenis layanan tidak memiliki kuota sendiri — ia menentukan syarat dokumen, estimasi durasi, dan tampil di tiket serta panel loket agar petugas siap sebelum memanggil.</div></div>
+        <div style="display: flex; flex-direction: column; gap: 5px; opacity: 0.62;"><div style="font-size: 14px; font-weight: 600;">Fallback saat gangguan <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c; border: 1px solid #ddd9d0; border-radius: 3px; padding: 2px 6px; margin-left: 6px;">Fase berikutnya</span></div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Di luar lingkup pengerjaan saat ini.</div></div>
+      </div>
+    </section>
+  </sc-if>
+
+  <section data-screen-label="06 Feature list" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">06</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Daftar fitur &amp; modul pengerjaan</h2>
+    </div>
+
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;">
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 14px 22px; background: #faf9f5; border-bottom: 1px solid #ddd9d0; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">
+        <div>No</div><div>Modul</div><div>Item fitur</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">01</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Fondasi &amp; infrastruktur</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Setup repo &amp; environment (dev/staging/prod) · skema database · autentikasi &amp; RBAC 4 peran (admin, supervisor, front office, petugas loket) · seed data instansi, jenis layanan &amp; loket · deployment pipeline</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">02</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Admin — master data &amp; konfigurasi</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">CRUD instansi (prefix nomor, kelompok TV) · <b>CRUD jenis layanan per instansi + daftar syarat dokumen &amp; estimasi durasi</b> · CRUD loket per instansi · kuota per tanggal × instansi · jam operasional &amp; hari libur · mode urutan antrean (FIFO / booking prioritas) · ambang alert walk-in · konten halaman profil (tentang, jam, kontak, pengumuman, FAQ)</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">03</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Admin — manajemen pengguna</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">CRUD petugas · penugasan ke layanan/loket · reset password · hak akses per menu · log aktivitas login</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">04</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Website publik MPP (profil + pendaftaran)</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;"><b>Profil MPP:</b> beranda pengenalan, tentang MPP, daftar instansi &amp; jenis layanan, syarat dokumen per jenis layanan, jam operasional, alamat + peta, kontak, halaman pengumuman/berita ringkas, FAQ · <b>Pendaftaran antrian:</b> pemilihan dua tingkat instansi → jenis layanan, form biodata, kalender kuota realtime (tanggal penuh non-aktif), pilih 1–2 layanan sekaligus, cek status &amp; batal booking · responsif mobile, SEO dasar</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">05</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Booking engine, QR &amp; verifikasi kontak</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Validasi &amp; pemesanan kuota (anti balapan) · OTP WhatsApp / tautan verifikasi email · generate QR token sekali pakai terikat tanggal · ringkasan booking + syarat dokumen · kedaluwarsa &amp; pembatalan · rantai layanan ke-2 (QUEUED_NEXT)</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">06</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">WhatsApp bot + AI agent</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Integrasi WA Business API · percakapan pengumpulan biodata (nama, NIK, kontak) · pemilihan instansi → jenis layanan → tanggal dengan cek kuota · <b>menjawab pertanyaan syarat dokumen dari katalog</b> · fallback menu tombol bila jawaban ambigu · state percakapan &amp; timeout · perintah cek/batal booking · guardrail di luar topik</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">07</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Notifikasi (WA &amp; email)</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Pengelolaan template pesan · kirim QR + detail booking + checklist syarat dokumen · reminder H-1 berisi pengingat dokumen (penjadwal) · notifikasi giliran 3 nomor sebelum · konfirmasi selesai + tautan survei · retry &amp; log pengiriman</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">08</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Ticket engine &amp; realtime hub</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Penomoran per instansi + reset harian 00:00 · state machine lengkap (WAITING/CALLED/SERVING/DONE/SKIPPED/HOLD/TRANSFERRED/EXPIRED) · mode FIFO &amp; booking prioritas · pembagian antar loket (idle terlama) · WebSocket pub/sub ke TV, kiosk, loket · estimasi waktu tunggu</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">09</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Aplikasi kiosk</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Mode scan QR → check-in · mode walk-in (pilih instansi &amp; jenis layanan, ambil nomor) · cetak tiket thermal memuat jenis layanan · layar sentuh besar &amp; ramah lansia · penanganan error (QR salah tanggal, sudah dipakai, kuota habis, printer offline)</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">10</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Display 3 TV (mini PC)</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Layout TV per kelompok instansi · panel nomor sedang dipanggil + riwayat · TV info: running text, pengumuman, video/gambar · animasi kedip saat panggilan · auto-reconnect &amp; auto-refresh · mode kios browser di mini PC</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">11</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Suara pemanggilan (TTS offline)</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Mesin TTS bahasa Indonesia offline di mini PC · antrean suara satu jalur (tidak tumpang tindih) · nada pembuka + jeda antar panggilan · template kalimat &amp; pengaturan volume/kecepatan · uji pelafalan kode nomor</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">12</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Web apps loket petugas</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Login &amp; buka/tutup sesi loket · panggil berikutnya · recall (maks 3x) · mulai layani + timer · selesai / tahan / transfer / skip · daftar nomor menunggu &amp; terlewat · <b>jenis layanan pemohon tampil saat dipanggil</b> · tampilan ringkas untuk layar kecil</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">13</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Front office — verifikasi dokumen</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Cari pemohon per nomor/NIK · checklist dokumen otomatis mengikuti jenis layanan yang dipilih · tandai lengkap / kurang + catatan · arahkan ke antrean layanan</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">14</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Dashboard realtime &amp; alert</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Beban antrian per instansi &amp; loket · status loket (buka/tutup/idle) · alert porsi walk-in melewati ambang · alert antrean menumpuk · broadcast pengumuman ke TV</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">15</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Laporan &amp; SLA</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Rata-rata waktu tunggu &amp; waktu layanan per instansi/jenis layanan/loket/petugas · volume harian, bulanan, jam sibuk · jenis layanan terbanyak diminta · rekap no-show &amp; skip · filter periode · export Excel/PDF</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">16</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Survei kepuasan</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Form survei via tautan WA (skor + komentar) · pengaturan pertanyaan · rekap hasil per instansi/jenis layanan/petugas</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">17</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">Audit log</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Jejak skip, transfer, tahan, ubah kuota, override admin · penelusuran per nomor antrian</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 42px 250px 1fr; gap: 16px; padding: 16px 22px; border-bottom: 1px solid #eeebe4; align-items: start;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #8a857b;">18</div>
+        <div style="font-size: 14px; font-weight: 600; line-height: 1.4;">QA, instalasi on-site &amp; serah terima</div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: #57534b;">Pengujian menyeluruh &amp; perbaikan bug · uji beban antrean · setup mini PC, 3 TV, kiosk, printer, audio di lokasi · UAT bersama pengelola MPP · pelatihan petugas · dokumentasi &amp; SOP singkat</div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section data-screen-label="07 UI Website" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">07</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Gambaran UI — website MPP &amp; pendaftaran antrian</h2>
+    </div>
+    <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.6; color: #57534b;">Sketsa tata letak, bukan desain akhir. Alur pemohon dari beranda sampai QR terbit: empat layar, semuanya mobile-first karena mayoritas pemohon mendaftar dari ponsel.</p>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 12px; background: #fff; padding: 12px; display: flex; flex-direction: column; gap: 10px; height: 470px; box-sizing: border-box;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eeebe4;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.02em;">MPP KABUPATEN</div>
+            <div style="display: flex; flex-direction: column; gap: 3px;"><div style="width: 16px; height: 2px; background: #b6b1a6;"></div><div style="width: 16px; height: 2px; background: #b6b1a6;"></div><div style="width: 16px; height: 2px; background: #b6b1a6;"></div></div>
+          </div>
+          <div style="background: #f2f0eb; border: 1px dashed #ccc7bd; border-radius: 5px; height: 92px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8a857b; text-align: center;">foto gedung MPP</div>
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <div style="height: 10px; background: #ddd9d0; border-radius: 2px; width: 92%;"></div>
+            <div style="height: 7px; background: #eeebe4; border-radius: 2px; width: 100%;"></div>
+            <div style="height: 7px; background: #eeebe4; border-radius: 2px; width: 76%;"></div>
+          </div>
+          <div style="background: oklch(0.55 0.11 250); color: #fff; border-radius: 5px; padding: 11px; text-align: center; font-size: 12px; font-weight: 600;">Daftar Antrian</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b; padding-top: 2px;">Layanan tersedia</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 8px; font-size: 10.5px; text-align: center;">Dukcapil</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 8px; font-size: 10.5px; text-align: center;">Samsat</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 8px; font-size: 10.5px; text-align: center;">KUA</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 10px 8px; font-size: 10.5px; text-align: center;">Perizinan</div>
+          </div>
+          <div style="margin-top: auto; display: flex; gap: 6px;">
+            <div style="flex: 1; border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; line-height: 1.4;">08.00–15.00<br>Sen–Jum</div>
+            <div style="flex: 1; border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; line-height: 1.4;">Lokasi<br>&amp; peta</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Layar 1 · Beranda</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Satu tombol utama ke pendaftaran. Informasi profil MPP ada, tapi tidak menutupi jalur antrian.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 12px; background: #fff; padding: 12px; display: flex; flex-direction: column; gap: 10px; height: 470px; box-sizing: border-box;">
+          <div style="display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #eeebe4;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8a857b;">←</div>
+            <div style="font-size: 11px; font-weight: 600;">Dukcapil</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Pilih jenis layanan</div>
+          <div style="border: 2px solid oklch(0.55 0.11 250); background: #f6f9ff; border-radius: 5px; padding: 10px; font-size: 11px; font-weight: 600;">Perbaikan nama pada akta</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 10px; font-size: 11px;">Pembuatan Kartu Keluarga</div>
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 10px; font-size: 11px;">Cetak ulang KTP</div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 11px; display: flex; flex-direction: column; gap: 7px;">
+            <div style="font-size: 10.5px; font-weight: 700;">Dokumen yang harus dibawa</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; gap: 6px; align-items: flex-start;"><div style="width: 11px; height: 11px; border: 1px solid #c9c4b9; border-radius: 2px; flex-shrink: 0; margin-top: 1px;"></div><div style="font-size: 10px; line-height: 1.4;">Akta yang akan diperbaiki (asli + fotokopi)</div></div>
+              <div style="display: flex; gap: 6px; align-items: flex-start;"><div style="width: 11px; height: 11px; border: 1px solid #c9c4b9; border-radius: 2px; flex-shrink: 0; margin-top: 1px;"></div><div style="font-size: 10px; line-height: 1.4;">Kartu Keluarga</div></div>
+              <div style="display: flex; gap: 6px; align-items: flex-start;"><div style="width: 11px; height: 11px; border: 1px solid #c9c4b9; border-radius: 2px; flex-shrink: 0; margin-top: 1px;"></div><div style="font-size: 10px; line-height: 1.4;">KTP pemohon</div></div>
+              <div style="display: flex; gap: 6px; align-items: flex-start;"><div style="width: 11px; height: 11px; border: 1px solid #c9c4b9; border-radius: 2px; flex-shrink: 0; margin-top: 1px;"></div><div style="font-size: 10px; line-height: 1.4;">Dokumen pendukung ejaan nama</div></div>
+              <div style="display: flex; gap: 6px; align-items: flex-start;"><div style="width: 11px; height: 11px; border: 1px solid #c9c4b9; border-radius: 2px; flex-shrink: 0; margin-top: 1px;"></div><div style="font-size: 10px; line-height: 1.4;">Surat pernyataan</div></div>
+            </div>
+          </div>
+          <div style="margin-top: auto; background: oklch(0.55 0.11 250); color: #fff; border-radius: 5px; padding: 11px; text-align: center; font-size: 12px; font-weight: 600;">Lanjut pilih tanggal</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Layar 2 · Jenis layanan &amp; syarat</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Syarat dokumen muncul <b>sebelum</b> pemohon lanjut, bukan setelah booking jadi. Inilah yang membuat orang datang dengan dokumen lengkap.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 12px; background: #fff; padding: 12px; display: flex; flex-direction: column; gap: 9px; height: 470px; box-sizing: border-box;">
+          <div style="display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #eeebe4;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8a857b;">←</div>
+            <div style="font-size: 11px; font-weight: 600;">Pilih tanggal kunjungan</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #57534b;"><span>Agustus 2026</span><span style="font-family: 'IBM Plex Mono', monospace; color: #8a857b;">&lt; &gt;</span></div>
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">S</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">S</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">R</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">K</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">J</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">S</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; text-align: center; color: #a8a49a;">M</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4; text-decoration: line-through;">3</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4; text-decoration: line-through;">4</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">5</div>
+            <div style="border: 2px solid oklch(0.55 0.11 250); background: #f6f9ff; border-radius: 3px; padding: 4px 0; text-align: center; font-size: 9.5px; font-weight: 700;">6</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">7</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4;">8</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4;">9</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">10</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4; text-decoration: line-through;">11</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">12</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">13</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px;">14</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4;">15</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 3px; padding: 5px 0; text-align: center; font-size: 9.5px; color: #c4bfb4;">16</div>
+          </div>
+          <div style="display: flex; gap: 10px; font-size: 8.5px; color: #8a857b; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; border: 1px solid #e2ded5; border-radius: 2px;"></span>tersedia</span>
+            <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; border: 1px solid #eeebe4; background: #f7f6f3; border-radius: 2px;"></span>penuh / libur</span>
+          </div>
+          <div style="border-top: 1px solid #eeebe4; padding-top: 8px; display: flex; flex-direction: column; gap: 7px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Data pemohon</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; color: #a8a49a;">Nama lengkap</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; color: #a8a49a;">NIK</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; color: #a8a49a;">Nomor WhatsApp</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px; font-size: 9.5px; color: #a8a49a;">Email</div>
+          </div>
+          <div style="margin-top: auto; background: oklch(0.55 0.11 250); color: #fff; border-radius: 5px; padding: 11px; text-align: center; font-size: 12px; font-weight: 600;">Kirim &amp; verifikasi WhatsApp</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Layar 3 · Tanggal &amp; data pemohon</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Tanggal penuh tercoret dan tidak bisa ditekan, jadi kuota terasa jelas tanpa perlu penjelasan.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 12px; background: #fff; padding: 12px; display: flex; flex-direction: column; gap: 10px; height: 470px; box-sizing: border-box;">
+          <div style="text-align: center; font-size: 11px; font-weight: 700; color: oklch(0.45 0.09 155); padding-bottom: 6px; border-bottom: 1px solid #eeebe4;">Pendaftaran berhasil</div>
+          <div style="align-self: center; width: 108px; height: 108px; border: 1px solid #c9c4b9; border-radius: 4px; background: repeating-linear-gradient(45deg, #f2f0eb 0 4px, #fff 4px 8px); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #7a756c;">QR</div>
+          <div style="display: flex; flex-direction: column; gap: 5px; border: 1px solid #e2ded5; border-radius: 4px; padding: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 10px;"><span style="color: #8a857b;">Instansi</span><span style="font-weight: 600;">Dukcapil</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; gap: 8px;"><span style="color: #8a857b;">Layanan</span><span style="font-weight: 600; text-align: right;">Perbaikan nama akta</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px;"><span style="color: #8a857b;">Tanggal</span><span style="font-weight: 600;">6 Agu 2026</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px;"><span style="color: #8a857b;">Kode booking</span><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600;">MPP-8F42</span></div>
+          </div>
+          <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 4px; padding: 10px; font-size: 10px; line-height: 1.5;"><b>Jangan lupa bawa:</b> akta asli + fotokopi, KK, KTP, dokumen pendukung, surat pernyataan.</div>
+          <div style="font-size: 10px; line-height: 1.5; color: #57534b;">QR juga dikirim ke WhatsApp dan email. Tunjukkan QR ini di kiosk MPP untuk mencetak nomor antrian.</div>
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 6px;">
+            <div style="border: 1px solid #c9c4b9; border-radius: 5px; padding: 9px; text-align: center; font-size: 11px; font-weight: 600;">Simpan QR</div>
+            <div style="border: 1px solid #eeebe4; border-radius: 5px; padding: 9px; text-align: center; font-size: 11px; color: #8a857b;">Batalkan booking</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Layar 4 · QR &amp; ringkasan</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Halaman ini sekaligus jadi halaman "cek status" bila tautan dibuka lagi nanti.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 28px 32px; display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Jalur WhatsApp</div>
+        <div style="border: 1px solid #c9c4b9; border-radius: 10px; background: #f7f6f3; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="align-self: flex-start; max-width: 82%; background: #fff; border: 1px solid #e2ded5; border-radius: 8px 8px 8px 2px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45;">Selamat datang di MPP. Mau daftar antrian? Sebutkan layanan yang dibutuhkan.</div>
+          <div style="align-self: flex-end; max-width: 82%; background: #eaf4ec; border: 1px solid #cde5d5; border-radius: 8px 8px 2px 8px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45;">mau benerin nama di akta</div>
+          <div style="align-self: flex-start; max-width: 88%; background: #fff; border: 1px solid #e2ded5; border-radius: 8px 8px 8px 2px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45;">Berarti <b>Dukcapil — Perbaikan nama pada akta</b>. Dokumen yang perlu dibawa: akta asli + fotokopi, KK, KTP, dokumen pendukung, surat pernyataan. Boleh saya catat nama lengkap dan NIK?</div>
+          <div style="align-self: flex-end; max-width: 82%; background: #eaf4ec; border: 1px solid #cde5d5; border-radius: 8px 8px 2px 8px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45;">Budi Santoso, 3374…</div>
+          <div style="align-self: flex-start; max-width: 88%; background: #fff; border: 1px solid #e2ded5; border-radius: 8px 8px 8px 2px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45;">Tanggal tersedia terdekat: 5, 6, 7 Agustus. Pilih yang mana?</div>
+          <div style="align-self: flex-start; max-width: 88%; background: #fff; border: 1px solid #e2ded5; border-radius: 8px 8px 8px 2px; padding: 10px; font-size: 10.5px; line-height: 1.45; display: flex; flex-direction: column; gap: 8px;">
+            <div>Booking terkonfirmasi. Ini QR Anda:</div>
+            <div style="width: 74px; height: 74px; border: 1px solid #c9c4b9; border-radius: 3px; background: repeating-linear-gradient(45deg, #f2f0eb 0 4px, #fff 4px 8px); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #7a756c;">QR</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #7a756c;">MPP-8F42 · 6 Agu 2026</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Prinsip UX yang dipegang</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7;"><div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Satu tujuan per layar</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Tiap layar meminta satu keputusan: instansi, jenis layanan, tanggal, data diri. Mengurangi kebingungan pemohon lanjut usia.</div></div>
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7;"><div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Syarat dokumen tampil dini</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Muncul di layar pilihan layanan, diulang di QR, diulang di reminder H-1. Tiga sentuhan menurunkan kunjungan gagal.</div></div>
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7;"><div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Kuota terlihat, bukan dijelaskan</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Tanggal penuh langsung non-aktif di kalender; tidak ada pesan error setelah tombol kirim.</div></div>
+          <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 16px; background: #fbfaf7;"><div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">WhatsApp = jalur setara</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">AI agent mengumpulkan data yang sama dan mengirim QR yang sama. Bila jawaban ambigu, bot beralih ke menu tombol.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="08 UI Kiosk" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">08</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Gambaran UI — kiosk di lobi MPP</h2>
+    </div>
+    <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.6; color: #57534b;">Layar sentuh berdiri. Semua tombol besar, teks minimal, satu keputusan per layar — pemohon berdiri, tidak membaca panjang.</p>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: grid; grid-template-columns: repeat(3, 1fr) 220px; gap: 24px; align-items: start;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 2px solid #c9c4b9; border-radius: 8px; background: #fff; padding: 20px; height: 366px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;">
+          <div style="text-align: center; display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-size: 15px; font-weight: 700;">SELAMAT DATANG</div>
+            <div style="font-size: 11px; color: #7a756c;">Mall Pelayanan Publik</div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center;">
+            <div style="border: 2px solid oklch(0.55 0.11 250); background: #f6f9ff; border-radius: 6px; padding: 22px 16px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+              <div style="font-size: 14px; font-weight: 700;">SAYA SUDAH DAFTAR</div>
+              <div style="font-size: 10.5px; color: #57534b;">Scan QR dari WhatsApp / email</div>
+            </div>
+            <div style="border: 2px solid #ecdfc4; background: #fdf8ef; border-radius: 6px; padding: 22px 16px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+              <div style="font-size: 14px; font-weight: 700;">BELUM DAFTAR</div>
+              <div style="font-size: 10.5px; color: #57534b;">Ambil nomor di sini</div>
+            </div>
+          </div>
+          <div style="text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #a8a49a;">Butuh bantuan? Hubungi petugas front office</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Kiosk 1 · Beranda</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Hanya dua pilihan. Pemisahan booking dan walk-in di layar pertama menghindari salah jalur.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 2px solid #c9c4b9; border-radius: 8px; background: #fff; padding: 20px; height: 366px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-size: 13px; font-weight: 700; text-align: center;">ARAHKAN QR KE PEMBACA</div>
+          <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 130px; height: 130px; border: 3px dashed #b6b1a6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8a857b; text-align: center; line-height: 1.5;">area<br>scanner</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Kondisi yang ditangani</div>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div style="border: 1px solid #cde5d5; background: #f4faf6; border-radius: 4px; padding: 7px 9px; font-size: 10px;">Valid → nomor tercetak</div>
+              <div style="border: 1px solid #f0d5d2; background: #fdf6f5; border-radius: 4px; padding: 7px 9px; font-size: 10px;">Salah tanggal → tawarkan walk-in</div>
+              <div style="border: 1px solid #f0d5d2; background: #fdf6f5; border-radius: 4px; padding: 7px 9px; font-size: 10px;">Sudah dipakai / printer mati → ke front office</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Kiosk 2 · Scan &amp; check-in</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Setiap kegagalan selalu berujung ke jalan keluar, bukan pesan error buntu.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 2px solid #c9c4b9; border-radius: 8px; background: #fff; padding: 20px; height: 366px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 13px; font-weight: 700;">PILIH LAYANAN</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Langkah 1 — instansi</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="border: 2px solid oklch(0.55 0.11 250); background: #f6f9ff; border-radius: 5px; padding: 14px 8px; text-align: center; font-size: 11.5px; font-weight: 600;">Dukcapil</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 8px; text-align: center; font-size: 11.5px;">Samsat</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 8px; text-align: center; font-size: 11.5px;">KUA</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 14px 8px; text-align: center; font-size: 11.5px;">Perizinan</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a857b;">Langkah 2 — jenis layanan</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 10px; font-size: 11px;">Perbaikan nama pada akta</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 10px; font-size: 11px;">Pembuatan Kartu Keluarga</div>
+          </div>
+          <div style="margin-top: auto; background: #1a1917; color: #fff; border-radius: 5px; padding: 12px; text-align: center; font-size: 12px; font-weight: 700;">CETAK NOMOR</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Kiosk 3 · Walk-in</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Jenis layanan tetap ditanya agar checklist front office dan laporan tetap akurat.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 4px; background: #fff; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; font-family: 'IBM Plex Mono', monospace; text-align: center;">
+          <div style="font-size: 9.5px; letter-spacing: 0.1em; color: #57534b;">MPP KABUPATEN</div>
+          <div style="border-top: 1px dashed #c9c4b9; border-bottom: 1px dashed #c9c4b9; padding: 12px 0; display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-size: 9px; color: #7a756c;">NOMOR ANTRIAN</div>
+            <div style="font-size: 40px; font-weight: 600; letter-spacing: -0.02em;">A-014</div>
+          </div>
+          <div style="font-size: 9.5px; line-height: 1.7; color: #3f3b34;">DUKCAPIL<br>Perbaikan nama akta<br>6 Agu 2026 · 09.12<br>Antrean di depan: 6<br>Estimasi: ± 35 menit</div>
+          <div style="font-size: 8.5px; color: #8a857b; line-height: 1.5;">Perhatikan layar &amp; suara<br>pemanggilan</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Tiket cetak (80 mm)</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Nomor besar, jenis layanan, jumlah antrean di depan, dan estimasi waktu.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="09 UI Loket" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">09</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Gambaran UI — web apps petugas loket &amp; front office</h2>
+    </div>
+    <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.6; color: #57534b;">Dipakai berulang ratusan kali sehari, jadi tombol utama besar dan selalu di tempat yang sama; aksi berisiko (skip, transfer) dipisah agar tidak tertekan tanpa sengaja.</p>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 6px; background: #fff; overflow: hidden;">
+          <div style="background: #1a1917; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 12px; font-weight: 600;">Dukcapil — Loket 2</div>
+            <div style="display: flex; gap: 12px; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #b9b5ad;">
+              <span>Sdri. Ayu</span><span style="border: 1px solid #4a4740; border-radius: 3px; padding: 2px 7px;">LOKET BUKA</span>
+            </div>
+          </div>
+          <div style="padding: 20px; display: grid; grid-template-columns: 1fr 260px; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 6px; padding: 18px; display: flex; gap: 20px; align-items: center;">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Sedang dipanggil</div>
+                  <div style="font-size: 44px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05;">A-014</div>
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8a6f3a;">panggilan ke-2 dari 3</div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 5px; border-left: 1px solid #ecdfc4; padding-left: 20px;">
+                  <div style="font-size: 14px; font-weight: 600;">Budi Santoso</div>
+                  <div style="font-size: 12px; color: #57534b;">Perbaikan nama pada akta</div>
+                  <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; border: 1px solid #cde5d5; background: #f4faf6; color: oklch(0.42 0.09 155); border-radius: 3px; padding: 3px 7px;">DOKUMEN LENGKAP</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #8a857b;">check-in 09.12 · tunggu 21 mnt</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 10px;">
+                <div style="background: oklch(0.55 0.11 250); color: #fff; border-radius: 5px; padding: 16px; text-align: center; font-size: 14px; font-weight: 700;">PANGGIL BERIKUTNYA</div>
+                <div style="border: 1px solid #c9c4b9; border-radius: 5px; padding: 16px; text-align: center; font-size: 13px; font-weight: 600;">Recall</div>
+                <div style="border: 1px solid #cde5d5; background: #f4faf6; border-radius: 5px; padding: 16px; text-align: center; font-size: 13px; font-weight: 600;">Mulai layani</div>
+              </div>
+              <div style="display: flex; gap: 10px; padding-top: 4px; border-top: 1px dashed #e6e2d9;">
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 14px; font-size: 11.5px; color: #57534b;">Selesai</div>
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 14px; font-size: 11.5px; color: #57534b;">Tahan (dokumen kurang)</div>
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 14px; font-size: 11.5px; color: #57534b;">Transfer</div>
+                <div style="border: 1px solid #f0d5d2; border-radius: 4px; padding: 9px 14px; font-size: 11.5px; color: oklch(0.5 0.14 25);">Skip</div>
+                <div style="margin-left: auto; border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 14px; font-size: 11.5px; color: #8a857b;">Tutup loket</div>
+              </div>
+            </div>
+            <div style="border-left: 1px solid #eeebe4; padding-left: 20px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Menunggu · 6</div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 11px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600;">A-015</span><span style="color: #8a857b;">KK baru</span></div>
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 11px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600;">A-016</span><span style="color: #8a857b;">Cetak KTP</span></div>
+                <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 11px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600;">A-017</span><span style="color: #8a857b;">Akta lahir</span></div>
+                <div style="border: 1px dashed #e2ded5; border-radius: 4px; padding: 8px 10px; font-size: 10.5px; color: #a8a49a; font-family: 'IBM Plex Mono', monospace;">+3 lagi</div>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c; padding-top: 6px;">Terlewat</div>
+              <div style="border: 1px solid #f0d5d2; background: #fdf6f5; border-radius: 4px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600;">A-011</span><span style="border: 1px solid #e2c9c5; border-radius: 3px; padding: 2px 6px; font-size: 9.5px;">panggil ulang</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Panel loket</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Nomor yang sedang dipanggil mendominasi layar; jenis layanan dan status dokumen tampil sebelum orangnya sampai di meja, sehingga petugas sudah siap.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 1px solid #c9c4b9; border-radius: 6px; background: #fff; overflow: hidden;">
+          <div style="background: #faf9f5; border-bottom: 1px solid #e6e2d9; padding: 10px 14px; font-size: 12px; font-weight: 600;">Front office — verifikasi dokumen</div>
+          <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 11px; font-size: 11px; color: #a8a49a;">Cari nomor antrian / NIK</div>
+            <div style="border: 1px solid #e2ded5; border-radius: 5px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600;">A-014</div>
+                <div style="font-size: 10.5px; color: #8a857b;">Budi Santoso</div>
+              </div>
+              <div style="font-size: 11px; color: #57534b; margin-top: 6px;">Dukcapil · Perbaikan nama pada akta</div>
+            </div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a756c;">Checklist jenis layanan</div>
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <div style="display: flex; gap: 8px; align-items: center;"><div style="width: 14px; height: 14px; border: 1px solid #8fbf9f; background: #f4faf6; border-radius: 3px; flex-shrink: 0;"></div><div style="font-size: 11px;">Akta asli + fotokopi</div></div>
+              <div style="display: flex; gap: 8px; align-items: center;"><div style="width: 14px; height: 14px; border: 1px solid #8fbf9f; background: #f4faf6; border-radius: 3px; flex-shrink: 0;"></div><div style="font-size: 11px;">Kartu Keluarga</div></div>
+              <div style="display: flex; gap: 8px; align-items: center;"><div style="width: 14px; height: 14px; border: 1px solid #8fbf9f; background: #f4faf6; border-radius: 3px; flex-shrink: 0;"></div><div style="font-size: 11px;">KTP pemohon</div></div>
+              <div style="display: flex; gap: 8px; align-items: center;"><div style="width: 14px; height: 14px; border: 1px solid #c9c4b9; border-radius: 3px; flex-shrink: 0;"></div><div style="font-size: 11px;">Dokumen pendukung ejaan</div></div>
+              <div style="display: flex; gap: 8px; align-items: center;"><div style="width: 14px; height: 14px; border: 1px solid #8fbf9f; background: #f4faf6; border-radius: 3px; flex-shrink: 0;"></div><div style="font-size: 11px;">Surat pernyataan</div></div>
+            </div>
+            <div style="border: 1px solid #e2ded5; border-radius: 4px; padding: 9px 11px; font-size: 10.5px; color: #a8a49a;">Catatan petugas…</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; background: oklch(0.55 0.09 155); color: #fff; border-radius: 5px; padding: 11px; text-align: center; font-size: 12px; font-weight: 600;">Lengkap</div>
+              <div style="flex: 1; border: 1px solid #ecdfc4; background: #fdf8ef; border-radius: 5px; padding: 11px; text-align: center; font-size: 12px; font-weight: 600;">Kurang</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">Panel front office</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Checklist muncul otomatis sesuai jenis layanan — petugas tidak perlu hafal syarat tiap instansi.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="10 UI TV" style="width: 1400px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: oklch(0.55 0.11 250); font-weight: 500;">10</span>
+      <h2 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em;">Gambaran UI — tiga layar TV di ruang tunggu</h2>
+    </div>
+    <p style="margin: 0; max-width: 900px; font-size: 14px; line-height: 1.6; color: #57534b;">Dibaca dari jarak 6–10 meter, jadi nomor dibuat sangat besar dan jumlah baris dibatasi. Satu mini PC menampilkan tiga halaman berbeda; suara pemanggilan keluar dari satu jalur audio.</p>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 6px solid #1a1917; border-radius: 6px; background: #14130f; padding: 16px; display: flex; flex-direction: column; gap: 12px; height: 260px; box-sizing: border-box;">
+          <div style="display: flex; justify-content: space-between; align-items: center; color: #b9b5ad; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em;">
+            <span>DUKCAPIL &amp; KEPENDUDUKAN</span><span>09:34</span>
+          </div>
+          <div style="background: #fdf8ef; border-radius: 5px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: #8a6f3a;">DIPANGGIL</div>
+              <div style="font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;">A-014</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: #8a6f3a;">MENUJU</div>
+              <div style="font-size: 22px; font-weight: 700;">LOKET 2</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <div style="display: flex; justify-content: space-between; background: #211f1a; border-radius: 3px; padding: 7px 10px;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e8e4db; font-weight: 600;">A-013</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8f8b82;">LOKET 1</span></div>
+            <div style="display: flex; justify-content: space-between; background: #211f1a; border-radius: 3px; padding: 7px 10px;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e8e4db; font-weight: 600;">A-012</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8f8b82;">LOKET 3</span></div>
+            <div style="display: flex; justify-content: space-between; background: #211f1a; border-radius: 3px; padding: 7px 10px;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #e8e4db; font-weight: 600;">A-010</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8f8b82;">LOKET 2</span></div>
+          </div>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; color: #6f6b63;"><span>MENUNGGU: 6</span><span>ESTIMASI ± 35 MENIT</span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">TV 1 · Dukcapil</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Satu nomor besar yang sedang dipanggil + tiga riwayat terakhir. Baris panggilan berkedip 5 detik seiring suara.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 6px solid #1a1917; border-radius: 6px; background: #14130f; padding: 16px; display: flex; flex-direction: column; gap: 10px; height: 260px; box-sizing: border-box;">
+          <div style="display: flex; justify-content: space-between; align-items: center; color: #b9b5ad; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em;">
+            <span>SAMSAT · KUA · PERIZINAN</span><span>09:34</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; flex: 1;">
+            <div style="background: #211f1a; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.08em; color: #8f8b82;">SAMSAT</div>
+              <div style="font-size: 21px; font-weight: 700; color: #fdf8ef; line-height: 1.15; white-space: nowrap;">B-042</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #b9b5ad;">LOKET 1</div>
+              <div style="margin-top: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6f6b63;">tunggu 4</div>
+            </div>
+            <div style="background: #211f1a; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.08em; color: #8f8b82;">KUA</div>
+              <div style="font-size: 21px; font-weight: 700; color: #fdf8ef; line-height: 1.15; white-space: nowrap;">C-008</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #b9b5ad;">LOKET 1</div>
+              <div style="margin-top: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6f6b63;">tunggu 2</div>
+            </div>
+            <div style="background: #211f1a; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.08em; color: #8f8b82;">PERIZINAN</div>
+              <div style="font-size: 21px; font-weight: 700; color: #fdf8ef; line-height: 1.15; white-space: nowrap;">D-021</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #b9b5ad;">LOKET 2</div>
+              <div style="margin-top: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6f6b63;">tunggu 9</div>
+            </div>
+          </div>
+          <div style="background: #211f1a; border-radius: 3px; padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #8f8b82;">Terakhir: B-041 · C-007 · D-020</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">TV 2 · Instansi lain</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Tiga instansi berdampingan; kolom yang baru dipanggil menyala lebih terang beberapa detik.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="border: 6px solid #1a1917; border-radius: 6px; background: #14130f; padding: 0; display: flex; flex-direction: column; height: 260px; box-sizing: border-box; overflow: hidden;">
+          <div style="flex: 1; background: repeating-linear-gradient(135deg, #1c1a16 0 8px, #211f1a 8px 16px); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6b63;">video / gambar informasi layanan</div>
+          <div style="background: #fdf8ef; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: #8a6f3a;">PENGUMUMAN</div>
+            <div style="font-size: 11px; line-height: 1.4;">Layanan Dukcapil tutup pukul 12.00–13.00 untuk istirahat.</div>
+          </div>
+          <div style="background: #1a1917; padding: 7px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #b9b5ad; white-space: nowrap; overflow: hidden;">Daftar antrian dari rumah lewat WhatsApp 0812-xxxx-xxxx atau mpp.kabupaten.go.id · siapkan dokumen sesuai syarat ·</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a756c;">TV 3 · Informasi</div>
+          <div style="font-size: 12px; line-height: 1.55; color: #57534b;">Media informasi, pengumuman dari admin, dan running text. Tidak menampilkan nomor supaya perhatian tidak terpecah.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #fffefb; border: 1px solid #ddd9d0; border-radius: 6px; padding: 24px 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 13.5px; font-weight: 600;">Kontras &amp; ukuran</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Latar gelap, nomor terang, tanpa gradasi. Nomor yang dipanggil minimal 3x lebih besar dari teks lain.</div></div>
+      <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 13.5px; font-weight: 600;">Suara &amp; visual sinkron</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Kedip di TV dimulai bersamaan dengan pelafalan, dan antrean suara memastikan dua panggilan tidak bertabrakan.</div></div>
+      <div style="display: flex; flex-direction: column; gap: 5px;"><div style="font-size: 13.5px; font-weight: 600;">Tahan gangguan</div><div style="font-size: 12.5px; line-height: 1.55; color: #57534b;">Bila koneksi terputus, layar menahan data terakhir dan menyambung sendiri tanpa perlu disentuh petugas.</div></div>
+    </div>
+  </section>
+
+</div>
+
+
+
+
+<div id="__claude_design_branding"><style>#__claude_design_branding{position:fixed;right:16px;bottom:16px;z-index:2147483646;display:flex;align-items:center;gap:7px;height:30px;padding:0 5px 0 10px;border-radius:999px;font-family:"Anthropic Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:12.5px;font-weight:400;line-height:1;letter-spacing:normal;text-transform:none;color:#141413;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 0 0 .5px rgba(31,30,29,.14),0 2px 10px rgba(0,0,0,.09)}
+#__claude_design_branding *{box-sizing:border-box;margin:0}
+#__claude_design_branding a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+#__claude_design_branding a:hover span{text-decoration:underline}
+#__claude_design_branding svg{flex:none}
+#__claude_design_branding a svg{color:#D97757}
+#__claude_design_branding button{width:20px;height:20px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:currentColor;opacity:.55;border:0;background:none;cursor:pointer;flex:none;font:inherit;transition:opacity .14s}
+#__claude_design_branding button:hover{opacity:1;background:rgba(127,127,127,.22)}
+@media print{#__claude_design_branding{display:none}}</style><a href="https://claude.com/product/design" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 20 21" fill="none" aria-hidden="true"><path fill="currentColor" d="M9.99902 0C15.5258 0.000170936 19.999 4.50643 19.999 10.0547C19.999 11.7656 19.5863 12.9976 18.7861 13.8203C17.9924 14.6362 16.9465 14.9138 15.9854 15.0078C15.05 15.0993 14.0097 15.0262 13.2549 15.0186C12.8524 15.0145 12.5177 15.0267 12.2441 15.0703C11.9682 15.1144 11.8143 15.1813 11.7305 15.2432C11.4745 15.4322 11.3353 15.7121 11.2656 16.1602C11.2303 16.3875 11.2168 16.6362 11.209 16.9131C11.2017 17.1715 11.1986 17.4893 11.1807 17.7705C11.1469 18.2975 11.0495 19.0865 10.4199 19.5908C9.7846 20.0996 8.88652 20.1057 7.85449 19.877C7.36399 19.7682 6.88652 19.6232 6.42578 19.4453C2.66989 17.9949 0.000187748 14.3414 0 10.0547C0 4.50643 4.47223 0.000171048 9.99902 0ZM9.99902 1.60547C5.36781 1.60564 1.60547 5.38391 1.60547 10.0547C1.60566 13.6582 3.84823 16.7296 7.00391 17.9482C7.39027 18.0974 7.79085 18.2184 8.20215 18.3096C9.1375 18.5169 9.384 18.3633 9.41602 18.3379C9.4524 18.3087 9.54558 18.1915 9.5791 17.668C9.5947 17.4239 9.59473 17.1786 9.60352 16.8672C9.61179 16.5742 9.62831 16.2435 9.67969 15.9131C9.78359 15.2455 10.0474 14.4906 10.7764 13.9521C11.1479 13.6778 11.5842 13.5493 11.9912 13.4844C12.4007 13.4191 12.8434 13.4088 13.2705 13.4131C14.1753 13.4222 15.0071 13.4905 15.8291 13.4102C16.6257 13.3322 17.2249 13.1235 17.6357 12.7012C18.0401 12.2855 18.3935 11.5261 18.3936 10.0547C18.3936 5.38391 14.6302 1.60564 9.99902 1.60547ZM5.11621 9.86719C5.86386 9.91468 6.45486 10.5348 6.45508 11.2939C6.45506 12.0838 5.81519 12.7245 5.02539 12.7246C4.28481 12.7246 3.67573 12.1617 3.60254 11.4404L3.59473 11.2939L3.60156 11.1533C3.66942 10.4596 4.23282 9.91186 4.93359 9.86719H5.11621ZM14.9814 7.19141C15.729 7.23889 16.3199 7.85919 16.3203 8.61816C16.3203 9.40801 15.6804 10.0487 14.8906 10.0488C14.1501 10.0487 13.5409 9.48586 13.4678 8.76465L13.46 8.61816L13.4668 8.47754C13.5348 7.78403 14.0983 7.23618 14.7988 7.19141H14.9814ZM6.4541 4.93457C7.20161 4.9822 7.79275 5.60231 7.79297 6.36133C7.79288 7.151 7.15291 7.7917 6.36328 7.79199C5.62274 7.79199 5.01369 7.22903 4.94043 6.50781L4.93262 6.36133L4.93945 6.2207C5.00731 5.52698 5.5707 4.97922 6.27148 4.93457H6.4541ZM11.3867 3.59668C12.1343 3.64419 12.7253 4.26436 12.7256 5.02344C12.7256 5.81326 12.0857 6.45393 11.2959 6.4541C10.5553 6.4541 9.94622 5.89123 9.87305 5.16992L9.86523 5.02344L9.87207 4.88281C9.93996 4.18912 10.5033 3.64133 11.2041 3.59668H11.3867Z"></path></svg><span>Made with Claude Design</span></a><button type="button" aria-label="Dismiss" onclick="this.parentElement.remove()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button></div>
+</body>
+</html>
