@@ -26,7 +26,7 @@
 - Consumes: N/A
 - Produces: Efficient `extractAst` function that reuses `Parser` instances.
 
-- [ ] **Step 1: Write the minimal implementation**
+- [x] **Step 1: Write the minimal implementation**
 
 Modify `skills/planner/parsers/ast-extractor.js` to move parsers outside the function:
 ```javascript
@@ -60,12 +60,12 @@ function extractAst(code, lang) {
         const tree = parser.parse(code);
 ```
 
-- [ ] **Step 2: Run test to verify it passes**
+- [x] **Step 2: Run test to verify it passes**
 
 Run: `npx jest tests/ast-extractor.test.js`
 Expected: PASS
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/planner/parsers/ast-extractor.js
@@ -83,7 +83,7 @@ git commit -m "perf: cache tree-sitter parser instances"
 - Consumes: `tree.rootNode`
 - Produces: Correct `imports` and `exports` arrays without deep recursion.
 
-- [ ] **Step 1: Write the minimal implementation**
+- [x] **Step 1: Write the minimal implementation**
 
 Replace the recursive `walk` block in `extractAst` with a shallow loop over top-level children:
 ```javascript
@@ -108,12 +108,12 @@ Replace the recursive `walk` block in `extractAst` with a shallow loop over top-
         return { status: 'success', imports, exports };
 ```
 
-- [ ] **Step 2: Run test to verify it passes**
+- [x] **Step 2: Run test to verify it passes**
 
 Run: `npx jest tests/ast-extractor.test.js`
 Expected: PASS
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/planner/parsers/ast-extractor.js
