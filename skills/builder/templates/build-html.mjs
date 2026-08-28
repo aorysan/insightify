@@ -225,20 +225,10 @@ function extractArchitectureHighlights(kbDir, techStack) {
  */
 export function buildProductOverview(kbDir) {
   let productMd = '';
-  let featuresMd = '';
-  let businessPoliciesMd = '';
 
   if (kbDir && fs.existsSync(kbDir)) {
     try {
       productMd = fs.readFileSync(path.join(kbDir, 'product.md'), 'utf-8');
-    } catch {}
-
-    try {
-      featuresMd = fs.readFileSync(path.join(kbDir, 'features-and-journeys.md'), 'utf-8');
-    } catch {}
-
-    try {
-      businessPoliciesMd = fs.readFileSync(path.join(kbDir, 'business-policies.md'), 'utf-8');
     } catch {}
   }
 

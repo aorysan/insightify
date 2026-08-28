@@ -36,9 +36,9 @@
   --color-code-text: #1e293b;
   --color-code-border: #e2e8f0;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
+  --font-heading: 'IBM Plex Sans', -apple-system, sans-serif;
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
