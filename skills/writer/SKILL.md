@@ -30,7 +30,7 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 
 ## Artifact HTML Formatting
 
-- High information density: no long prose paragraphs or bullet walls. Every paragraph is at most 3 sentences. Optimize for scannability with short paragraphs, cards, grids, and tables.
+- High information density: no long prose paragraphs or bullet walls. Every paragraph is at most 1 sentence. Mandate heavy use of lists. Optimize for scannability with short paragraphs, cards, grids, and tables.
 - Use structural HTML wrappers for dense, enumerable information (architecture components, API endpoint lists, process steps, configuration options):
   - `<div class="grid-2">...</div>` and `<div class="grid-3">...</div>` as layout wrappers containing two/three columns of cards
   - `<div class="artifact-card">...</div>` for each discrete item inside a grid (title in bold or H4, then a 1–2 sentence description)
