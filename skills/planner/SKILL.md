@@ -52,10 +52,10 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 1. Analyze the ingested sources to detect the project archetype.
 2. Supported archetypes: `frontend-spa`, `backend-api`, `system-design`, `general`.
 3. Map the detected archetype to its corresponding knowledge categories:
-   - `frontend-spa`: 17 default categories (product, directory-structure, modularization, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, user-journeys, business-policies, cross-cutting, terminology, constraints, workflows, unanswered).
-   - `backend-api`: product, directory-structure, data-models, modularization, api-patterns, features, user-journeys, business-policies, cross-cutting, terminology, constraints, workflows, unanswered.
-   - `system-design`: product, architecture, user-journeys, business-policies, constraints, terminology, unanswered.
-   - `general`: product, directory-structure, features, business-policies, terminology, unanswered.
+   - `frontend-spa`: 10 default categories (product, directory-structure, architecture, state-and-data, design-system, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows, unanswered).
+   - `backend-api`: product, directory-structure, architecture, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows, unanswered.
+   - `system-design`: product, architecture, features-and-journeys, business-policies, constraints-and-limits, unanswered.
+   - `general`: product, directory-structure, features-and-journeys, business-policies, constraints-and-limits, unanswered.
 
 ### Phase 2: Extract
 
@@ -69,24 +69,18 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 **Map-Reduce / Context Filtering:** Chunk large sources into segments; extract facts per chunk (map), then merge per category (reduce). Per category, feed only relevant chunks as context — filtered by category keywords and churn priority — instead of all content.
 
 **Knowledge Categories:**
-*(Note: The following 17 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 0).*
+*(Note: The following 10 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 0).*
 1. `product.md` — Product identity, version, audience, tagline
 2. `directory-structure.md` — Folder tree, module boundaries, import conventions
-3. `modularization.md` — Module boundaries, public interfaces, dependency direction, reuse patterns
-4. `data-models.md` — TypeScript interfaces, enums, Mermaid class diagrams
-5. `component-architecture.md` — Layout components, shell, feature components, composition tree
-6. `state-management.md` — Stores, selectors, middleware, persistence, testing patterns
-7. `routing-structure.md` — Route tree, guards, lazy loading, breadcrumbs, metadata
-8. `ui-component-library.md` — Component registry, design tokens, accessibility
-9. `api-patterns.md` — Client config, hooks, endpoints, error flow, mapping
-10. `features.md` — Feature catalog, Gherkin acceptance criteria, edge cases
-11. `user-journeys.md` — Personas, end-to-end task flows, touchpoints across features
-12. `business-policies.md` — Business rules, validation policies, SLAs, compliance requirements
-13. `cross-cutting.md` — Providers (Auth, Theme, i18n), ErrorBoundary, Logger, Analytics, FeatureFlags
-14. `terminology.md` — Glossary, acronyms, naming conventions
-15. `constraints.md` — Technical limits, performance budgets, security, known issues
-16. `workflows.md` — Dev workflows, CI/CD, deployment, release, incident response
-17. `unanswered.md` — Conflicts, ambiguities, missing info
+3. `architecture.md` — High-level architecture, module boundaries, layout wrappers, routing structure, entity names + purpose only (not full field listings)
+4. `state-and-data.md` — Stores, selectors, data models, persistence, cache/sync patterns
+5. `design-system.md` — UI component registry, design tokens, accessibility
+6. `api-patterns.md` — Client config, hooks, endpoints, error flow, mapping
+7. `features-and-journeys.md` — Feature catalog, personas, end-to-end user journeys, acceptance criteria
+8. `business-policies.md` — Business rules, validation policies, cross-cutting concerns, domain glossary
+9. `constraints-and-limits.md` — Technical limits, performance budgets, security, known issues
+10. `workflows.md` — Dev workflows, CI/CD, deployment, release, incident response
+11. `unanswered.md` — Conflicts, ambiguities, missing info
 
 **Conflict Handling:** Keep both facts, flag in `unanswered.md`.
 **Confidence:** `high` (explicit), `medium` (inferred), `low` (ambiguous).
