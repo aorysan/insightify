@@ -62,7 +62,7 @@ description: Stage 3 - Evaluate generated documentation across 9 quality dimensi
 - 1: State machines or user journeys make no business sense, or business policies are entirely ignored
 
 **Scannability** (density and structure):
-- 5: High density throughout; processes/endpoints/architecture rendered as cards, grids, or tables; paragraphs ≤3 sentences; instantly scannable headings
+- 5: High density throughout; processes/endpoints/architecture rendered as cards, grids, or tables; paragraphs ≤1 sentence; instantly scannable headings
 - 3: Mostly structured but several prose-heavy sections or bullet walls remain
 - 1: Wall-of-text output; low scannability; ignores card/grid formatting guidance
 
@@ -74,6 +74,7 @@ description: Stage 3 - Evaluate generated documentation across 9 quality dimensi
 ## Issue Classification
 
 - **Critical**: Factual error, missing entire planned section, broken navigation, TypeScript errors, architecture violations
+- **Critical**: Dense prose — any paragraph exceeding 1 sentence or wall-of-text blocks
 - **Minor**: Typo, slightly inconsistent tone, suboptimal heading level, missing citation
 
 ## Issue Format for Writer
