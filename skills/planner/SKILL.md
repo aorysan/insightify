@@ -117,6 +117,8 @@ The API supports up to 1000 concurrent connections.
 **Document Structure:**
 - The plan outlines a single unified Product Knowledge Base document containing structured sections corresponding to the extracted knowledge categories for the detected archetype.
 - Each section specifies its purpose, target audience, key topics, and source knowledge files mapped from `[OUT_DIR]/.insightify/knowledge/`.
+- **CRITICAL**: Each section MUST include a 1-2 sentence core summary of the main findings from the source files. The plan should describe *what* the section covers, rather than just listing source file names.
+- **CRITICAL**: Automatically generate architecture and relationship diagrams (using Mermaid) from the extracted file relationships to be included in the final output.
 
 ### Progress & Error Handling
 
