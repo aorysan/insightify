@@ -394,9 +394,9 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(processHtml.includes('Writer'));
     assert.ok(processHtml.includes('Reviewer'));
     assert.ok(processHtml.includes('Builder'));
-    assert.ok(processHtml.includes('14 knowledge categories') || processHtml.includes('14 categories'));
+    assert.ok(processHtml.includes('10 knowledge categories') || processHtml.includes('10 categories'));
     assert.ok(processHtml.includes('independently in parallel'));
-    assert.ok(processHtml.includes('7 dimensions'));
+    assert.ok(processHtml.includes('10 dimensions'));
   });
 
   test('assembleKnowledgeBase processes all 14 categories in order, strips frontmatter, and preserves citations', async () => {
@@ -579,12 +579,12 @@ Content for ${cat} section ${idx + 1}.
     });
   });
 
-  test('styles.css defines Inter headings, numbered H2 counters, and artifact utilities', () => {
+  test('styles.css defines IBM Plex headings, numbered H2 counters, and artifact utilities', () => {
     const css = fs.readFileSync(path.join(templatesDir, 'styles.css'), 'utf8');
 
-    // Typography: Inter everywhere, no serif headings
-    assert.ok(css.includes("--font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"),
-      'Heading font stack must be Inter-based sans-serif');
+    // Typography: IBM Plex everywhere, no serif headings
+    assert.ok(css.includes("--font-heading: 'IBM Plex Sans', -apple-system, sans-serif"),
+      'Heading font stack must be IBM Plex Sans');
 
     // Numbered H2 via CSS counters
     assert.ok(css.includes('.doc-content { counter-reset: doc-section; }'), 'Must reset counter on .doc-content');
@@ -626,9 +626,9 @@ Content for ${cat} section ${idx + 1}.
   test('index-html-template.html wraps central column in artifact-container and drops Georgia font', () => {
     const tpl = fs.readFileSync(path.join(templatesDir, 'index-html-template.html'), 'utf8');
 
-    // Fonts: Inter + JetBrains Mono kept, Georgia removed
-    assert.ok(tpl.includes('family=Inter'), 'Must load Inter font');
-    assert.ok(tpl.includes('JetBrains+Mono'), 'Must load JetBrains Mono font');
+    // Fonts: IBM Plex Sans + IBM Plex Mono kept, Georgia removed
+    assert.ok(tpl.includes('IBM+Plex'), 'Must load IBM Plex font');
+    assert.ok(tpl.includes('IBM+Plex+Mono'), 'Must load IBM Plex Mono font');
     assert.strictEqual(tpl.includes('Georgia'), false, 'Georgia must be removed from font link');
 
     // artifact-container wraps content INSIDE article.doc-content; TOC aside stays outside

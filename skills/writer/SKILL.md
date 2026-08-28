@@ -20,7 +20,7 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 - Technical Depth: Avoid excessive technical jargon or deep code implementation details (How). Keep explanations short, concise, and accessible. Even for technical categories (like state management or routing), translate the explanation to be understandable for a client.
 - Person: second person ("you") for instructions, third person for concepts
 - Voice: active voice preferred ("Run the command" not "The command should be run")
-- Avoid jargon without explanation — if a term is in `knowledge/terminology.md`, link or define it on first use
+- Avoid jargon without explanation — if a term is in `knowledge/business-policies.md` (glossary), link or define it on first use
 
 ## Conciseness & Abstraction Level
 

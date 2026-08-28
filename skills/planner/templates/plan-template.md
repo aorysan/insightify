@@ -11,7 +11,7 @@ output_format: "artifact-html"
 # Documentation Plan: <Project Name>
 
 ## Overview
-<Generated from product.md + cross-cutting.md. Summary of the project, its purpose, tech stack (React, TypeScript, Zustand, React Router, etc.), and the goal of this technical specification.>
+<Generated from product.md + business-policies.md. Summary of the project, its purpose, tech stack (React, TypeScript, Zustand, React Router, etc.), and the goal of this technical specification.>
 
 ## Audience
 - **Primary:** Frontend Developers (React/TypeScript) — implementation, maintenance, onboarding

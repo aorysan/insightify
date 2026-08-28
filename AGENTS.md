@@ -19,8 +19,8 @@ The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md 
 4-stage sequential pipeline orchestrated by `skills/insightify/SKILL.md`:
 
 1. **Planner** (`skills/planner/SKILL.md`) — Ingests sources, extracts knowledge, generates plan
-2. **Writer** (`skills/writer/SKILL.md`) — Generates 14 markdown doc pages from templates
-3. **Reviewer** (`skills/reviewer/SKILL.md`) — Reviews across 9 quality dimensions, max 3 iterations
+2. **Writer** (`skills/writer/SKILL.md`) — Renders sections from the extracted knowledge base into a single markdown doc
+3. **Reviewer** (`skills/reviewer/SKILL.md`) — Reviews across 10 quality dimensions, max 3 iterations
 4. **Builder** (`skills/builder/SKILL.md`) — Renders final HTML artifact + knowledge base
 
 Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orchestrated mode.
@@ -28,10 +28,10 @@ Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orch
 ## Key Structural Facts
 
 - **Skill definitions** (`skills/*/SKILL.md`) are the primary source of truth. Tests validate their content structure extensively.
-- **14 knowledge categories** (product, directory-structure, data-models, component-architecture, state-management, routing-structure, ui-component-library, api-patterns, features, cross-cutting, terminology, constraints, workflows, unanswered).
+- **10 merged knowledge categories** (product, directory-structure, architecture, state-and-data, design-system, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows) plus `unanswered`.
 - **Parsers** (`skills/planner/parsers/*.js`) are CommonJS — `code-parser.js`, `html-parser.js`, `json-parser.js`, `pdf-parser.js`, `directory-scanner.js`.
 - **Builder** (`skills/builder/templates/build-html.mjs`) is ESM. Tests import it via dynamic `import()`.
-- **Writer templates** (`skills/writer/templates/*.md`) — 14 markdown templates with YAML frontmatter.
+- **Writer templates** (`skills/writer/templates/*.md`) — markdown templates with YAML frontmatter (legacy set; the writer skill reads `plan.md`/knowledge files directly).
 - **Output** goes to `insights/<project-name>/` relative to the target project.
 - **Workspace** for intermediate data: `[OUT_DIR]/.insightify/`.
 

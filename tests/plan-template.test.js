@@ -63,16 +63,13 @@ describe('Plan Template (Parallel Sections)', () => {
     const expectedKnowledgeCategories = [
       'product.md',
       'directory-structure.md',
-      'data-models.md',
-      'component-architecture.md',
-      'state-management.md',
-      'routing-structure.md',
-      'ui-component-library.md',
+      'architecture.md',
+      'state-and-data.md',
+      'design-system.md',
       'api-patterns.md',
-      'features.md',
-      'cross-cutting.md',
-      'terminology.md',
-      'constraints.md',
+      'features-and-journeys.md',
+      'business-policies.md',
+      'constraints-and-limits.md',
       'workflows.md',
       'unanswered.md'
     ];

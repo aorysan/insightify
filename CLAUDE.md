@@ -21,11 +21,11 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 1. **Stage 1 (Planner)**: `skills/planner/SKILL.md`
    - Ingests source code, markdown, HTML, and PDFs using parsers (`code-parser.js`, `json-parser.js`, `directory-scanner.js`, `html-parser.js`, `pdf-parser.js`).
    - Extracts structured knowledge into the category set for the detected archetype (`frontend-spa`, `backend-api`, `system-design`, `general`; see Planner Phase 0).
-   - Generates a 14-page, 5-wave documentation plan (`.insightify/plan.md`) requiring user approval before writing.
+   - Generates a documentation plan (`.insightify/plan.md`) from the 10 merged knowledge categories, requiring user approval before writing.
 2. **Stage 2 (Writer)**: `skills/writer/SKILL.md`
-   - Generates markdown documentation pages under `docs/markdown/` in 5 dependency-aware waves using 14 specialized templates.
+   - Renders document sections in parallel from the extracted knowledge base and stitches them into a single `docs/markdown/documentation.md`.
 3. **Stage 3 (Reviewer)**: `skills/reviewer/SKILL.md`
-   - Automatically evaluates generated docs across 9 quality dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment, Business Alignment, Scannability) on a 1-5 rubric.
+   - Automatically evaluates generated docs across 10 quality dimensions (Accuracy, Completeness, Consistency, Structure, Usability, Type Safety, Architecture Alignment, Business Alignment, Scannability, Brevity) on a 1-5 rubric.
    - If revisions are needed, sends targeted issues back to Stage 2 (max 3 iterations).
 4. **Stage 4 (Builder)**: `skills/builder/SKILL.md`
    - Assembles the single-page HTML artifact (`docs/index.html`) and the consolidated knowledge base (`docs/knowledge-base.md`) via `build-html.mjs`.

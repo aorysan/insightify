@@ -3,7 +3,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-describe('Extract Schema Reference (14 Categories)', () => {
+describe('Extract Schema Reference (10 Merged Categories)', () => {
   const schemaPath = path.join(__dirname, '../skills/planner/references/extraction-schema.md');
   let schemaDoc;
 
@@ -13,22 +13,19 @@ describe('Extract Schema Reference (14 Categories)', () => {
     }
   });
 
-  test('extraction-schema.md exists and defines all 14 required categories', () => {
+  test('extraction-schema.md exists and defines all 10 merged categories plus unanswered', () => {
     assert.strictEqual(fs.existsSync(schemaPath), true, 'Schema file must exist');
 
     const categories = [
       'product.md',
       'directory-structure.md',
-      'data-models.md',
-      'component-architecture.md',
-      'state-management.md',
-      'routing-structure.md',
-      'ui-component-library.md',
+      'architecture.md',
+      'state-and-data.md',
+      'design-system.md',
       'api-patterns.md',
-      'features.md',
-      'cross-cutting.md',
-      'terminology.md',
-      'constraints.md',
+      'features-and-journeys.md',
+      'business-policies.md',
+      'constraints-and-limits.md',
       'workflows.md',
       'unanswered.md'
     ];

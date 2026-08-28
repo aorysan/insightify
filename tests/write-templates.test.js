@@ -3,28 +3,25 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-describe('Writer Templates (14 Templates)', () => {
+describe('Writer Templates (11 Templates, 10 Merged Categories)', () => {
   const templateDir = path.join(__dirname, '../skills/writer/templates');
   const expectedTemplates = [
     'executive-summary-template.md',
     'directory-structure-template.md',
-    'data-models-template.md',
-    'component-architecture-template.md',
-    'state-management-template.md',
-    'routing-structure-template.md',
-    'ui-component-library-template.md',
+    'architecture-template.md',
+    'state-and-data-template.md',
+    'design-system-template.md',
     'api-patterns-template.md',
-    'features-template.md',
-    'cross-cutting-template.md',
-    'terminology-template.md',
-    'constraints-template.md',
+    'features-and-journeys-template.md',
+    'business-policies-template.md',
+    'constraints-and-limits-template.md',
     'workflows-template.md',
     'appendix-template.md'
   ];
 
-  test('templates directory contains exactly the 14 expected templates', () => {
+  test('templates directory contains exactly the 11 aligned templates (10 categories + doc framing)', () => {
     const files = fs.readdirSync(templateDir).filter(f => f.endsWith('.md'));
-    assert.strictEqual(files.length, 14, `Expected 14 templates, found ${files.length}: ${files.join(', ')}`);
+    assert.strictEqual(files.length, 11, `Expected 11 templates, found ${files.length}: ${files.join(', ')}`);
     expectedTemplates.forEach(t => {
       assert.ok(files.includes(t), `Template ${t} should be present in ${templateDir}`);
     });
@@ -96,42 +93,37 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('Import Path Conventions'), 'Must contain import path conventions code block');
   });
 
-  test('data-models-template contains TypeScript interfaces and Mermaid class diagram', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'data-models-template.md'), 'utf8');
+  test('architecture-template merges layouts, routing, and entity data models', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'architecture-template.md'), 'utf8');
+    // Layouts
+    assert.ok(content.includes('PublicLayout'), 'Must define PublicLayout');
+    assert.ok(content.includes('AuthLayout'), 'Must define AuthLayout');
+    assert.ok(content.includes('ProtectedLayout'), 'Must define ProtectedLayout');
+    assert.ok(content.includes('Component Composition Tree'), 'Must contain component composition tree');
+    assert.ok(content.includes('graph TD') || content.includes('flowchart TD'), 'Must contain Mermaid tree diagram');
+    // Routing
+    assert.ok(content.includes('PublicRoute'), 'Must define PublicRoute guard');
+    assert.ok(content.includes('PrivateRoute'), 'Must define PrivateRoute guard');
+    assert.ok(content.includes('RoleRoute'), 'Must define RoleRoute guard');
+    assert.ok(content.includes('LazyPage'), 'Must define lazy page wrapper');
+    assert.ok(content.includes('routeMeta') || content.includes('RouteMeta'), 'Must define route metadata');
+    // Data models (entities)
     assert.ok(content.includes('interface BaseEntity'), 'Must define BaseEntity');
     assert.ok(content.includes('interface ApiResponse'), 'Must define ApiResponse');
     assert.ok(content.includes('interface PaginatedResponse'), 'Must define PaginatedResponse');
     assert.ok(content.includes('classDiagram'), 'Must contain Mermaid class diagram');
   });
 
-  test('component-architecture-template contains layouts, shell components, and composition tree', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'component-architecture-template.md'), 'utf8');
-    assert.ok(content.includes('PublicLayout'), 'Must define PublicLayout');
-    assert.ok(content.includes('AuthLayout'), 'Must define AuthLayout');
-    assert.ok(content.includes('ProtectedLayout'), 'Must define ProtectedLayout');
-    assert.ok(content.includes('Component Composition Tree'), 'Must contain component composition tree');
-    assert.ok(content.includes('graph TD') || content.includes('flowchart TD'), 'Must contain Mermaid tree diagram');
-  });
-
-  test('state-management-template contains Zustand stores, flow diagram, and persistence', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'state-management-template.md'), 'utf8');
+  test('state-and-data-template contains stores, selectors, flow diagram, and persistence', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'state-and-data-template.md'), 'utf8');
     assert.ok(content.includes('useAuthStore'), 'Must define useAuthStore');
     assert.ok(content.includes('useAppStore'), 'Must define useAppStore');
     assert.ok(content.includes('State Flow Diagram'), 'Must contain state flow diagram');
     assert.ok(content.includes('Persistence Strategy'), 'Must define persistence strategy');
   });
 
-  test('routing-structure-template contains route tree, guards, lazy loading, and metadata', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'routing-structure-template.md'), 'utf8');
-    assert.ok(content.includes('PublicRoute'), 'Must define PublicRoute guard');
-    assert.ok(content.includes('PrivateRoute'), 'Must define PrivateRoute guard');
-    assert.ok(content.includes('RoleRoute'), 'Must define RoleRoute guard');
-    assert.ok(content.includes('LazyPage'), 'Must define lazy page wrapper');
-    assert.ok(content.includes('routeMeta') || content.includes('RouteMeta'), 'Must define route metadata');
-  });
-
-  test('ui-component-library-template contains component registry, design tokens, and accessibility', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'ui-component-library-template.md'), 'utf8');
+  test('design-system-template contains component registry, design tokens, and accessibility', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'design-system-template.md'), 'utf8');
     assert.ok(content.includes('Button'), 'Must specify Button component');
     assert.ok(content.includes('Input'), 'Must specify Input component');
     assert.ok(content.includes('Modal'), 'Must specify Modal component');
@@ -149,8 +141,8 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('Error Handling Flow'), 'Must contain error handling flow diagram');
   });
 
-  test('features-template contains standardized placeholder catalog, Gherkin stories, and technical mapping', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'features-template.md'), 'utf8');
+  test('features-and-journeys-template contains feature catalog, Gherkin stories, personas, and acceptance criteria', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'features-and-journeys-template.md'), 'utf8');
     assert.ok(content.includes('Feature Catalog'), 'Must contain feature catalog table');
     assert.ok(content.includes('<Feature 1 Name>'), 'Must use standardized placeholder syntax for features');
     assert.ok(content.includes('Feature:'), 'Must contain Gherkin Feature definition');
@@ -159,8 +151,8 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('Technical Mapping'), 'Must contain technical mapping table');
   });
 
-  test('cross-cutting-template contains provider tree, theming, i18n, error boundary, logger, and feature flags', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'cross-cutting-template.md'), 'utf8');
+  test('business-policies-template contains shared concerns (auth/theming/i18n/error/logging/flags) and glossary', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'business-policies-template.md'), 'utf8');
     assert.ok(content.includes('Provider Composition Tree'), 'Must contain provider tree');
     assert.ok(content.includes('AuthProvider'), 'Must define AuthProvider');
     assert.ok(content.includes('ThemeProvider'), 'Must define ThemeProvider');
@@ -168,17 +160,13 @@ describe('Writer Templates (14 Templates)', () => {
     assert.ok(content.includes('ErrorBoundary'), 'Must define ErrorBoundary');
     assert.ok(content.includes('Logger') || content.includes('logger'), 'Must define logger utility');
     assert.ok(content.includes('FeatureFlagsProvider'), 'Must define FeatureFlagsProvider');
-  });
-
-  test('terminology-template contains glossary, acronyms, and naming conventions', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'terminology-template.md'), 'utf8');
     assert.ok(content.includes('Glossary'), 'Must contain glossary table');
     assert.ok(content.includes('Acronyms & Abbreviations'), 'Must contain acronyms table');
     assert.ok(content.includes('Naming Conventions'), 'Must contain naming conventions table');
   });
 
-  test('constraints-template contains technical constraints, performance budgets, security, and known issues', () => {
-    const content = fs.readFileSync(path.join(templateDir, 'constraints-template.md'), 'utf8');
+  test('constraints-and-limits-template contains technical constraints, budgets, security, and known issues', () => {
+    const content = fs.readFileSync(path.join(templateDir, 'constraints-and-limits-template.md'), 'utf8');
     assert.ok(content.includes('Technical Constraints'), 'Must contain technical constraints table');
     assert.ok(content.includes('Performance Budgets'), 'Must contain performance budgets table');
     assert.ok(content.includes('Security Requirements'), 'Must contain security requirements table');
@@ -207,12 +195,12 @@ describe('Writer Templates (14 Templates)', () => {
 
   test('writer skill instructs sub-agents to render sections independently in parallel with max concurrency 5', () => {
     const skill = fs.readFileSync(path.join(__dirname, '../skills/writer/SKILL.md'), 'utf8');
-    
+
     assert.ok(skill.includes('sub-agents'), 'SKILL.md must mention sub-agents');
     assert.ok(skill.includes('independently in parallel'), 'SKILL.md must instruct to render independently in parallel');
     assert.ok(skill.includes('maximum concurrency of 5'), 'SKILL.md must specify maximum concurrency of 5');
     assert.ok(skill.includes('stitch them together'), 'SKILL.md must instruct to stitch them together');
-    
+
     // Output target
     assert.ok(skill.includes('docs/markdown/'), 'Must reference docs/markdown/ output path');
   });
@@ -245,4 +233,3 @@ describe('Writer Templates (14 Templates)', () => {
       'Wrapper guidance must warn that markdown syntax will not be rendered inside raw HTML wrappers');
   });
 });
-
