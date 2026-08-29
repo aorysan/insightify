@@ -4,6 +4,7 @@ node_modules/
 .superpowers/
 .claude/settings.local.json
 docs/superpowers/plans
+scraped-artifact/
 
 # Logs
 logs
