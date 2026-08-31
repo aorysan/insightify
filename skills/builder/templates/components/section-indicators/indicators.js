@@ -7,21 +7,29 @@
 
     if (sections.length === 0) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          navLinks.forEach(link => {
-            link.classList.toggle('active', link.getAttribute('data-section') === id);
-          });
+    const sectionsArr = Array.from(sections);
+    
+    function updateNav() {
+      const scrollPos = window.scrollY + 120; // 120px offset for header
+      let currentId = sectionsArr[0] ? sectionsArr[0].getAttribute('id') : null;
+      
+      for (const section of sectionsArr) {
+        if (section.offsetTop <= scrollPos) {
+          currentId = section.getAttribute('id');
+        } else {
+          break;
         }
-      });
-    }, {
-      rootMargin: '-60px 0px -66% 0px',
-      threshold: 0.1
-    });
+      }
 
-    sections.forEach(section => observer.observe(section));
+      if (currentId) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-section') === currentId);
+        });
+      }
+    }
+
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
   }
 
   // ==========================================================================

@@ -6,12 +6,9 @@ sources:
   - design-system.md
 ---
 
-
 ## Overview
 
 The application uses a **design system** of reusable UI primitives built with React and Tailwind. Components are grouped by scope — primitives, composites, feedback, and data display — and are styled via design tokens (CSS variables) so theming stays consistent across light and dark modes.
-
-> **Source:** design-system.md § Design System Overview
 
 ---
 
@@ -30,7 +27,7 @@ The application uses a **design system** of reusable UI primitives built with Re
 
 ### Button
 ```tsx
-// Source: source-005.md § components/ui/Button.tsx
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -64,7 +61,7 @@ export function Button({ variant, size, isLoading, className, children, ...props
 
 ### Input
 ```tsx
-// Source: source-005.md § components/ui/Input.tsx
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
@@ -100,7 +97,7 @@ export function Input({ label, error, hint, leftIcon, rightIcon, className, id, 
 
 ### Modal
 ```tsx
-// Source: source-005.md § components/ui/Modal.tsx
+
 interface ModalProps {
   open: boolean;
   onClose: () => void;
@@ -163,8 +160,6 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
 | Toast | Feedback | success, error, warning, info | ✅ |
 | DataTable | Data Display | sortable, paginated | ✅ |
 
-> **Source:** design-system.md § Component Registry
-
 ---
 
 ## 7. Design Token References
@@ -172,7 +167,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
 Design tokens are exposed as CSS variables on `:root` (light) and `[data-theme="dark"]` (dark), defined in `styles.css`.
 
 ```css
-/* Source: design-system.md § Design Tokens */
+
 :root {
   --color-surface: #ffffff;
   --color-foreground: #1a1a1a;
@@ -198,8 +193,6 @@ Design tokens are exposed as CSS variables on `:root` (light) and `[data-theme="
 - [ ] Color is never the sole conveyer of state (add icon/text alongside success/error colors).
 - [ ] Text and interactive targets meet WCAG AA contrast and touch-target (≥ 44px) sizing.
 - [ ] Keyboard: all components operable via Tab/Enter/Space/Arrows; Escape closes overlays.
-
-> **Source:** design-system.md § Accessibility
 
 ---
 

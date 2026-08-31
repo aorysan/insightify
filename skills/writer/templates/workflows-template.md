@@ -11,7 +11,7 @@ sources:
 
 Standardized operational procedures for development, testing, deployment, and incident response. Each workflow includes triggers, preconditions, steps, decision points, and rollback procedures.
 
-> **Source:** workflows.md § Workflow Standards
+
 
 ---
 
@@ -335,4 +335,3 @@ Is it used by multiple features?
 
 ---
 
-*All workflows documented from team practices and source code. See individual source citations for exact file locations.*

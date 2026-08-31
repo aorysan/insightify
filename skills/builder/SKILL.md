@@ -92,12 +92,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
         <!-- Documentation Sections (Rendered from Product-Knowledge-Base.md) -->
         {{DOC_SECTIONS}}
 
-        <!-- Process / Pipeline diagram -->
-        <section id="pipeline" class="doc-section">
-          <span class="section-label">Process</span>
-          <h2>Documentation Pipeline</h2>
-          {{PROCESS_DIAGRAM}}
-        </section>
+
       </div>
     </article>
   </main>

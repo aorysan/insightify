@@ -11,7 +11,7 @@ sources:
 
 Supplementary materials including external references, version history, contribution guidelines, and metadata about this specification's generation.
 
-> **Source:** Generated from all knowledge categories
+
 
 ---
 

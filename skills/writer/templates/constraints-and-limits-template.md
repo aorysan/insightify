@@ -6,12 +6,9 @@ sources:
   - constraints-and-limits.md
 ---
 
-
 ## Overview
 
 Explicit technical limitations, performance budgets, dependency/version constraints, security requirements, and known issues with workarounds. These constraints form the boundary the team agrees not to cross and guide future architecture decisions.
-
-> **Source:** constraints-and-limits.md § Overview
 
 ---
 
@@ -54,8 +51,6 @@ Explicit technical limitations, performance budgets, dependency/version constrai
 | Route | <e.g. ≤ 150 kB gzip> |
 | Initial (critical) | <e.g. ≤ 200 kB gzip> |
 
-> **Source:** constraints-and-limits.md § Performance Budgets
-
 ---
 
 ## 3. Dependency Constraints
@@ -80,8 +75,6 @@ Explicit technical limitations, performance budgets, dependency/version constrai
 | Authorization | <RBAC roles & guards, least privilege> |
 | Data handling | <PII minimization, encryption at rest/in transit, no secrets in client> |
 | Dependency scanning | <SCA in CI, license audit> |
-
-> **Source:** constraints-and-limits.md § Security
 
 ---
 
@@ -108,8 +101,6 @@ Explicit technical limitations, performance budgets, dependency/version constrai
 | <Issue 1> | <Impact / affected area> | <Workaround or tracking issue link> |
 | <Issue 2> | <Impact / affected area> | <Workaround or tracking issue link> |
 | <Issue 3> | <Impact / affected area> | <Workaround or tracking issue link> |
-
-> **Source:** constraints-and-limits.md § Known Issues
 
 ---
 

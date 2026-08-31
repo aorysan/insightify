@@ -11,7 +11,7 @@ sources:
 
 This project follows a **feature-based modular architecture** organized by domain rather than technology. This structure scales well for medium-to-large teams and promotes clear module boundaries.
 
-> **Source:** directory-structure.md § Architecture Overview
+
 
 ## Complete Folder Tree
 
@@ -241,7 +241,7 @@ utils/
 | **Pages compose features** | `pages/*` import from `features/*/components` and `features/*/hooks` | By convention |
 | **Barrel exports only** | Import from `features/auth` not `features/auth/hooks/useAuth` | `index.ts` exports |
 
-> **Source:** directory-structure.md § Module Boundaries
+
 
 ---
 
@@ -263,7 +263,7 @@ import { UserCard } from '../components/UserCard';
 import { useUsers } from '../hooks/useUsers';
 ```
 
-> **Source:** directory-structure.md § Import Conventions
+
 
 ---
 
@@ -275,4 +275,3 @@ import { useUsers } from '../hooks/useUsers';
 | Medium (5-15 features) | 5-15 | 15-30 | Consider splitting `components/ui` into subfolders |
 | Large (15+ features) | 15+ | 30+ | Extract shared components to separate package/library |
 
-> **Source:** directory-structure.md § Scaling Guidelines

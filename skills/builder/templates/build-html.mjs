@@ -438,12 +438,7 @@ export function buildSidebarNav(docPath) {
     }
   }
 
-  navHtml += `
-    <a href="#pipeline" class="section-indicator" data-section="pipeline">
-      <span class="indicator-label">Documentation Pipeline</span>
-      <span class="indicator-line"></span>
-    </a>
-  `;
+
   return navHtml;
 }
 

@@ -6,12 +6,9 @@ sources:
   - architecture.md
 ---
 
-
 ## Overview
 
 The application uses a **layout-driven component architecture** with three primary layout shells (Public, Auth, Protected) and a shared component library. Components are organized by reusability scope: global primitives, layout shells, and feature-specific compositions. Routes are grouped by layout with role-based access control and lazy loading; entity data models are summarized at the name-and-purpose level (not full field listings).
-
-> **Source:** architecture.md § Architecture Overview
 
 ---
 
@@ -22,7 +19,7 @@ The application uses a **layout-driven component architecture** with three prima
 **Purpose:** Wrapper for public-facing pages (landing, about, pricing). Includes Navbar and Footer but no sidebar.
 
 ```tsx
-// Source: source-004.md § components/layout/PublicLayout.tsx
+
 interface PublicLayoutProps {
   children: React.ReactNode;
   className?: string;
@@ -44,7 +41,7 @@ export function PublicLayout({ children, className }: PublicLayoutProps) {
 **Purpose:** Centered, distraction-free wrapper for authentication pages (login, register, password reset).
 
 ```tsx
-// Source: source-004.md § components/layout/AuthLayout.tsx
+
 interface AuthLayoutProps {
   title: string;
   subtitle?: string;
@@ -71,7 +68,7 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
 **Purpose:** Authenticated app shell with a collapsible sidebar, topbar, and main content outlet.
 
 ```tsx
-// Source: source-004.md § components/layout/ProtectedLayout.tsx
+
 interface ProtectedLayoutProps {
   children: React.ReactNode;
 }
@@ -108,8 +105,6 @@ flowchart TD
     ProtectedLayout --> FeatureComponents
 ```
 
-> **Source:** architecture.md § Component Composition Tree
-
 The tree groups components by scope: global primitives (Button, Input, Modal), layout shells, and feature-specific compositions under their owning route.
 
 ---
@@ -145,7 +140,7 @@ graph TD
 
 ### PublicRoute (Redirects Authenticated Users)
 ```tsx
-// Source: source-012.md § routes/guards/PublicRoute.tsx
+
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -164,7 +159,7 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
 
 ### PrivateRoute (Redirects Unauthenticated Users)
 ```tsx
-// Source: source-012.md § routes/guards/PrivateRoute.tsx
+
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -184,7 +179,7 @@ export function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 ### RoleRoute (Role-Based Access Control)
 ```tsx
-// Source: source-012.md § routes/guards/RoleRoute.tsx
+
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -206,7 +201,7 @@ export function RoleRoute({ children, allowedRoles }: {
 ## 5. Lazy Loading
 
 ```tsx
-// Source: source-012.md § components/ui/LazyPage.tsx
+
 import { Suspense, lazy, ComponentType } from 'react';
 
 export function LazyPage<T extends ComponentType<any>>(importFn: () => Promise<{ default: T }>) {
@@ -229,7 +224,7 @@ export function LazyPage<T extends ComponentType<any>>(importFn: () => Promise<{
 Data models are documented at the **entity level** (name + purpose) rather than full field listings. Shared API envelope types are reused across all entities.
 
 ```typescript
-// Source: source-003.md § types/common.ts
+
 export interface BaseEntity {
   id: string | number;
   createdAt: string;
@@ -263,14 +258,12 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 | `Product` | Catalog item for sale | referenced by `Order` |
 | `Order` | Purchase transaction | belongs to `User`, contains `Product` |
 
-> **Source:** architecture.md § Entity Data Models
-
 ---
 
 ## 7. Route Metadata
 
 ```typescript
-// Source: source-012.md § routes/routeTree.ts
+
 export interface RouteMeta {
   title: string;
   description?: string;
@@ -323,4 +316,3 @@ classDiagram
     Order --> Product
 ```
 
-> **Source:** architecture.md § Entity Relationships

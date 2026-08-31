@@ -43,7 +43,7 @@ sources:
 | <Feature 2> | <One-line description> | P1 | 🚧 In Progress |
 | <Feature 3> | <One-line description> | P2 | 📋 Planned |
 
-> **Source:** features.md § Feature Catalog
+
 
 ## Target Audience & Use Cases
 
@@ -63,7 +63,7 @@ sources:
 - **Design system primitives** — Consistent UI components with Tailwind CSS tokens
 - **API-first development** — Custom hooks for data fetching with optimistic updates
 
-> **Source:** cross-cutting.md § Architecture Decisions
+
 
 ---
 

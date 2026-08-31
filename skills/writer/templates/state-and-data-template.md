@@ -6,12 +6,9 @@ sources:
   - state-and-data.md
 ---
 
-
 ## Overview
 
 This application uses **Zustand** for global state management — a lightweight, TypeScript-first solution with minimal boilerplate. State is organized into domain-specific stores with clear boundaries and persistence strategies; data models are captured at the entity level and data fetching is centralized in hooks and selectors.
-
-> **Source:** state-and-data.md § State Management Philosophy
 
 ---
 
@@ -35,7 +32,7 @@ stores/
 
 ### State Shape
 ```typescript
-// Source: source-010.md § stores/useAuthStore.ts
+
 interface AuthState {
   // State
   user: User | null;
@@ -62,7 +59,7 @@ interface AuthState {
 
 ### Implementation
 ```typescript
-// Source: source-010.md § stores/useAuthStore.ts
+
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { authApi } from '@/features/auth/api/authApi';
@@ -155,7 +152,7 @@ export const useAuthStore = create<AuthState>()(
 ## 3. App Store (`stores/useAppStore.ts`)
 
 ```typescript
-// Source: source-010.md § stores/useAppStore.ts
+
 interface AppState {
   theme: 'light' | 'dark';
   sidebarOpen: boolean;
@@ -184,7 +181,7 @@ export const useAppStore = create<AppState>()((set) => ({
 Selectors keep components decoupled from store shape and prevent unnecessary re-renders.
 
 ```tsx
-// Source: source-010.md § stores/selectors.ts
+
 export const selectIsAdmin = (s: AuthState) => s.user?.role === 'ADMIN';
 export const selectPermissions = (s: AuthState) =>
   s.user ? ROLE_PERMISSIONS[s.user.role] || [] : [];
@@ -200,7 +197,7 @@ const isAdmin = useAuthStore(selectIsAdmin);
 Server state is fetched through dedicated hooks backed by the API client, with derived data selected into components.
 
 ```tsx
-// Source: source-010.md § hooks/useProducts.ts
+
 export function useProducts() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['products'],
@@ -225,8 +222,6 @@ stateDiagram-v2
     Success --> [*]
 ```
 
-> **Source:** state-and-data.md § State Flow
-
 ---
 
 ## 7. Persistence Strategy
@@ -241,4 +236,3 @@ stateDiagram-v2
 | `useAppStore` | Partial | `app-storage` | No |
 | `useFeatureStore` | Selective | per feature | Varies |
 
-> **Source:** state-and-data.md § Persistence Strategy

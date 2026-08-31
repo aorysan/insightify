@@ -6,12 +6,9 @@ sources:
   - business-policies.md
 ---
 
-
 ## Overview
 
 Cross-cutting policies that span the whole application — authentication, theming, internationalization, error handling, logging, feature flags — plus the domain glossary and naming conventions that keep documentation and code consistent. These shared concerns are composed at the application root and available app-wide.
-
-> **Source:** business-policies.md § Shared Concerns
 
 ---
 
@@ -20,7 +17,7 @@ Cross-cutting policies that span the whole application — authentication, themi
 The application root composes all global providers in a fixed order so concerns wrap the entire tree.
 
 ```tsx
-// Source: source-009.md § App.tsx
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -58,15 +55,13 @@ graph TD
     FeatureFlagsProvider --> AppRoutes
 ```
 
-> **Source:** business-policies.md § Provider Composition Tree
-
 ---
 
 ## 2. Authentication
 
 ### AuthProvider
 ```tsx
-// Source: source-009.md § features/auth/providers/AuthProvider.tsx
+
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -85,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 ### ThemeProvider
 ```tsx
-// Source: source-009.md § providers/ThemeProvider.tsx
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = useAppStore((s) => s.theme);
   useEffect(() => {
@@ -113,7 +108,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 ### I18nProvider
 ```tsx
-// Source: source-009.md § providers/I18nProvider.tsx
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const { locale } = useLocale();
   return <I18nextProvider i18n={configuredI18n(locale)}>{children}</I18nextProvider>;
@@ -129,7 +124,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
 ### ErrorBoundary
 ```tsx
-// Source: source-009.md § components/ui/ErrorBoundary/ErrorBoundary.tsx
+
 export class ErrorBoundary extends React.Component<Props, State> {
   state = { hasError: false };
   static getDerivedStateFromError() {
@@ -152,7 +147,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
 ### Logger (`utils/logger.ts`)
 ```ts
-// Source: source-009.md § utils/logger.ts
+
 export const logger = {
   info: (msg: string, ctx?: Record<string, unknown>) => console.info(`[info] ${msg}`, ctx),
   warn: (msg: string, ctx?: Record<string, unknown>) => console.warn(`[warn] ${msg}`, ctx),
@@ -168,7 +163,7 @@ export const logger = {
 
 ### FeatureFlagsProvider
 ```tsx
-// Source: source-009.md § providers/FeatureFlagsProvider.tsx
+
 export function FeatureFlagsProvider({ children }: { children: React.ReactNode }) {
   const flags = useRemoteConfig();
   return <FeatureFlagContext.Provider value={flags}>{children}</FeatureFlagContext.Provider>;
@@ -186,8 +181,6 @@ export function FeatureFlagsProvider({ children }: { children: React.ReactNode }
 | <Term 1> | <Domain definition, with citation to its source> |
 | <Term 2> | <Domain definition, with citation to its source> |
 | <Term 3> | <Domain definition, with citation to its source> |
-
-> **Source:** business-policies.md § Glossary
 
 ---
 
@@ -211,8 +204,6 @@ export function FeatureFlagsProvider({ children }: { children: React.ReactNode }
 | API clients | camelCase suffixed with `Api` | `orderApi` |
 | Routes paths | kebab-case, lowercase | `/dashboard/users` |
 | Git branches | `type/scope` e.g. `feat/checkout` | `feat/order-detail` |
-
-> **Source:** business-policies.md § Naming Conventions
 
 ---
 

@@ -6,12 +6,9 @@ sources:
   - features-and-journeys.md
 ---
 
-
 ## Overview
 
 Complete catalog of business features with user personas, end-to-end journeys, user stories, acceptance criteria, and technical implementation mapping. Each feature is traced to its components, hooks, stores, and API endpoints.
-
-> **Source:** features-and-journeys.md § Feature Catalog
 
 ---
 
@@ -32,8 +29,6 @@ Complete catalog of business features with user personas, end-to-end journeys, u
 | **<Persona 1 Name>** | <Role / department> | <Goal 1>, <Goal 2> | <Pain point 1> | <Feature X>, <Feature Y> |
 | **<Persona 2 Name>** | <Role / department> | <Goal 1>, <Goal 2> | <Pain point 2> | <Feature Z> |
 
-> **Source:** features-and-journeys.md § User Personas
-
 ---
 
 ## 3. End-to-End Journeys
@@ -48,8 +43,6 @@ flowchart LR
 ```
 
 Document the primary happy-path journey and key alternate/error paths per feature, each traced to the components and state involved.
-
-> **Source:** features-and-journeys.md § Journeys
 
 ---
 

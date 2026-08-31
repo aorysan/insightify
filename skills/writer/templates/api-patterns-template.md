@@ -12,14 +12,13 @@ sources:
 
 The application uses a centralized **API client** (Axios) with interceptors for authentication, logging, and error normalization. Data fetching is abstracted through custom React hooks providing type-safe, cached, and optimistic updates.
 
-> **Source:** api-patterns.md § API Architecture
+
 
 ---
 
 ## 1. API Client Configuration (`services/apiClient.ts`)
 
-```typescript
-// Source: source-013.md § services/apiClient.ts
+```typescript
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { ErrorResponse } from '@/types/api';
@@ -145,8 +144,7 @@ export const apiClient = new ApiClient();
 ## 2. Custom Hooks
 
 ### useFetchData — Generic Data Fetching
-```typescript
-// Source: source-009.md § hooks/useFetchData.ts
+```typescript
 import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { apiClient } from '@/services/apiClient';
 import { PaginatedResponse, ErrorResponse } from '@/types/api';
@@ -199,8 +197,7 @@ const { data } = useFetchData<User>('/users/me', {
 ---
 
 ### useInfiniteQuery — Infinite Scroll / Pagination
-```typescript
-// Source: source-009.md § hooks/useInfiniteQuery.ts
+```typescript
 import { useInfiniteQuery, UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { apiClient } from '@/services/apiClient';
 import { PaginatedResponse, ErrorResponse } from '@/types/api';
@@ -255,8 +252,7 @@ return (
 ---
 
 ### useMutation — Create/Update/Delete
-```typescript
-// Source: source-009.md § hooks/useMutation.ts
+```typescript
 import { useMutation, UseMutationOptions, UseMutateFunction } from '@tanstack/react-query';
 import { apiClient } from '@/services/apiClient';
 import { ErrorResponse } from '@/types/api';
@@ -340,8 +336,7 @@ const deleteUser = useMutation<void, string>(
 ---
 
 ### useOptimisticUpdate — Optimistic UI
-```typescript
-// Source: source-009.md § hooks/useOptimisticUpdate.ts
+```typescript
 import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
 
 interface OptimisticOptions<TData, TVariables> {
@@ -408,8 +403,7 @@ const toggleUserStatus = useOptimisticUpdate<User, { id: string; isActive: boole
 ## 3. Feature-Specific API Hooks
 
 ### Auth API (`features/auth/api/authApi.ts`)
-```typescript
-// Source: source-014.md § features/auth/api/authApi.ts
+```typescript
 import { apiClient } from '@/services/apiClient';
 import { LoginCredentials, RegisterCredentials, AuthTokens, User } from '@/types/auth';
 
@@ -440,8 +434,7 @@ export const authApi = {
 ```
 
 ### Users API (`features/users/api/usersApi.ts`)
-```typescript
-// Source: source-015.md § features/users/api/usersApi.ts
+```typescript
 import { apiClient } from '@/services/apiClient';
 import { User, UserFilters, PaginatedResponse, CreateUserData, UpdateUserData } from '@/features/users/types';
 
@@ -473,8 +466,7 @@ export const usersApi = {
 ## 4. Error Handling Strategy
 
 ### Global Error Types
-```typescript
-// Source: source-003.md § types/api.ts
+```typescript
 export type ErrorCode = 
   | 'VALIDATION_ERROR'
   | 'UNAUTHORIZED'
@@ -548,8 +540,7 @@ flowchart TD
 
 ## 6. API Endpoints Reference
 
-```typescript
-// Source: source-013.md § services/endpoints.ts
+```typescript
 export const ENDPOINTS = {
   // Auth
   AUTH: {
@@ -602,8 +593,7 @@ export const ENDPOINTS = {
 ## 7. Testing API Hooks
 
 ### Mocking with MSW
-```typescript
-// Source: source-009.md § hooks/__tests__/useFetchData.test.ts
+```typescript
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -640,8 +630,7 @@ it('fetches users successfully', async () => {
 
 ## 8. Rate Limiting & Retry
 
-```typescript
-// Source: source-013.md § services/apiClient.ts (retry config)
+```typescript
 const client = axios.create({
   // ...
 });
@@ -676,4 +665,3 @@ client.interceptors.response.use(
 
 ---
 
-*All API patterns extracted from source code. See individual source citations for exact file locations.*
