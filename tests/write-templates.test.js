@@ -231,5 +231,15 @@ describe('Writer Templates (11 Templates, 10 Merged Categories)', () => {
     assert.ok(skill.includes('use raw HTML only'), 'Wrapper guidance must mandate raw HTML only inside wrappers');
     assert.ok(skill.includes('Markdown syntax will not be rendered'),
       'Wrapper guidance must warn that markdown syntax will not be rendered inside raw HTML wrappers');
+
+    // Strict HTML Grid card rules and anti-patterns
+    assert.ok(skill.includes('Mandatory HTML Grid Cards for Enumerations'),
+      'Must enforce mandatory HTML grid cards for enumerations');
+    assert.ok(skill.includes('forbid standard markdown lists') || skill.includes('NO Markdown Bullets'),
+      'Must explicitly forbid markdown bullet lists for structures');
+    assert.ok(skill.includes('<h4>') && skill.includes('<code>'),
+      'Must specify <h4> for card titles and <code> for code terms');
+    assert.ok(skill.includes('Few-Shot HTML Grid Template'),
+      'Must include a few-shot HTML grid template example');
   });
 });

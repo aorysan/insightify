@@ -39,13 +39,34 @@ description: Stage 2 - Execute documentation plan by generating a single compreh
 
 ## Artifact HTML Formatting
 
-- High information density: no long prose paragraphs or bullet walls. Every paragraph is at most 1 sentence. Mandate heavy use of lists. Optimize for scannability with short paragraphs, cards, grids, and tables.
-- Use structural HTML wrappers for dense, enumerable information (architecture components, API endpoint lists, process steps, configuration options):
-  - `<div class="grid-2">...</div>` and `<div class="grid-3">...</div>` as layout wrappers containing two/three columns of cards
-  - `<div class="artifact-card">...</div>` for each discrete item inside a grid (title in bold or H4, then a 1–2 sentence description)
+- High information density: no long prose paragraphs or bullet walls. Every paragraph is at most 1 sentence. Optimize for scannability with short paragraphs, cards, grids, and tables.
+- **Mandatory HTML Grid Cards for Enumerations**: When describing directory structures, features, components, architecture elements, API endpoint lists, process steps, or configuration options, you MUST use structural HTML grid cards instead of standard markdown lists.
+  - `<div class="grid-2">...</div>` and `<div class="grid-3">...</div>` as layout wrappers containing two or three columns of cards
+  - `<div class="artifact-card">...</div>` for each discrete item inside a grid
+- **Card Content Rules**:
+  - The title inside each `<div class="artifact-card">` MUST use an `<h4>` tag (e.g., `<h4>Title</h4>`).
+  - File names, paths, or code terms MUST be wrapped in `<code>` tags (e.g., `<code>page.tsx</code>`).
+  - Keep descriptions concise (1–2 sentences max per card).
+- **Hard Anti-Pattern Rule — NO Markdown Bullets for Structures**: Explicitly forbid standard markdown lists (`-` or `*`) when describing directory structures, features, or APIs. Enforce `<div class="grid-2">` / `<div class="grid-3">` with `<div class="artifact-card">` instead.
+- **Hard rule — raw HTML only inside wrappers:** Within `grid-*`, `artifact-card`, `badge`, and `status-indicator` wrappers, use raw HTML only (`<strong>`, `<h4>`, `<code>`, plain text). Markdown syntax will not be rendered inside these raw HTML elements (marked emits literal asterisks for `**bold**`, etc.) — never nest markdown syntax in them.
+- **Few-Shot HTML Grid Template**:
+```html
+### src/app
+
+<div class="grid-2">
+  <div class="artifact-card">
+    <h4>Pages</h4>
+    The main app at <code>page.tsx</code> plus <code>login</code> and <code>register</code> auth screens.
+  </div>
+  <div class="artifact-card">
+    <h4>API routes</h4>
+    <code>api/chat</code> powers the live AI chatbot.
+  </div>
+</div>
+```
+- **Additional UI Components**:
   - `<span class="badge">LABEL</span>` for small labels such as HTTP methods, statuses, versions
   - `<div class="status-indicator">TEXT</div>` for state/health lists, with modifiers `status-warning` and `status-error` (e.g., `<div class="status-indicator status-error">Deprecated</div>`)
-- **Hard rule — raw HTML only inside wrappers:** Within `grid-*`, `artifact-card`, `badge`, and `status-indicator` wrappers, use raw HTML only (`<strong>`, `<h4>`, plain text). Markdown syntax will not be rendered inside these raw HTML elements (marked emits literal asterisks for `**bold**`, etc.) — never nest markdown syntax in them.
 - Markdown stays the default for narrative flow; interleave the HTML wrappers above where structure beats prose — instead of raw markdown tables or bullet lists where appropriate.
 - These classes are styled by the Builder CSS; do not invent other class names.
 - Section heading numbers (`01`, `02`, ...) are added automatically by CSS counters — never hardcode them into headings.
