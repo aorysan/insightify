@@ -140,35 +140,25 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(css.includes('@media (max-width: 640px)'), 'Must include 640px phone breakpoint');
   });
 
-  // test('styles.css defines styles for documentation components, tables, code blocks, and diagrams', () => {
-//     const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
-// 
-//     // Navigation and layout
-//     assert.ok(css.includes(`.section-indicators`), `Must style .section-indicators`);
-//     assert.ok(css.includes(`.site-main`), `Must style .site-main`);
-//     assert.ok(css.includes('.doc-section'), 'Must style .doc-section');
-//     assert.ok(css.includes('.section-label'), 'Must style .section-label');
-//     assert.ok(css.includes('.tagline'), 'Must style .tagline');
-// 
-//     // Product overview
-//     // assert.ok(css.includes(`.product-overview`));
-//     // assert.ok(css.includes(.product-meta), Must style .product-meta);
-//     
-//     // assert.ok(css.includes(.tech-badges), Must style .tech-badges);
-//     
-// 
-//     // Content components
-//     assert.ok(css.includes('.table-wrapper'), 'Must style .table-wrapper');
-//     assert.ok(css.includes('.code-block'), 'Must style .code-block');
-//     assert.ok(css.includes('.source-citation'), 'Must style .source-citation');
-//     assert.ok(css.includes('.mermaid'), 'Must style .mermaid');
-//     assert.ok(css.includes('.process-diagram'), 'Must style .process-diagram');
-//     assert.ok(css.includes('.process-step'), 'Must style .process-step');
-//     assert.ok(css.includes('details'), 'Must style details tree');
-//     assert.ok(css.includes('summary'), 'Must style summary');
-//     assert.ok(css.includes('.tabs'), 'Must style CSS tabs');
-//     assert.ok(css.includes('.callout'), 'Must style callouts');
-//   });
+    test('styles.css defines styles for documentation components, tables, code blocks, and diagrams', () => {
+    const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
+
+    // Layout
+    assert.ok(css.includes('.site-main'), 'Must style .site-main');
+    assert.ok(css.includes('.doc-section'), 'Must style .doc-section');
+    assert.ok(css.includes('.section-label'), 'Must style .section-label');
+    assert.ok(css.includes('.tagline'), 'Must style .tagline');
+    
+    // Components
+    assert.ok(css.includes('.code-block'), 'Must style .code-block');
+    assert.ok(css.includes('.artifact-card'), 'Must style .artifact-card');
+    assert.ok(css.includes('.badge'), 'Must style .badge');
+    assert.ok(css.includes('.card-grid'), 'Must style .card-grid');
+    assert.ok(css.includes('.flow-diagram'), 'Must style .flow-diagram');
+    assert.ok(css.includes('.state-machine'), 'Must style .state-machine');
+    assert.ok(css.includes('.info-block'), 'Must style .info-block');
+    assert.ok(css.includes('.policy-grid'), 'Must style .policy-grid');
+  });
 
   test('styles.css defines print stylesheet with clean document layout', () => {
     const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
