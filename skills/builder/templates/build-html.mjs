@@ -366,7 +366,11 @@ export function buildDocSections(docPath) {
     const match = section.match(/^##\s+(.+)$/m);
     if (match) {
       const title = match[1].trim();
-      if (title.toLowerCase() === 'table of contents') continue;
+      const titleLower = title.toLowerCase();
+      if (titleLower === 'table of contents' ||
+          titleLower.includes('workflows') ||
+          titleLower.includes('unanswered') ||
+          titleLower.includes('known gaps')) continue;
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       const sectionContent = section.substring(match[0].length);
       
@@ -401,7 +405,11 @@ export function buildSidebarNav(docPath) {
     const sections = md.match(/^##\s+(.+)$/gm) || [];
     for (const section of sections) {
       const title = section.replace(/^##\s+/, '').trim();
-      if (title.toLowerCase() === 'table of contents') continue;
+      const titleLower = title.toLowerCase();
+      if (titleLower === 'table of contents' ||
+          titleLower.includes('workflows') ||
+          titleLower.includes('unanswered') ||
+          titleLower.includes('known gaps')) continue;
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       navHtml += `
         <button type="button" class="section-indicator" data-section="${escapeHtml(slug)}" aria-label="Go to ${escapeHtml(title)}">
@@ -563,12 +571,16 @@ export function buildArtifact(options = {}) {
   let htmlTemplate = options.htmlTemplate;
   if (!htmlTemplate) {
     const baseHtml = readTemplate('layouts/base.html');
-    const headerHtml = readTemplate('components/site-header/header.html');
-    const indicatorsHtml = readTemplate('components/section-indicators/indicators.html');
-    htmlTemplate = baseHtml;
-    if (headerHtml) htmlTemplate = htmlTemplate.replace('{{> site-header}}', headerHtml);
-    if (indicatorsHtml) htmlTemplate = htmlTemplate.replace('{{> section-indicators}}', indicatorsHtml);
-    if (!htmlTemplate && readTemplate('index-html-template.html')) {
+    if (baseHtml) {
+      htmlTemplate = baseHtml.replace(/\{\{>\s*([a-zA-Z0-9_-]+)\}\}/g, (match, compName) => {
+        const compDir = path.join(__dirname, 'components', compName);
+        if (fs.existsSync(compDir)) {
+          const files = fs.readdirSync(compDir).filter(f => f.endsWith('.html'));
+          return files.map(f => readTemplate(`components/${compName}/${f}`)).join('\n');
+        }
+        return '';
+      });
+    } else if (readTemplate('index-html-template.html')) {
       // Fallback to legacy path for compatibility if layout doesn't exist
       htmlTemplate = readTemplate('index-html-template.html');
     }
@@ -576,11 +588,25 @@ export function buildArtifact(options = {}) {
 
   let styles = options.styles;
   if (!styles) {
+    let cssList = [];
     const baseCss = readTemplate('layouts/styles-base.css');
-    const headerCss = readTemplate('components/site-header/header.css');
-    const indicatorsCss = readTemplate('components/section-indicators/indicators.css');
-    if (baseCss) {
-      styles = [baseCss, headerCss, indicatorsCss].filter(Boolean).join('\n');
+    if (baseCss) cssList.push(baseCss);
+
+    const componentsDir = path.join(__dirname, 'components');
+    if (fs.existsSync(componentsDir)) {
+      const dirs = fs.readdirSync(componentsDir, { withFileTypes: true });
+      for (const dir of dirs) {
+        if (dir.isDirectory()) {
+          const files = fs.readdirSync(path.join(componentsDir, dir.name)).filter(f => f.endsWith('.css'));
+          for (const file of files) {
+            cssList.push(readTemplate(`components/${dir.name}/${file}`));
+          }
+        }
+      }
+    }
+
+    if (cssList.length > 0) {
+      styles = cssList.join('\n');
     } else {
       styles = readTemplate('styles.css');
     }
@@ -588,14 +614,28 @@ export function buildArtifact(options = {}) {
 
   let scripts = options.scripts;
   if (!scripts) {
-    const baseJs = readTemplate('layouts/scripts-base.js');
-    const headerJs = readTemplate('components/site-header/header.js');
-    const indicatorsJs = readTemplate('components/section-indicators/indicators.js');
+    let jsList = [];
     
+    const componentsDir = path.join(__dirname, 'components');
+    if (fs.existsSync(componentsDir)) {
+      const dirs = fs.readdirSync(componentsDir, { withFileTypes: true });
+      for (const dir of dirs) {
+        if (dir.isDirectory()) {
+          const files = fs.readdirSync(path.join(componentsDir, dir.name)).filter(f => f.endsWith('.js'));
+          for (const file of files) {
+            jsList.push(readTemplate(`components/${dir.name}/${file}`));
+          }
+        }
+      }
+    }
+
+    const baseJs = readTemplate('layouts/scripts-base.js');
     if (baseJs) {
-      scripts = baseJs
-        .replace('{{> site-header-js}}', headerJs || '')
-        .replace('{{> section-indicators-js}}', indicatorsJs || '');
+      jsList.push(baseJs.replace(/\{\{>\s*[a-zA-Z0-9_-]+\}\}/g, ''));
+    }
+
+    if (jsList.length > 0) {
+      scripts = jsList.join('\n');
     } else {
       scripts = readTemplate('scripts.js');
     }
