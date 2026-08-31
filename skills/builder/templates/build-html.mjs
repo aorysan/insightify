@@ -7,6 +7,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
+ * Recursively find files matching extension
+ */
+function getAllFilesRecursive(dir, ext, fileList = []) {
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir, { withFileTypes: true });
+    for (const file of files) {
+      const fullPath = path.join(dir, file.name);
+      if (file.isDirectory()) {
+        getAllFilesRecursive(fullPath, ext, fileList);
+      } else if (file.name.endsWith(ext)) {
+        fileList.push(fullPath);
+      }
+    }
+  }
+  return fileList;
+}
+
+/**
  * Escape HTML special characters
  */
 function escapeHtml(text) {
@@ -574,11 +592,8 @@ export function buildArtifact(options = {}) {
     if (baseHtml) {
       htmlTemplate = baseHtml.replace(/\{\{>\s*([a-zA-Z0-9_-]+)\}\}/g, (match, compName) => {
         const compDir = path.join(__dirname, 'components', compName);
-        if (fs.existsSync(compDir)) {
-          const files = fs.readdirSync(compDir).filter(f => f.endsWith('.html'));
-          return files.map(f => readTemplate(`components/${compName}/${f}`)).join('\n');
-        }
-        return '';
+        const htmlFiles = getAllFilesRecursive(compDir, '.html');
+        return htmlFiles.map(f => fs.readFileSync(f, 'utf-8')).join('\n');
       });
     } else if (readTemplate('index-html-template.html')) {
       // Fallback to legacy path for compatibility if layout doesn't exist
@@ -593,16 +608,9 @@ export function buildArtifact(options = {}) {
     if (baseCss) cssList.push(baseCss);
 
     const componentsDir = path.join(__dirname, 'components');
-    if (fs.existsSync(componentsDir)) {
-      const dirs = fs.readdirSync(componentsDir, { withFileTypes: true });
-      for (const dir of dirs) {
-        if (dir.isDirectory()) {
-          const files = fs.readdirSync(path.join(componentsDir, dir.name)).filter(f => f.endsWith('.css'));
-          for (const file of files) {
-            cssList.push(readTemplate(`components/${dir.name}/${file}`));
-          }
-        }
-      }
+    const cssFiles = getAllFilesRecursive(componentsDir, '.css');
+    for (const f of cssFiles) {
+      cssList.push(fs.readFileSync(f, 'utf-8'));
     }
 
     if (cssList.length > 0) {
@@ -614,28 +622,16 @@ export function buildArtifact(options = {}) {
 
   let scripts = options.scripts;
   if (!scripts) {
-    let jsList = [];
-    
-    const componentsDir = path.join(__dirname, 'components');
-    if (fs.existsSync(componentsDir)) {
-      const dirs = fs.readdirSync(componentsDir, { withFileTypes: true });
-      for (const dir of dirs) {
-        if (dir.isDirectory()) {
-          const files = fs.readdirSync(path.join(componentsDir, dir.name)).filter(f => f.endsWith('.js'));
-          for (const file of files) {
-            jsList.push(readTemplate(`components/${dir.name}/${file}`));
-          }
-        }
-      }
-    }
-
     const baseJs = readTemplate('layouts/scripts-base.js');
     if (baseJs) {
-      jsList.push(baseJs.replace(/\{\{>\s*[a-zA-Z0-9_-]+\}\}/g, ''));
-    }
-
-    if (jsList.length > 0) {
-      scripts = jsList.join('\n');
+      // Replace placeholders precisely to maintain IIFE encapsulation
+      scripts = baseJs.replace(/\{\{>\s*([a-zA-Z0-9_-]+)-js\}\}/g, (match, compName) => {
+        const compDir = path.join(__dirname, 'components', compName);
+        const jsFiles = getAllFilesRecursive(compDir, '.js');
+        return jsFiles.map(f => fs.readFileSync(f, 'utf-8')).join('\n');
+      });
+      // Append any component JS that wasn't injected? The reviewer said "just like HTML assembly".
+      // We will assume components that need JS injection must declare a placeholder in scripts-base.js
     } else {
       scripts = readTemplate('scripts.js');
     }
