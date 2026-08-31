@@ -3,7 +3,7 @@ name: insightify
 description: Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
 ---
 
-# Insightify v6.1 Pipeline Orchestrator
+# Insightify v6.4.1 Pipeline Orchestrator
 
 When the user runs this skill, execute the 4-stage documentation pipeline sequentially. Do NOT skip any steps unless explicitly requested by the user.
 
@@ -50,7 +50,7 @@ Support the following invocation patterns:
 - On fresh run (no --resume, --sync, or --update), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation. (--sync and --update target an existing OUT_DIR and refresh it incrementally without the overwrite prompt.)
 - Detect missing `[OUT_DIR]/.insightify/` on resume and offer to restart or resume from last completed step.
 
-## Output Specification (v6.1)
+## Output Specification (v6.4.1)
 
 The pipeline generates a **Technical Specification** matching the reference artifact structure:
 
