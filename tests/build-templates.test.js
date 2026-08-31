@@ -90,26 +90,19 @@ Content for ${cat} section ${idx + 1}.
     });
   });
 
-//   test('index-html-template.html contains required font links and semantic HTML elements', () => {
-//     const tpl = fs.readFileSync(path.join(templatesDir, 'layouts/base.html'), 'utf8').replace('{{> site-header}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.html'), 'utf8')).replace('{{> section-indicators}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.html'), 'utf8'));
-// 
-//     // // Google Fonts
-//     // assert.ok(tpl.includes('Space+Grotesk'), 'Must include Space Grotesk font');
-//     assert.ok(tpl.includes('Inter'), 'Must include Inter font');
-//     assert.ok(tpl.includes('JetBrains+Mono'), 'Must include JetBrains Mono font');
-// 
-//     // // Semantic layout and CSS-only sidebar
-//     // assert.ok(tpl.includes('id="sidebar-toggle"'), 'Must include sidebar-toggle checkbox');
-//     // 
-//     assert.ok(tpl.includes(`class="section-indicators"`), `Must include section-indicators component`);
-//     assert.ok(tpl.includes(`<main class="site-main">`), `Must include site-main element`);
-//     assert.ok(tpl.includes(`<header class="site-header`), `Must include site header`);
-//     assert.ok(tpl.includes('<article class="doc-content">'), 'Must include article doc-content');
-//     assert.ok(tpl.includes('id="overview"'), 'Must include overview section');
-//     assert.ok(tpl.includes('id="pipeline"'), 'Must include pipeline section');
-//     assert.ok(tpl.includes('id="theme-toggle"'), 'Must include theme toggle button');
-//     assert.ok(tpl.includes('class="print-link"'), 'Must include print link');
-//   });
+  test('layouts/base.html contains required font links and semantic HTML elements', () => {
+    const tpl = fs.readFileSync(path.join(templatesDir, 'layouts/base.html'), 'utf8').replace('{{> site-header}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.html'), 'utf8')).replace('{{> section-indicators}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.html'), 'utf8'));
+
+    assert.ok(tpl.includes('IBM+Plex+Sans'), 'Must include IBM Plex Sans font');
+    assert.ok(tpl.includes('JetBrains+Mono'), 'Must include JetBrains Mono font');
+
+    assert.ok(tpl.includes('class="section-indicators"'), 'Must include section-indicators component');
+    assert.ok(tpl.includes('<main class="site-main">'), 'Must include site-main element');
+    assert.ok(tpl.includes('<header class="site-header'), 'Must include site header');
+    assert.ok(tpl.includes('<article class="doc-content">'), 'Must include article doc-content');
+    assert.ok(tpl.includes('id="theme-toggle"'), 'Must include theme toggle button');
+    assert.ok(tpl.includes('class="print-link"'), 'Must include print link');
+  });
 
   test('styles.css contains design tokens for colors, typography, spacing, radius, and layout', () => {
     const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
