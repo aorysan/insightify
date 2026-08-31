@@ -386,9 +386,9 @@ export function buildDocSections(docPath) {
       const title = match[1].trim();
       const titleLower = title.toLowerCase();
       if (titleLower === 'table of contents' ||
-          titleLower.includes('workflows') ||
-          titleLower.includes('unanswered') ||
-          titleLower.includes('known gaps')) continue;
+          titleLower === 'approval workflows' ||
+          titleLower === 'unanswered questions' ||
+          titleLower === 'known gaps') continue;
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       const sectionContent = section.substring(match[0].length);
       
@@ -412,7 +412,7 @@ export function buildDocSections(docPath) {
 export function buildSidebarNav(docPath) {
   let navHtml = '';
   navHtml += `
-    <a href="#overview" class="section-indicator active">
+    <a href="#overview" class="section-indicator active" data-section="overview">
       <span class="indicator-label">Overview</span>
       <span class="indicator-line"></span>
     </a>
@@ -430,7 +430,7 @@ export function buildSidebarNav(docPath) {
           titleLower === 'known gaps') continue;
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       navHtml += `
-        <a href="#${escapeHtml(slug)}" class="section-indicator">
+        <a href="#${escapeHtml(slug)}" class="section-indicator" data-section="${escapeHtml(slug)}">
           <span class="indicator-label">${escapeHtml(title)}</span>
           <span class="indicator-line"></span>
         </a>
@@ -439,7 +439,7 @@ export function buildSidebarNav(docPath) {
   }
 
   navHtml += `
-    <a href="#pipeline" class="section-indicator">
+    <a href="#pipeline" class="section-indicator" data-section="pipeline">
       <span class="indicator-label">Documentation Pipeline</span>
       <span class="indicator-line"></span>
     </a>

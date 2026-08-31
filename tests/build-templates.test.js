@@ -356,7 +356,6 @@ Content for ${cat} section ${idx + 1}.
     fs.writeFileSync(combinedPath, '## Executive Summary\nContent\n## Directory Structure\nContent', 'utf8');
 
     const navHtml = buildSidebarNav(combinedPath);
-    // assert.ok(navHtml.includes('<ul class="nav-list">')));
     assert.ok(navHtml.includes('href="#overview"'));
     assert.ok(navHtml.includes('href="#executive-summary"'));
     assert.ok(navHtml.includes('href="#directory-structure"'));
