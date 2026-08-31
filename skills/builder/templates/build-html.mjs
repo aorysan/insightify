@@ -593,11 +593,9 @@ export function buildArtifact(options = {}) {
     const indicatorsJs = readTemplate('components/section-indicators/indicators.js');
     
     if (baseJs) {
-      // Extract IIFE contents and merge
-      let mergedJs = baseJs.replace(/^\s*\(\s*function\s*\(\)\s*\{/, '').replace(/\}\)\(\)\s*;?\s*$/, '');
-      if (headerJs) mergedJs = headerJs + '\n' + mergedJs;
-      if (indicatorsJs) mergedJs = mergedJs + '\n' + indicatorsJs;
-      scripts = `(function() {\n${mergedJs}\n})();`;
+      scripts = baseJs
+        .replace('{{> site-header-js}}', headerJs || '')
+        .replace('{{> section-indicators-js}}', indicatorsJs || '');
     } else {
       scripts = readTemplate('scripts.js');
     }

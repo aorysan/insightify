@@ -72,41 +72,38 @@ Content for ${cat} section ${idx + 1}.
     });
   });
 
-//   test('index-html-template.html contains all required v6 placeholders', () => {
-//     const tpl = fs.readFileSync(path.join(templatesDir, 'layouts/base.html'), 'utf8').replace('{{> site-header}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.html'), 'utf8')).replace('{{> section-indicators}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.html'), 'utf8'));
-//     const placeholders = [
-//       '{{TITLE}}',
-//       '{{PRODUCT_NAME}}',
-//       '{{TAGLINE}}',
-//       '{{VERSION}}',
-//       '{{GENERATED_AT}}',
-//       '{{SIDEBAR_NAV}}',
-//       '{{PRODUCT_OVERVIEW}}',
-//       '{{DOC_SECTIONS}}',
-//       '{{PROCESS_DIAGRAM}}',
-//       '{{STYLE}}',
-//       '{{SCRIPTS}}',
-//       '{{INSIGHTIFY_VERSION}}'
-//     ];
-//     placeholders.forEach(p => {
-//       assert.ok(tpl.includes(p), `Template must include placeholder ${p}`);
-//     });
-//   });
+  test('index-html-template.html contains all required v6 placeholders', () => {
+    const tpl = fs.readFileSync(path.join(templatesDir, 'layouts/base.html'), 'utf8').replace('{{> site-header}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.html'), 'utf8')).replace('{{> section-indicators}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.html'), 'utf8'));
+    const placeholders = [
+      '{{TITLE}}',
+      '{{PRODUCT_NAME}}',
+      '{{TAGLINE}}',
+      '{{SIDEBAR_NAV}}',
+      '{{PRODUCT_OVERVIEW}}',
+      '{{DOC_SECTIONS}}',
+      '{{PROCESS_DIAGRAM}}',
+      '{{STYLE}}',
+      '{{SCRIPTS}}',
+      ];
+    placeholders.forEach(p => {
+      assert.ok(tpl.includes(p), `Template must include placeholder ${p}`);
+    });
+  });
 
 //   test('index-html-template.html contains required font links and semantic HTML elements', () => {
 //     const tpl = fs.readFileSync(path.join(templatesDir, 'layouts/base.html'), 'utf8').replace('{{> site-header}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.html'), 'utf8')).replace('{{> section-indicators}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.html'), 'utf8'));
 // 
-//     // Google Fonts
+//     // // Google Fonts
 //     // assert.ok(tpl.includes('Space+Grotesk'), 'Must include Space Grotesk font');
 //     assert.ok(tpl.includes('Inter'), 'Must include Inter font');
 //     assert.ok(tpl.includes('JetBrains+Mono'), 'Must include JetBrains Mono font');
 // 
-//     // Semantic layout and CSS-only sidebar
+//     // // Semantic layout and CSS-only sidebar
 //     // assert.ok(tpl.includes('id="sidebar-toggle"'), 'Must include sidebar-toggle checkbox');
 //     // 
-//     assert.ok(tpl.includes('<aside class="sidebar"'), 'Must include aside sidebar element');
-//     assert.ok(tpl.includes('<main class="main-content">'), 'Must include main content element');
-//     assert.ok(tpl.includes('<header class="page-header">'), 'Must include page header');
+//     assert.ok(tpl.includes(`class="section-indicators"`), `Must include section-indicators component`);
+//     assert.ok(tpl.includes(`<main class="site-main">`), `Must include site-main element`);
+//     assert.ok(tpl.includes(`<header class="site-header`), `Must include site header`);
 //     assert.ok(tpl.includes('<article class="doc-content">'), 'Must include article doc-content');
 //     assert.ok(tpl.includes('id="overview"'), 'Must include overview section');
 //     assert.ok(tpl.includes('id="pipeline"'), 'Must include pipeline section');
@@ -150,22 +147,22 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(css.includes('@media (max-width: 640px)'), 'Must include 640px phone breakpoint');
   });
 
-//   test('styles.css defines styles for documentation components, tables, code blocks, and diagrams', () => {
+  // test('styles.css defines styles for documentation components, tables, code blocks, and diagrams', () => {
 //     const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
 // 
 //     // Navigation and layout
-//     // assert.ok(css.includes('.sidebar'), 'Must style .sidebar');
-//     assert.ok(css.includes('.main-content'), 'Must style .main-content');
+//     assert.ok(css.includes(`.section-indicators`), `Must style .section-indicators`);
+//     assert.ok(css.includes(`.site-main`), `Must style .site-main`);
 //     assert.ok(css.includes('.doc-section'), 'Must style .doc-section');
 //     assert.ok(css.includes('.section-label'), 'Must style .section-label');
 //     assert.ok(css.includes('.tagline'), 'Must style .tagline');
 // 
 //     // Product overview
-//     // assert.ok(css.includes('.product-overview'), 'Must style .product-overview');
-//     assert.ok(css.includes('.product-meta'), 'Must style .product-meta');
-//     // 
-//     assert.ok(css.includes('.tech-badges'), 'Must style .tech-badges');
-//     // 
+//     // assert.ok(css.includes(`.product-overview`));
+//     // assert.ok(css.includes(.product-meta), Must style .product-meta);
+//     
+//     // assert.ok(css.includes(.tech-badges), Must style .tech-badges);
+//     
 // 
 //     // Content components
 //     assert.ok(css.includes('.table-wrapper'), 'Must style .table-wrapper');
@@ -188,7 +185,7 @@ Content for ${cat} section ${idx + 1}.
   });
 
   test('scripts.js provides theme toggle with localStorage persistence and system theme detection', () => {
-    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8');
+    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8').replace('{{> site-header-js}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8')).replace('{{> section-indicators-js}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8'));
 
     assert.ok(js.includes('toggleTheme'), 'Must include toggleTheme function');
     assert.ok(js.includes('initTheme'), 'Must include initTheme function');
@@ -198,7 +195,7 @@ Content for ${cat} section ${idx + 1}.
   });
 
   test('scripts.js separates localStorage persistence from DOM application and prevents system state corruption', () => {
-    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8');
+    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8').replace('{{> site-header-js}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8')).replace('{{> section-indicators-js}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8'));
     const { JSDOM } = require('jsdom');
 
     const dom = new JSDOM('<!DOCTYPE html><html><head></head><body><button id="theme-toggle"></button></body></html>', {
@@ -242,7 +239,7 @@ Content for ${cat} section ${idx + 1}.
   });
 
   test('scripts.js provides Mermaid diagram initialization and theme mutation observer', () => {
-    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8');
+    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8').replace('{{> site-header-js}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8')).replace('{{> section-indicators-js}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8'));
 
     assert.ok(js.includes('initMermaid'), 'Must include initMermaid function');
     assert.ok(js.includes('mermaid.initialize'), 'Must call mermaid.initialize');
@@ -250,7 +247,7 @@ Content for ${cat} section ${idx + 1}.
   });
 
   test('scripts.js provides smooth scrolling, copy code buttons, and mobile navigation', () => {
-    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8');
+    const js = fs.readFileSync(path.join(templatesDir, 'layouts/scripts-base.js'), 'utf8').replace('{{> site-header-js}}', fs.readFileSync(path.join(templatesDir, 'components/site-header/header.js'), 'utf8')).replace('{{> section-indicators-js}}', fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.js'), 'utf8'));
 
     assert.ok(js.includes('initSmoothScroll'), 'Must include initSmoothScroll');
     assert.ok(js.includes('initCopyCode'), 'Must include initCopyCode');
@@ -631,7 +628,7 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(tpl.includes('IBM+Plex+Mono'), 'Must load IBM Plex Mono font');
     assert.strictEqual(tpl.includes('Georgia'), false, 'Georgia must be removed from font link');
 
-    // artifact-container wraps content INSIDE article.doc-content; TOC aside stays outside
+    // // artifact-container wraps content INSIDE article.doc-content; TOC aside stays outside
     const iArticle = tpl.indexOf('<article class="doc-content">');
     const iWrap = tpl.indexOf('<div class="artifact-container">');
     const iCloseArticle = tpl.indexOf('</article>');
@@ -644,7 +641,7 @@ Content for ${cat} section ${idx + 1}.
     // assert.ok(iCloseArticle < iAside,
       // 'TOC aside must stay outside the constrained central column');
 
-    // Floating TOC untouched
+    // // Floating TOC untouched
     // assert.ok(tpl.includes('<nav class="floating-toc">'), 'floating-toc must remain');
     assert.ok(tpl.includes('{{SIDEBAR_NAV}}'), 'TOC nav placeholder must remain');
   });
@@ -660,7 +657,7 @@ Content for ${cat} section ${idx + 1}.
   test('styles.css preserves legacy component classes referenced by pipeline output', () => {
     const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
 
-    ['.section-label', '.card-grid', '.state-machine',
+    ['.premium-meta-header', '.page-header', '.section-label', '.card-grid', '.state-machine',
      '.flow-diagram', '.info-block', '.policy-grid', '.code-block', '.copy-button', '.toc-container', '.floating-toc'
     ].forEach(cls => {
       assert.ok(css.includes(cls), `Legacy component ${cls} must survive redesign`);
