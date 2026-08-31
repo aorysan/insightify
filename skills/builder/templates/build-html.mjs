@@ -21,7 +21,7 @@ function getAllFilesRecursive(dir, ext, fileList = []) {
       }
     }
   }
-  return fileList;
+  return fileList.sort();
 }
 
 /**
@@ -412,10 +412,10 @@ export function buildDocSections(docPath) {
 export function buildSidebarNav(docPath) {
   let navHtml = '';
   navHtml += `
-    <button type="button" class="section-indicator active" data-section="overview" aria-label="Go to Overview">
+    <a href="#overview" class="section-indicator active">
       <span class="indicator-label">Overview</span>
       <span class="indicator-line"></span>
-    </button>
+    </a>
   `;
   
   if (docPath && fs.existsSync(docPath)) {
@@ -425,24 +425,24 @@ export function buildSidebarNav(docPath) {
       const title = section.replace(/^##\s+/, '').trim();
       const titleLower = title.toLowerCase();
       if (titleLower === 'table of contents' ||
-          titleLower.includes('workflows') ||
-          titleLower.includes('unanswered') ||
-          titleLower.includes('known gaps')) continue;
+          titleLower === 'approval workflows' ||
+          titleLower === 'unanswered questions' ||
+          titleLower === 'known gaps') continue;
       const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       navHtml += `
-        <button type="button" class="section-indicator" data-section="${escapeHtml(slug)}" aria-label="Go to ${escapeHtml(title)}">
+        <a href="#${escapeHtml(slug)}" class="section-indicator">
           <span class="indicator-label">${escapeHtml(title)}</span>
           <span class="indicator-line"></span>
-        </button>
+        </a>
       `;
     }
   }
 
   navHtml += `
-    <button type="button" class="section-indicator" data-section="pipeline" aria-label="Go to Documentation Pipeline">
+    <a href="#pipeline" class="section-indicator">
       <span class="indicator-label">Documentation Pipeline</span>
       <span class="indicator-line"></span>
-    </button>
+    </a>
   `;
   return navHtml;
 }

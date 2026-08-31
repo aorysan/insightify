@@ -121,23 +121,12 @@
   // Initialize All
   // ==========================================================================
 
-  function initSectionIndicators() {
-    document.querySelectorAll('button.section-indicator').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-section');
-        if (!id) return;
-        scrollToTarget(document.getElementById(id));
-      });
-    });
-  }
-
   function init() {
     initTheme();
     initMermaid();
     initSmoothScroll();
     initCopyCode();
     initActiveNav();
-    initSectionIndicators();
 
     // Theme toggle button
     const themeToggle = document.getElementById('theme-toggle');

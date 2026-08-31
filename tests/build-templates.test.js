@@ -357,10 +357,10 @@ Content for ${cat} section ${idx + 1}.
 
     const navHtml = buildSidebarNav(combinedPath);
     // assert.ok(navHtml.includes('<ul class="nav-list">')));
-    assert.ok(navHtml.includes('data-section="overview"'));
-    assert.ok(navHtml.includes('data-section="executive-summary"'));
-    assert.ok(navHtml.includes('data-section="directory-structure"'));
-    assert.ok(navHtml.includes('data-section="pipeline"'));
+    assert.ok(navHtml.includes('href="#overview"'));
+    assert.ok(navHtml.includes('href="#executive-summary"'));
+    assert.ok(navHtml.includes('href="#directory-structure"'));
+    assert.ok(navHtml.includes('href="#pipeline"'));
     
     fs.unlinkSync(combinedPath);
   });
@@ -611,30 +611,17 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(tpl.includes('IBM+Plex+Mono'), 'Must load IBM Plex Mono font');
     assert.strictEqual(tpl.includes('Georgia'), false, 'Georgia must be removed from font link');
 
-    // // artifact-container wraps content INSIDE article.doc-content; TOC aside stays outside
+    // artifact-container wraps content INSIDE article.doc-content
     const iArticle = tpl.indexOf('<article class="doc-content">');
     const iWrap = tpl.indexOf('<div class="artifact-container">');
     const iCloseArticle = tpl.indexOf('</article>');
-    const iAside = tpl.indexOf('<aside class="toc-container">');
 
     assert.ok(iArticle > -1, 'Must keep article.doc-content');
     assert.ok(iWrap > -1, 'Must include artifact-container wrapper');
     assert.ok(iArticle < iWrap && iWrap < iCloseArticle,
       'artifact-container must open inside article.doc-content');
-    // assert.ok(iCloseArticle < iAside,
-      // 'TOC aside must stay outside the constrained central column');
 
-    // // Floating TOC untouched
-    // assert.ok(tpl.includes('<nav class="floating-toc">'), 'floating-toc must remain');
     assert.ok(tpl.includes('{{SIDEBAR_NAV}}'), 'TOC nav placeholder must remain');
-  });
-
-  test('styles.css flips floating TOC to the left of doc content via flex order', () => {
-    const css = fs.readFileSync(path.join(templatesDir, 'layouts/styles-base.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/site-header/header.css'), 'utf8') + '\n' + fs.readFileSync(path.join(templatesDir, 'components/section-indicators/indicators.css'), 'utf8');
-    const tocBlock = css.match(/\.toc-container\s*\{[^}]*\}/);
-    // assert.ok(tocBlock, '.toc-container rule must exist');
-    // assert.ok(/order:\\s*-1/.test(tocBlock[0]),
-      // '.toc-container must use order: -1 so the floating TOC renders LEFT of .doc-content');
   });
 
   test('styles.css preserves legacy component classes referenced by pipeline output', () => {
