@@ -9,7 +9,7 @@
     {
       "name": "insightify",
       "description": "Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from code repositories. Archetype-aware spec covering directory structure, data models, component architecture, state management, routing, API patterns, and Mermaid diagrams.",
-      "version": "6.2.0",
+      "version": "6.3.0",
       "source": {"source": "github", "repo": "aorysan/insightify"}
     },
     {
