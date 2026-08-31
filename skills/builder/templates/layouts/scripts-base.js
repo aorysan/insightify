@@ -7,81 +7,6 @@
   'use strict';
 
   // ==========================================================================
-  // Theme Management
-  // ==========================================================================
-
-  const THEME_KEY = 'insightify-theme';
-  const THEME_ATTR = 'data-theme';
-
-  function getStoredTheme() {
-    try {
-      return localStorage.getItem(THEME_KEY);
-    } catch {
-      return null;
-    }
-  }
-
-  function setStoredTheme(theme) {
-    try {
-      localStorage.setItem(THEME_KEY, theme);
-    } catch {}
-  }
-
-  function getSystemTheme() {
-    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
-
-  function getEffectiveTheme(theme) {
-    const target = theme || getStoredTheme() || 'system';
-    if (target === 'system') {
-      return getSystemTheme();
-    }
-    return target;
-  }
-
-  function applyThemeToDom(effectiveTheme) {
-    document.documentElement.setAttribute(THEME_ATTR, effectiveTheme);
-  }
-
-  function setTheme(theme) {
-    const intended = theme || 'system';
-    setStoredTheme(intended);
-    const effective = getEffectiveTheme(intended);
-    applyThemeToDom(effective);
-  }
-
-  function applyTheme(theme) {
-    setTheme(theme);
-  }
-
-  function initTheme() {
-    const stored = getStoredTheme() || 'system';
-    const effective = getEffectiveTheme(stored);
-    applyThemeToDom(effective);
-
-    // Listen for system theme changes
-    if (window.matchMedia) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', () => {
-        const currentStored = getStoredTheme();
-        if (currentStored === 'system' || currentStored === null) {
-          applyThemeToDom(getSystemTheme());
-        }
-      });
-    }
-  }
-
-  function toggleTheme() {
-    const current = getStoredTheme() || 'system';
-    const themes = ['light', 'dark', 'system'];
-    const currentIndex = themes.indexOf(current);
-    const nextIndex = (currentIndex === -1) ? 0 : (currentIndex + 1) % themes.length;
-    const nextTheme = themes[nextIndex];
-    setTheme(nextTheme);
-    return nextTheme;
-  }
-
-  // ==========================================================================
   // Mermaid Initialization
   // ==========================================================================
 
@@ -115,6 +40,12 @@
   // Smooth Scroll
   // ==========================================================================
 
+  function scrollToTarget(target) {
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  }
+
   function initSmoothScroll() {
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href^="#"]');
@@ -126,7 +57,7 @@
       const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToTarget(target);
         history.pushState(null, '', href);
       }
     });
@@ -151,12 +82,7 @@
         </svg>
       `;
       
-
-      
       block.appendChild(button);
-
-      
-      
 
       button.addEventListener('click', async () => {
         const code = block.querySelector('code');
@@ -187,37 +113,19 @@
     });
   }
 
-
-  // ==========================================================================
-  // Active Navigation Highlight
-  // ==========================================================================
-
-  function initActiveNav() {
-    const sections = document.querySelectorAll('.doc-section[id]');
-    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
-
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          navLinks.forEach(link => {
-            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-          });
-        }
-      });
-    }, {
-      rootMargin: '-60px 0px -66% 0px',
-      threshold: 0.1
-    });
-
-    sections.forEach(section => observer.observe(section));
-  }
-
   // ==========================================================================
   // Initialize All
   // ==========================================================================
+
+  function initSectionIndicators() {
+    document.querySelectorAll('button.section-indicator').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-section');
+        if (!id) return;
+        scrollToTarget(document.getElementById(id));
+      });
+    });
+  }
 
   function init() {
     initTheme();
@@ -225,6 +133,7 @@
     initSmoothScroll();
     initCopyCode();
     initActiveNav();
+    initSectionIndicators();
 
     // Theme toggle button
     const themeToggle = document.getElementById('theme-toggle');

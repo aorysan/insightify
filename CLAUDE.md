@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Run a single test file**: `node --test tests/orchestrator.test.js`
 - **Install dependencies**: `npm install` (Dependencies include `cheerio`, `pdf-parse`, `marked`, `jsdom`, `mermaid`)
 
-## Architecture Overview (v6.3.0)
+## Architecture Overview (v6.4.1)
 
 Insightify is a multi-platform documentation generator plugin structured as a 4-stage pipeline orchestrated by a central skill. The architecture uses a "Multi-Skill Pipeline with Per-Stage Folders" approach producing two primary deliverables:
 1. **Single Artifact HTML (`index.html`)**: Self-contained technical specification page with CSS sidebar, dark/light theme toggle, Mermaid diagram rendering, collapsible sections, and print styles.
