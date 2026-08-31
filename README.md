@@ -1,4 +1,4 @@
-# Insightify
+# Insightify v6.3.0
 
 Generate artifact-style documentation and a Product Knowledge Base from source code, URLs, and files.
 
