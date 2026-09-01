@@ -16,7 +16,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 2. Read `[OUT_DIR]/.insightify/knowledge/*.md` (all category files emitted by Planner).
 3. Read `[OUT_DIR]/.insightify/plan.md` for metadata (title, audience, section order).
 4. Assemble `[OUT_DIR]/Product-Knowledge-Base.md` as the primary output consisting only of the finalized documentation (`final-documentation.md`), with an added Table of Contents at the top. The raw knowledge categories must remain untouched in their original `knowledge/` directory.
-5. Render `[OUT_DIR]/index.html` as an HTML preview of the single `Product-Knowledge-Base.md` using `templates/index-html-template.html` and `templates/build-html.mjs`.
+5. Render `[OUT_DIR]/index.html` as an HTML preview of the single `Product-Knowledge-Base.md` using `templates/index-html-template.html` and `templates/build-html.mjs`. **CRITICAL**: When writing the `build.mjs` script, you MUST import `build-html.mjs` using the absolute path to this local workspace plugin directory, NEVER from a global `plugins/cache` directory.
 6. Copy `[OUT_DIR]/.insightify/sources/` → `[OUT_DIR]/docs/intake/`.
 7. Copy `[OUT_DIR]/.insightify/plan.md` → `[OUT_DIR]/docs/plan/plan.md`.
 8. Copy `[OUT_DIR]/.insightify/review/` → `[OUT_DIR]/docs/review/`.
