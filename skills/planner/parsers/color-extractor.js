@@ -46,7 +46,7 @@ function colorToHex(raw) {
     return '#' + hex.toLowerCase();
   }
 
-  const rgbMatch = value.match(/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)\s*)?\)$/i);
+  const rgbMatch = value.match(/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d*\.?\d+)\s*)?\)$/i);
   if (rgbMatch) {
     let hex = '#' + toHexChannel(rgbMatch[1]) + toHexChannel(rgbMatch[2]) + toHexChannel(rgbMatch[3]);
     if (rgbMatch[4] !== undefined) {
@@ -55,7 +55,7 @@ function colorToHex(raw) {
     return hex;
   }
 
-  const hslMatch = value.match(/^hsla?\(\s*(\d{1,3}(?:\.\d+)?)\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*([\d.]+)\s*)?\)$/i);
+  const hslMatch = value.match(/^hsla?\(\s*(\d{1,3}(?:\.\d+)?)\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*(\d*\.?\d+)\s*)?\)$/i);
   if (hslMatch) {
     const [r, g, b] = hslToRgb(Number(hslMatch[1]), Number(hslMatch[2]), Number(hslMatch[3]));
     let hex = '#' + toHexChannel(r) + toHexChannel(g) + toHexChannel(b);
@@ -85,25 +85,29 @@ function collectFromValue(value, add) {
 
 function extractColors($) {
   if (typeof $ !== 'function') return [];
-  const entries = new Map();
-  const add = (raw) => {
-    const hex = colorToHex(raw);
-    if (hex && !entries.has(hex)) {
-      entries.set(hex, { color: raw.trim(), hex });
-    }
-  };
+  try {
+    const entries = new Map();
+    const add = (raw) => {
+      const hex = colorToHex(raw);
+      if (hex && !entries.has(hex)) {
+        entries.set(hex, { color: raw.trim(), hex });
+      }
+    };
 
-  $('style').each((_, el) => {
-    const css = $(el).text() || '';
-    parseDeclarations(css).forEach(decl => collectFromValue(decl.value, add));
-  });
+    $('style').each((_, el) => {
+      const css = $(el).text() || '';
+      parseDeclarations(css).forEach(decl => collectFromValue(decl.value, add));
+    });
 
-  $('*[style]').each((_, el) => {
-    const attr = $(el).attr('style') || '';
-    parseDeclarations(attr).forEach(decl => collectFromValue(decl.value, add));
-  });
+    $('*[style]').each((_, el) => {
+      const attr = $(el).attr('style') || '';
+      parseDeclarations(attr).forEach(decl => collectFromValue(decl.value, add));
+    });
 
-  return Array.from(entries.values());
+    return Array.from(entries.values());
+  } catch {
+    return [];
+  }
 }
 
 function renderColorsSection(colors) {

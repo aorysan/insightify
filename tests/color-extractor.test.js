@@ -63,6 +63,11 @@ describe('color-extractor', () => {
     assert.deepStrictEqual(colors, [{ color: '#123456', hex: '#123456' }]);
   });
 
+  test('skips malformed alpha literal silently and emits no NaN hex', () => {
+    const $ = cheerio.load('<div style="color: rgba(0, 0, 0, ..);"></div>');
+    assert.deepStrictEqual(extractColors($), []);
+  });
+
   test('renderColorsSection returns empty string for empty array', () => {
     assert.strictEqual(renderColorsSection([]), '');
   });
