@@ -70,7 +70,7 @@ function colorToHex(raw) {
 
 function collectFromValue(value, add) {
   const patterns = [
-    /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/g,
+    /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})(?!\w)/g,
     /rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*[\d.]+\s*)?\)/gi,
     /hsla?\(\s*\d{1,3}(?:\.\d+)?\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(?:,\s*[\d.]+\s*)?\)/gi
   ];
@@ -84,6 +84,7 @@ function collectFromValue(value, add) {
 }
 
 function extractColors($) {
+  if (typeof $ !== 'function') return [];
   const entries = new Map();
   const add = (raw) => {
     const hex = colorToHex(raw);
