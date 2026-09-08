@@ -384,6 +384,14 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(html.includes('Text before citation.'));
   });
 
+  test('renderMarkdown preserves legitimate blockquotes containing source in text', async () => {
+    const { renderMarkdown } = await import('../skills/builder/templates/build-html.mjs');
+    const mdWithBlockquote = 'Text before.\n\n> Data Source: PostgreSQL\n\nText after.';
+    const html = renderMarkdown(mdWithBlockquote);
+    assert.ok(html.includes('<blockquote>'));
+    assert.ok(html.includes('Data Source: PostgreSQL'));
+  });
+
   test('assembleKnowledgeBase processes all 14 categories in order, strips frontmatter, and strips citations', async () => {
     const { assembleKnowledgeBase } = await import('../skills/builder/templates/build-html.mjs');
     

@@ -72,7 +72,11 @@ export function renderMarkdown(md) {
   // Render blockquotes (suppress source citations in HTML output)
   renderer.blockquote = (quote) => {
     const quoteText = typeof quote === 'object' ? (quote.text || '') : quote;
-    if (quoteText.includes('**Source:**') || quoteText.includes('<strong>Source:</strong>') || quoteText.includes('Source:')) {
+    if (
+      quoteText.includes('**Source:**') ||
+      quoteText.includes('<strong>Source:</strong>') ||
+      /^\s*(?:<[^>]+>\s*)*(?:>\s*)?(?:\*\*)?Source:\*?\*?\s*/i.test(quoteText)
+    ) {
       return '';
     }
     return `<blockquote>${quoteText}</blockquote>\n`;
