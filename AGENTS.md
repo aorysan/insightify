@@ -5,12 +5,16 @@ This file provides guidance to AI coding agents when working with code in this r
 ## Commands
 
 - **Run tests**: `npm test` (runs `node --test`, discovers `tests/**/*.test.js`)
-- **Install dependencies**: `npm install`
+- **Install dependencies**: `npm install` (no flags needed; `package.json` `overrides` reconciles the stale `tree-sitter-typescript` peer range — see below)
 - No lint, typecheck, or format commands exist. No CI workflows.
+
+### Dependency note: tree-sitter peer range
+
+`tree-sitter-typescript@0.23.2` (latest) still declares `peerDependencies: tree-sitter ^0.21.0`, while `tree-sitter-javascript`/`tree-sitter-python` `@0.25.0` require `^0.25.0`. The ranges are mutually exclusive, so npm's resolver rejects the install without help. The package is compiled against ABI 14 and runs fine on `tree-sitter@0.25.1`, so `package.json` pins it via `overrides` instead of using `--legacy-peer-deps` or downgrading `tree-sitter` (which would break the other two grammars).
 
 ## What This Is
 
-Insightify is a **Claude Code plugin** (v6.4.1) that generates technical documentation from codebases. It produces two artifacts: a self-contained HTML spec page and a knowledge-base markdown file.
+Insightify is a **Claude Code plugin** (v6.4.1) that generates technical documentation from codebases. It produces two outputs in `[OUT_DIR]`: a self-contained HTML spec page (`index.html`) and the consolidated `Product-Knowledge-Base.md`.
 
 The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md files) that an LLM executes step-by-step. The only executable JS code is parsers and the builder template engine.
 
@@ -21,7 +25,7 @@ The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md 
 1. **Planner** (`skills/planner/SKILL.md`) — Ingests sources, extracts knowledge, generates plan
 2. **Writer** (`skills/writer/SKILL.md`) — Renders sections from the extracted knowledge base into a single markdown doc
 3. **Reviewer** (`skills/reviewer/SKILL.md`) — Reviews across 10 quality dimensions, max 3 iterations
-4. **Builder** (`skills/builder/SKILL.md`) — Renders final HTML artifact + knowledge base
+4. **Builder** (`skills/builder/SKILL.md`) — Renders the final HTML artifact and assembles `Product-Knowledge-Base.md`
 
 Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orchestrated mode.
 

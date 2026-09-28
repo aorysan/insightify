@@ -434,7 +434,7 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(jsTemplate.includes('Insightify'));
   });
 
-  test('buildArtifact generates complete static HTML specification and knowledge-base.md', async () => {
+  test('buildArtifact generates complete static HTML specification and Product-Knowledge-Base.md', async () => {
     const { buildArtifact } = await import('../skills/builder/templates/build-html.mjs');
     
     const tmpDir = path.join(__dirname, '.tmp');
@@ -462,6 +462,62 @@ Content for ${cat} section ${idx + 1}.
     assert.ok(artifact.knowledgeBase.includes('# Knowledge Base'));
     
     fs.unlinkSync(combinedPath);
+  });
+
+  test('buildArtifact writes index.html and Product-Knowledge-Base.md to outDir', async () => {
+    const { buildArtifact } = await import('../skills/builder/templates/build-html.mjs');
+
+    const outDir = path.join(tmpDir, 'artifact-out');
+    fs.rmSync(outDir, { recursive: true, force: true });
+
+    buildArtifact({
+      kbDir: fixture14KbDir,
+      docPath: path.join(fixture14KbDir, 'product.md'),
+      outDir
+    });
+
+    assert.strictEqual(fs.existsSync(path.join(outDir, 'index.html')), true, 'must write index.html');
+    assert.strictEqual(
+      fs.existsSync(path.join(outDir, 'Product-Knowledge-Base.md')),
+      true,
+      'must write the primary output as Product-Knowledge-Base.md'
+    );
+    assert.strictEqual(
+      fs.existsSync(path.join(outDir, 'knowledge-base.md')),
+      false,
+      'must not write the legacy lowercase knowledge-base.md'
+    );
+  });
+
+  test('output name Product-Knowledge-Base.md is used consistently across docs and manifests', () => {
+    const root = path.join(__dirname, '..');
+    const files = [
+      '.claude-plugin/plugin.json',
+      '.claude-plugin/marketplace.json',
+      'plugin.json',
+      'package.json',
+      'AGENTS.md',
+      'CLAUDE.md',
+      'README.md',
+      'skills/insightify/SKILL.md',
+      'skills/builder/SKILL.md'
+    ];
+
+    files.forEach((relPath) => {
+      const filePath = path.join(root, relPath);
+      assert.strictEqual(fs.existsSync(filePath), true, `${relPath} must exist`);
+      const content = fs.readFileSync(filePath, 'utf8');
+
+      assert.ok(
+        content.includes('Product-Knowledge-Base.md'),
+        `${relPath} must reference the Product-Knowledge-Base.md output`
+      );
+      assert.strictEqual(
+        content.includes('knowledge-base.md'),
+        false,
+        `${relPath} must not reference the legacy lowercase knowledge-base.md output`
+      );
+    });
   });
 
   test('builder SKILL.md defines Stage 4, Interfaces (Consumes/Produces), instructions, and rendering rules', () => {
