@@ -31,12 +31,24 @@ insights/<project-name>/
 ├── docs/
 │   ├── intake/             # Ingested sources
 │   ├── plan/               # Approved documentation plan
-│   ├── markdown/           # Generated markdown pages
+│   ├── markdown/           # Writer output (documentation.md)
+│   ├── final/              # Finalized documentation (final-documentation.md)
 │   └── review/             # Review reports
-└── .insightify/            # Internal workspace
+└── .insightify/            # Internal workspace (knowledge/, sources/, review/)
 ```
 
 **No npm install required for output.** Just open `index.html`.
+
+## Verifying a generated output
+
+Check any run against the pipeline contract (artifacts, knowledge citations, section parity, self-contained HTML):
+
+```bash
+npm install
+npm run verify:output -- insights/<project-name>
+```
+
+Exit code is `0` when every required check passes. A reference-quality build passes all 19 checks.
 
 ## Skills
 

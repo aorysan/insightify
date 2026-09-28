@@ -6,7 +6,12 @@ This file provides guidance to AI coding agents when working with code in this r
 
 - **Run tests**: `npm test` (runs `node --test`, discovers `tests/**/*.test.js`)
 - **Install dependencies**: `npm install` (no flags needed; `package.json` `overrides` reconciles the stale `tree-sitter-typescript` peer range — see below)
+- **Verify a generated output**: `npm run verify:output -- insights/<project>` (see Output verification below)
 - No lint, typecheck, or format commands exist. No CI workflows.
+
+### Output verification
+
+`scripts/verify-output.mjs` checks a generated `insights/<project>/` against the pipeline contract: required artifacts, knowledge frontmatter plus source citations, client-facing output free of citations and YAML, Table of Contents ordering, document/KB/HTML section parity, and a self-contained HTML surface. It mirrors the builder's own slug and skip rules, so any run that drifts below the reference build fails the check (`insights/congen10` passes 19/19). `tests/verify-output.test.js` covers a clean output plus three corrupted variants so the verifier itself cannot silently pass everything.
 
 ### Dependency note: tree-sitter peer range
 
