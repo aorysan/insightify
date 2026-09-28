@@ -108,7 +108,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 - **Mermaid Diagrams**: Render via `mermaid.initialize({startOnLoad: true, theme: 'base', securityLevel: 'loose'})` - diagrams in `<pre class="mermaid">` blocks. *Note: Loaded from external CDN (jsDelivr); offline environments display pre-formatted diagrams or require a locally bundled script.*
 - **Collapsible Trees**: Directory structure as nested `<details>/<summary>` with `open` on first level.
 - **Tabs**: Component registry with tabbed interface (Component | Props | Usage) using CSS-only `:checked` hack.
-- **Product Overview**: Grid cards from `product.md`; feature badges from `features.md` with source citations.
+- **Product Overview**: Grid cards from `product.md`; feature badges from `features-and-journeys.md` with source citations.
 - **Doc Sections**: Render the single `Product-Knowledge-Base.md` with section navigation generated from H2/H3 headings, structuring sections as `<section id="slug" class="doc-section">` with label + heading + content.
 - **Styling**: 
   - Design tokens as CSS custom properties (`--color-bg`, `--color-text`, `--color-primary`, etc.)

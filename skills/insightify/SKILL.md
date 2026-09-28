@@ -32,6 +32,7 @@ Support the following invocation patterns:
 
 1. **Planner:** Run `insightify:planner`.
    - Progress: `⏳ Planner: ingesting sources, extracting knowledge categories for detected archetype, generating plan...`
+   - Approval gate: Planner ends with a `[HARD STOP]` on plan approval. Show the plan and END TURN; do NOT start Stage 2 (Writer) until the user explicitly approves.
    - Error: If partial failure, log in manifest as `failed` and continue.
 2. **Writer:** Run `insightify:writer`. Generate document sections independently in parallel.
    - Progress: `⏳ Writer: [======--] A/B sections (max 5 parallel)`
@@ -59,5 +60,5 @@ The pipeline generates a **Technical Specification** matching the reference arti
 | `index.html` | Single artifact-style HTML with CSS-only sidebar, Mermaid diagrams, dark/light mode, print support |
 | `Product-Knowledge-Base.md` | Primary output: consolidated knowledge base assembled from the finalized documentation, with a Table of Contents |
 
-**Documentation Sections:** Planner emits the category set for the detected archetype (see Planner Phase 0); Builder concatenates exactly those category files under `(Categories)` headings.
+**Documentation Sections:** Planner emits the category set for the detected archetype (see Planner Phase 2); Builder concatenates exactly those category files under `(Categories)` headings.
 

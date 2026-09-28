@@ -27,12 +27,12 @@ The "pipeline" is not runtime code — it's **AI agent instructions** (SKILL.md 
 
 4-stage sequential pipeline orchestrated by `skills/insightify/SKILL.md`:
 
-1. **Planner** (`skills/planner/SKILL.md`) — Ingests sources, extracts knowledge, generates plan
+1. **Planner** (`skills/planner/SKILL.md`) — Ingests sources, extracts knowledge, generates plan (ends with a `[HARD STOP]` for explicit user approval of the plan — no auto-approve)
 2. **Writer** (`skills/writer/SKILL.md`) — Renders sections from the extracted knowledge base into a single markdown doc
 3. **Reviewer** (`skills/reviewer/SKILL.md`) — Reviews across 10 quality dimensions, max 3 iterations
 4. **Builder** (`skills/builder/SKILL.md`) — Renders the final HTML artifact and assembles `Product-Knowledge-Base.md`
 
-Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orchestrated mode.
+Each stage has a standalone invocation (e.g., `/insightify:planner`) and an orchestrated mode.
 
 ## Key Structural Facts
 
@@ -54,6 +54,6 @@ Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orch
 ## Conventions
 
 - This is a **plugin repo**, not a library or app. Changes to SKILL.md files change agent behavior, not runtime code.
-- `plugin.json` and `.claude-plugin/plugin.json` must stay version-synced with `package.json`.
+- `.claude-plugin/plugin.json` is the only Claude Code manifest (Claude Code ignores a root-level `plugin.json`) and must stay version-synced with `package.json`.
 - No TypeScript. No bundler. No dev server.
 - Dependencies: `cheerio`, `pdf-parse`, `marked`, `jsdom`, `tree-sitter` (+ `tree-sitter-javascript`, `tree-sitter-typescript`, `tree-sitter-python`). Mermaid is CDN-loaded at runtime, not an npm dependency.

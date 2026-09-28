@@ -20,7 +20,7 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 
 1. **Stage 1 (Planner)**: `skills/planner/SKILL.md`
    - Ingests source code, markdown, HTML, and PDFs using parsers (`code-parser.js`, `json-parser.js`, `directory-scanner.js`, `html-parser.js`, `pdf-parser.js`).
-   - Extracts structured knowledge into the category set for the detected archetype (`frontend-spa`, `backend-api`, `system-design`, `general`; see Planner Phase 0).
+   - Extracts structured knowledge into the category set for the detected archetype (`frontend-spa`, `backend-api`, `system-design`, `general`; see Planner Phase 2).
    - Generates a documentation plan (`.insightify/plan.md`) from the 10 merged knowledge categories, requiring user approval before writing.
 2. **Stage 2 (Writer)**: `skills/writer/SKILL.md`
    - Renders document sections in parallel from the extracted knowledge base and stitches them into a single `docs/markdown/documentation.md`.

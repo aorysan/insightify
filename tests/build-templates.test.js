@@ -493,8 +493,6 @@ Content for ${cat} section ${idx + 1}.
     const root = path.join(__dirname, '..');
     const files = [
       '.claude-plugin/plugin.json',
-      '.claude-plugin/marketplace.json',
-      'plugin.json',
       'package.json',
       'AGENTS.md',
       'CLAUDE.md',
