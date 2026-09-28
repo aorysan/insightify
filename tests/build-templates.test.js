@@ -520,6 +520,80 @@ Content for ${cat} section ${idx + 1}.
     });
   });
 
+  const writeVerifyDoc = () => {
+    if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+    const docPath = path.join(tmpDir, 'verify-doc.md');
+    fs.writeFileSync(docPath, [
+      '---',
+      'title: "Verify Project"',
+      '---',
+      '',
+      '# Verify Project - Product Knowledge Base',
+      '',
+      '## Product Overview',
+      'Content for the product section.',
+      '',
+      '## Directory & Module Boundaries',
+      'Content for the directory section.',
+      '',
+      '## Constraints and Limits',
+      'Content for the constraints section.',
+      ''
+    ].join('\n'), 'utf8');
+    return docPath;
+  };
+
+  test('buildArtifact is deterministic: identical inputs produce byte-identical artifacts', async () => {
+    const { buildArtifact } = await import('../skills/builder/templates/build-html.mjs');
+    const docPath = writeVerifyDoc();
+    const firstDir = path.join(tmpDir, 'determinism-a');
+    const secondDir = path.join(tmpDir, 'determinism-b');
+    fs.rmSync(firstDir, { recursive: true, force: true });
+    fs.rmSync(secondDir, { recursive: true, force: true });
+
+    buildArtifact({ kbDir: fixture14KbDir, docPath, outDir: firstDir });
+    buildArtifact({ kbDir: fixture14KbDir, docPath, outDir: secondDir });
+
+    assert.strictEqual(
+      fs.readFileSync(path.join(firstDir, 'index.html'), 'utf8'),
+      fs.readFileSync(path.join(secondDir, 'index.html'), 'utf8'),
+      'index.html must be byte-identical across runs'
+    );
+    assert.strictEqual(
+      fs.readFileSync(path.join(firstDir, 'Product-Knowledge-Base.md'), 'utf8'),
+      fs.readFileSync(path.join(secondDir, 'Product-Knowledge-Base.md'), 'utf8'),
+      'Product-Knowledge-Base.md must be byte-identical across runs'
+    );
+  });
+
+  test('knowledge base leads with a Table of Contents and every documented section is anchored in the HTML', async () => {
+    const { buildArtifact } = await import('../skills/builder/templates/build-html.mjs');
+    const artifact = buildArtifact({ kbDir: fixture14KbDir, docPath: writeVerifyDoc() });
+
+    const tocIdx = artifact.knowledgeBase.indexOf('## Table of Contents');
+    const firstSectionIdx = artifact.knowledgeBase.indexOf('## Product Overview');
+    assert.ok(tocIdx !== -1, 'knowledge base must contain a Table of Contents');
+    assert.ok(firstSectionIdx !== -1, 'knowledge base must embed the documented sections');
+    assert.ok(tocIdx < firstSectionIdx, 'Table of Contents must precede the first documented section');
+
+    ['product-overview', 'directory-module-boundaries', 'constraints-and-limits'].forEach(id => {
+      assert.ok(artifact.html.includes('id="' + id + '"'), `section ${id} must be anchored in the HTML`);
+    });
+  });
+
+  test('index.html stays self-contained: inline CSS/JS, mermaid CDN, and no blueprint-skeleton classes', async () => {
+    const { buildArtifact } = await import('../skills/builder/templates/build-html.mjs');
+    const artifact = buildArtifact({ kbDir: fixture14KbDir, docPath: writeVerifyDoc() });
+
+    assert.strictEqual(artifact.html.split('<style>').length - 1, 1, 'exactly one inline <style> block');
+    assert.strictEqual(artifact.html.split('<script>').length - 1, 1, 'exactly one inline <script> block');
+    assert.strictEqual(artifact.html.split('<script src=').length - 1, 1, 'exactly one external script (mermaid CDN)');
+    assert.ok(artifact.html.includes('src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"'), 'mermaid must load from the CDN');
+    assert.strictEqual(artifact.html.split('rel="stylesheet"').length - 1, 1, 'exactly one stylesheet link');
+    assert.ok(artifact.html.includes('href="https://fonts.googleapis.com/css2'), 'the only stylesheet is Google Fonts');
+    assert.strictEqual(artifact.html.includes('class="bp-'), false, 'removed blueprint-skeleton classes must not return');
+  });
+
   test('builder SKILL.md defines Stage 4, Interfaces (Consumes/Produces), instructions, and rendering rules', () => {
     assert.strictEqual(fs.existsSync(skillPath), true, 'SKILL.md must exist');
     const content = fs.readFileSync(skillPath, 'utf8');

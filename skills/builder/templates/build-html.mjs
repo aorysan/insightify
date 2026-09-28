@@ -471,7 +471,6 @@ export function readTemplate(templateName) {
 export function buildArtifact(options = {}) {
   const kbDir = options.kbDir || path.join(options.outDir || '.', '.insightify/knowledge');
   const docPath = options.docPath || path.join(options.outDir || '.', 'docs/final/final-documentation.md');
-  const plan = options.plan || (options.planFile && fs.existsSync(options.planFile) ? fs.readFileSync(options.planFile, 'utf-8') : null) || {};
 
   const overview = buildProductOverview(kbDir);
   const docSections = buildDocSections(docPath);

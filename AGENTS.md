@@ -35,7 +35,7 @@ Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orch
 - **10 merged knowledge categories** (product, directory-structure, architecture, state-and-data, design-system, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows) plus `unanswered`.
 - **Parsers** (`skills/planner/parsers/*.js`) are CommonJS — `code-parser.js`, `html-parser.js`, `json-parser.js`, `pdf-parser.js`, `directory-scanner.js`, `color-extractor.js`.
 - **Builder** (`skills/builder/templates/build-html.mjs`) is ESM. Tests import it via dynamic `import()`.
-- **Writer templates** (`skills/writer/templates/*.md`) — markdown templates with YAML frontmatter (legacy set; the writer skill reads `plan.md`/knowledge files directly).
+- **Writer sections are planned, not templated**: the writer reads `[OUT_DIR]/.insightify/plan.md` + `knowledge/*.md` and renders whatever sections the plan defines, so the plugin ships no writer-side section templates.
 - **Output** goes to `insights/<project-name>/` relative to the target project.
 - **Workspace** for intermediate data: `[OUT_DIR]/.insightify/`.
 

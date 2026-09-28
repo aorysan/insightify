@@ -50,9 +50,9 @@ The entry point is `skills/insightify/SKILL.md`, which orchestrates four indepen
 ### Incremental Update Modes
 
 The pipeline supports two incremental modes for refreshing existing output:
-- `--sync`: Re-ingests only sources whose content/churn changed since the manifest; re-extracts affected knowledge categories; passes affected-pages list downstream.
-- `--update <source>`: Upserts a single manifest entry, re-extracts its categories, refreshes dependent pages.
+- `--sync`: Re-ingests only sources whose content/churn changed since the manifest; re-extracts affected knowledge categories; passes the affected-sections list downstream.
+- `--update <source>`: Upserts a single manifest entry, re-extracts its categories, refreshes dependent sections.
 
 ### Tests
 
-Tests are in `tests/` and cover: parsers, directory scanner, extraction schema, scaffolding, templates, orchestrator, and a full pipeline integration test.
+Tests are in `tests/` and cover: parsers, directory scanner, extraction schema, scaffolding, builder rendering, orchestrator, and a full pipeline integration test.
