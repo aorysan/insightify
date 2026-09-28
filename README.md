@@ -5,7 +5,8 @@ Generate artifact-style documentation and a Product Knowledge Base from source c
 ## Installation
 
 ```bash
-# ... existing install ...
+/plugin marketplace add aorysan/insightify
+/plugin install insightify@aorysan-marketplace
 ```
 
 ## Usage
@@ -18,7 +19,7 @@ Generate artifact-style documentation and a Product Knowledge Base from source c
 /insightify-planner # Ingest → Extract → Plan (with approval)
 /writer           # Generate markdown docs from plan
 /reviewer         # Review docs, send revisions back to writer
-/builder          # Render index.html + knowledge-base.md from markdown
+/builder          # Render index.html + Product-Knowledge-Base.md from markdown
 ```
 
 ## Output Structure
@@ -26,7 +27,7 @@ Generate artifact-style documentation and a Product Knowledge Base from source c
 ```
 insights/<project-name>/
 ├── index.html              # Single artifact-style page (open in browser)
-├── knowledge-base.md       # PRIMARY output — consolidated knowledge
+├── Product-Knowledge-Base.md  # PRIMARY output — consolidated knowledge
 ├── docs/
 │   ├── intake/             # Ingested sources
 │   ├── plan/               # Approved documentation plan

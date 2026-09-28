@@ -482,10 +482,10 @@ Content for ${cat} section ${idx + 1}.
     // Instructions and rendering rules
     assert.ok(content.includes('## Instructions'), 'Must include Instructions');
     assert.ok(content.includes('## Rendering Rules'), 'Must include Rendering Rules');
-    assert.ok(content.includes('templates/index-html-template.html'), 'Must reference index-html-template.html');
     assert.ok(content.includes('templates/build-html.mjs'), 'Must reference build-html.mjs');
-    assert.ok(content.includes('templates/styles.css'), 'Must reference styles.css');
-    assert.ok(content.includes('templates/scripts.js'), 'Must reference scripts.js');
+    assert.ok(content.includes('templates/layouts/base.html'), 'Must reference layouts/base.html');
+    assert.ok(content.includes('templates/layouts/styles-base.css'), 'Must reference layouts/styles-base.css');
+    assert.ok(content.includes('templates/layouts/scripts-base.js'), 'Must reference layouts/scripts-base.js');
   });
 
   test('buildProductOverview renders dynamic highlights from KB files, not hardcoded React', async () => {

@@ -1,6 +1,6 @@
 ---
 name: insightify
-description: Generate comprehensive technical specification documentation (artifact-style HTML + knowledge-base.md) from an unstructured code repository.
+description: Generate comprehensive technical specification documentation (artifact-style HTML + Product-Knowledge-Base.md) from an unstructured code repository.
 ---
 
 # Insightify v6.4.1 Pipeline Orchestrator
@@ -40,13 +40,13 @@ Support the following invocation patterns:
    - Progress: `⏳ Reviewer: [========] X/10 dimensions (iteration 1/3)`
    - Error: If review loop exceeds 3 iterations, stop and report to user.
 4. **Builder:** Run `insightify:builder`. Print success summary.
-   - Progress: `⏳ Builder: rendering artifact-style index.html and knowledge-base.md...`
+   - Progress: `⏳ Builder: rendering artifact-style index.html and Product-Knowledge-Base.md...`
 
 ## Workspace Constraints
 
 - Output directory: `OUT_DIR = "insights/<project-name>/"`. All pipeline stages MUST operate within this `OUT_DIR`.
 - All intermediate data in `[OUT_DIR]/.insightify/`.
-- Final output: `[OUT_DIR]/index.html`, `[OUT_DIR]/knowledge-base.md`, `[OUT_DIR]/docs/` (archive), `[OUT_DIR]/.insightify/` (workspace).
+- Final output: `[OUT_DIR]/index.html`, `[OUT_DIR]/Product-Knowledge-Base.md`, `[OUT_DIR]/docs/` (archive), `[OUT_DIR]/.insightify/` (workspace).
 - On fresh run (no --resume, --sync, or --update), if [OUT_DIR]/.insightify/ already exists, warn the user and ask: 'Previous data found at [OUT_DIR]. Overwrite? [Y/n]'. Only proceed after confirmation. (--sync and --update target an existing OUT_DIR and refresh it incrementally without the overwrite prompt.)
 - Detect missing `[OUT_DIR]/.insightify/` on resume and offer to restart or resume from last completed step.
 
@@ -57,7 +57,7 @@ The pipeline generates a **Technical Specification** matching the reference arti
 | Output | Description |
 |--------|-------------|
 | `index.html` | Single artifact-style HTML with CSS-only sidebar, Mermaid diagrams, dark/light mode, print support |
-| `knowledge-base.md` | All knowledge categories emitted by Planner for the detected archetype, with source citations |
+| `Product-Knowledge-Base.md` | Primary output: consolidated knowledge base assembled from the finalized documentation, with a Table of Contents |
 
 **Documentation Sections:** Planner emits the category set for the detected archetype (see Planner Phase 0); Builder concatenates exactly those category files under `(Categories)` headings.
 

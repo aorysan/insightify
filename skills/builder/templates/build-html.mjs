@@ -538,9 +538,6 @@ export function buildArtifact(options = {}) {
         const htmlFiles = getAllFilesRecursive(compDir, '.html');
         return htmlFiles.map(f => fs.readFileSync(f, 'utf-8')).join('\n');
       });
-    } else if (readTemplate('index-html-template.html')) {
-      // Fallback to legacy path for compatibility if layout doesn't exist
-      htmlTemplate = readTemplate('index-html-template.html');
     }
   }
 
@@ -558,8 +555,6 @@ export function buildArtifact(options = {}) {
 
     if (cssList.length > 0) {
       styles = cssList.join('\n');
-    } else {
-      styles = readTemplate('styles.css');
     }
   }
 
@@ -573,10 +568,6 @@ export function buildArtifact(options = {}) {
         const jsFiles = getAllFilesRecursive(compDir, '.js');
         return jsFiles.map(f => fs.readFileSync(f, 'utf-8')).join('\n');
       });
-      // Append any component JS that wasn't injected? The reviewer said "just like HTML assembly".
-      // We will assume components that need JS injection must declare a placeholder in scripts-base.js
-    } else {
-      scripts = readTemplate('scripts.js');
     }
   }
 

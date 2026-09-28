@@ -38,7 +38,7 @@ Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orch
 ## Testing
 
 - Tests validate SKILL.md content (required sections, keywords, structure) — not just behavior.
-- `tests/build-templates.test.js` is the largest suite (~27 tests). Uses `jsdom` for DOM/JS runtime testing of `scripts.js`.
+- `tests/build-templates.test.js` is the largest suite (~27 tests). Uses `jsdom` for DOM/JS runtime testing of `scripts-base.js`.
 - `tests/fixtures/sample-14-kb/` is a generated fixture (14 `.md` files with frontmatter) used by build tests.
 - Some tests in `build-templates.test.js` are commented out (template placeholder assertions) — these are intentional skips, not failures.
 
@@ -47,4 +47,4 @@ Each stage has a standalone invocation (e.g., `/insightify-planner`) and an orch
 - This is a **plugin repo**, not a library or app. Changes to SKILL.md files change agent behavior, not runtime code.
 - `plugin.json` and `.claude-plugin/plugin.json` must stay version-synced with `package.json`.
 - No TypeScript. No bundler. No dev server.
-- Dependencies: `cheerio`, `pdf-parse`, `marked`, `jsdom`, `mermaid`.
+- Dependencies: `cheerio`, `pdf-parse`, `marked`, `jsdom`, `tree-sitter` (+ `tree-sitter-javascript`, `tree-sitter-typescript`, `tree-sitter-python`). Mermaid is CDN-loaded at runtime, not an npm dependency.
