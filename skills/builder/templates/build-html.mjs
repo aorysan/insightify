@@ -316,58 +316,6 @@ export function buildProductOverview(kbDir) {
 }
 
 /**
- * Helper to parse plan pages from text or object
- */
-function parsePlanPages(planInput) {
-  if (!planInput) return [];
-
-  if (Array.isArray(planInput)) return planInput;
-  if (typeof planInput === 'object' && Array.isArray(planInput.pages)) return planInput.pages;
-
-  if (typeof planInput === 'string') {
-    try {
-      const parsed = JSON.parse(planInput);
-      if (Array.isArray(parsed)) return parsed;
-      if (Array.isArray(parsed.pages)) return parsed.pages;
-    } catch {}
-
-    const pages = [];
-    const lines = planInput.split('\n');
-
-    // Check for ### N. Page Name
-    for (const line of lines) {
-      const match = line.trim().match(/^###\s+(?:(\d+)\.\s+)?(.+)$/);
-      if (match) {
-        const num = match[1];
-        const title = match[2].trim();
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        const file = num ? `${num.padStart(2, '0')}-${slug}.md` : `${slug}.md`;
-        pages.push({ title: num ? `${num}. ${title}` : title, file, slug });
-      }
-    }
-
-    if (pages.length > 0) return pages;
-
-    // Check for list items - N. Page Name
-    for (const line of lines) {
-      const match = line.trim().match(/^-\s+(?:\[[ xX]\]\s+)?(?:(\d+)\.\s+)?(.+)$/);
-      if (match) {
-        const num = match[1];
-        const title = match[2].trim();
-        if (title.startsWith('All ') || title.startsWith('Dependency ') || title.startsWith('Priority ')) continue;
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        const file = num ? `${num.padStart(2, '0')}-${slug}.md` : `${slug}.md`;
-        pages.push({ title: num ? `${num}. ${title}` : title, file, slug });
-      }
-    }
-
-    return pages;
-  }
-
-  return [];
-}
-
-/**
  * Build documentation sections from markdown pages
  */
 export function buildDocSections(docPath) {

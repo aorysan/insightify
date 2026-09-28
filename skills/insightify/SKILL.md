@@ -18,15 +18,15 @@ Support the following invocation patterns:
 - `/insightify:insightify --config <path>` -> Read from `insightify.config.json`
 - `/insightify:insightify --dry-run` -> Show execution plan without running
 - `/insightify:insightify --resume [--from-step N]` -> Resume from last completed step or specified step (1=planner, 2=writer, 3=reviewer, 4=builder)
-- `/insightify:insightify --sync` -> Incremental update: re-run pipeline against an existing [OUT_DIR], re-ingesting sources and updating only stale/affected knowledge + pages. Prompt for OUT_DIR/project if not resolvable.
-- `/insightify:insightify --update <path-or-url>` -> Add/update a single source, then refresh dependent pages.
+- `/insightify:insightify --sync` -> Incremental update: re-run pipeline against an existing [OUT_DIR], re-ingesting sources and updating only stale/affected knowledge and sections. Prompt for OUT_DIR/project if not resolvable.
+- `/insightify:insightify --update <path-or-url>` -> Add/update a single source, then refresh dependent sections.
 
 ### Incremental Update Modes (--sync / --update)
 
 - `[OUT_DIR]/.insightify/sources/manifest.md` is the source of truth for incremental runs.
-- `--sync`: re-ingest only sources whose content/churn changed since the manifest; re-extract affected knowledge categories; pass the affected-pages list downstream.
+- `--sync`: re-ingest only sources whose content/churn changed since the manifest; re-extract affected knowledge categories; pass the affected-sections list downstream.
 - `--update <source>`: upsert a single manifest entry, re-extract its categories, refresh dependent pages.
-- Writer/Reviewer operate on the affected-pages list when invoked in sync/update mode; run the full pipeline otherwise.
+- Writer/Reviewer operate on the affected-sections list when invoked in sync/update mode; run the full pipeline otherwise.
 
 ## Pipeline Execution (4 Stages)
 
