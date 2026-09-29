@@ -43,7 +43,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
   {{STYLE}}  <!-- Inline CSS with design tokens -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   {{> site-header}}        <!-- templates/components/site-header/header.html: {{PRODUCT_NAME}}, {{TAGLINE}}, theme toggle, print -->
@@ -85,7 +85,7 @@ description: Stage 4 - Assemble Product-Knowledge-Base.md and render single arti
 - **Styling**: 
   - Design tokens as CSS custom properties (`--color-bg`, `--color-text`, `--color-primary`, etc.)
   - Light/dark via `prefers-color-scheme` AND `[data-theme="light"]` / `[data-theme="dark"]`
-  - Google Fonts: Inter (headings and body), JetBrains Mono (code)
+  - Google Fonts: IBM Plex Sans (headings and body), IBM Plex Mono (code), JetBrains Mono (secondary mono)
   - Print stylesheet: hides sidebar, expands all details, shows URLs
 - **Minimal JavaScript** (only):
   - Theme toggle with localStorage persistence

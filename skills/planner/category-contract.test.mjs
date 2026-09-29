@@ -18,17 +18,17 @@ export const BACKEND_API_CATEGORIES = [
   'workflows'
 ];
 
-test('planner SKILL.md Phase 0 lists workflows.md for frontend-spa (10 categories)', () => {
+test('planner SKILL.md Phase 2 lists workflows.md for frontend-spa (10 categories)', () => {
   const skill = fs.readFileSync(path.join(__dirname, 'SKILL.md'), 'utf-8');
   const line = skill.split(/\r?\n/).find(l => l.includes('`frontend-spa`:') && l.includes('default categories'));
-  assert.ok(line, 'frontend-spa category line not found in Phase 0');
+  assert.ok(line, 'frontend-spa category line not found in Phase 2');
   assert.match(line, /10 default categories/, 'frontend-spa should now declare 10 categories');
   for (const cat of FRONTEND_SPA_CATEGORIES) {
     assert.ok(line.includes(cat), `frontend-spa category list missing "${cat}"`);
   }
 });
 
-test('planner SKILL.md Phase 0 lists workflows for backend-api', () => {
+test('planner SKILL.md Phase 2 lists workflows for backend-api', () => {
   const skill = fs.readFileSync(path.join(__dirname, 'SKILL.md'), 'utf-8');
   const line = skill.split(/\r?\n/).find(l => l.includes('`backend-api`:'));
   assert.ok(line, 'backend-api category line not found');
