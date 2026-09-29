@@ -47,7 +47,7 @@ Each stage has a standalone invocation (e.g., `/insightify:planner`) and an orch
 ## Testing
 
 - Tests validate SKILL.md content (required sections, keywords, structure) — not just behavior.
-- `tests/build-templates.test.js` is the largest suite (~27 tests). Uses `jsdom` for DOM/JS runtime testing of `scripts-base.js`.
+- `tests/build-templates.test.js` is the largest suite. Uses `jsdom` for DOM/JS runtime testing of `scripts-base.js`.
 - `tests/fixtures/sample-14-kb/` is a generated fixture (14 `.md` files with frontmatter) used by build tests.
 - Some tests in `build-templates.test.js` are commented out (template placeholder assertions) — these are intentional skips, not failures.
 

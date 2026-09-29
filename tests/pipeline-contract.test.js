@@ -103,3 +103,30 @@ describe('Pipeline contract (4-stage artifact chain)', () => {
     );
   });
 });
+
+describe('Documentation numeric claims match reality', () => {
+  test('README check count matches scripts/verify-output.mjs', () => {
+    const readme = read('README.md');
+    // Only the count is asserted; the sentence around it is free to change.
+    const claimed = readme.match(/passes all (\d+) checks/i);
+    assert.ok(claimed, 'README.md must state how many checks a reference build passes');
+    const actual = (read('scripts/verify-output.mjs').match(/\bcheck\(/g) || []).length;
+    assert.strictEqual(
+      Number(claimed[1]),
+      actual,
+      `README claims ${claimed[1]} checks but verify-output.mjs defines ${actual}`
+    );
+  });
+
+  test('README does not pin a stale test count', () => {
+    // Counts of test declarations drift on every refactor; the docs must not
+    // hardcode them (this is exactly the drift class fixed in AGENTS.md).
+    for (const rel of ['README.md', 'AGENTS.md', 'CLAUDE.md']) {
+      const doc = read(rel);
+      assert.ok(
+        !/~?\d+\s+tests?\b/i.test(doc),
+        `${rel} hardcodes a test count; describe the suite instead of numbering it`
+      );
+    }
+  });
+});
