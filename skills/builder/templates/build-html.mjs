@@ -197,7 +197,8 @@ function extractArchitectureHighlights(kbDir, techStack) {
     { file: 'state-and-data.md', label: 'State & Data' },
     { file: 'design-system.md', label: 'Design System' },
     { file: 'api-patterns.md', label: 'API Patterns' },
-    { file: 'business-policies.md', label: 'Business Policies' }
+    { file: 'business-policies.md', label: 'Business Policies' },
+    { file: 'workflows.md', label: 'Workflows' }
   ];
 
   for (const { file, label } of kbSources) {

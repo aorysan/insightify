@@ -52,8 +52,8 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 1. Analyze the ingested sources to detect the project archetype.
 2. Supported archetypes: `frontend-spa`, `backend-api`, `system-design`, `general`.
 3. Map the detected archetype to its corresponding knowledge categories:
-   - `frontend-spa`: 9 default categories (product, directory-structure, architecture, state-and-data, design-system, api-patterns, features-and-journeys, business-policies, constraints-and-limits).
-   - `backend-api`: product, directory-structure, architecture, api-patterns, features-and-journeys, business-policies, constraints-and-limits.
+   - `frontend-spa`: 10 default categories (product, directory-structure, architecture, state-and-data, design-system, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows).
+   - `backend-api`: product, directory-structure, architecture, api-patterns, features-and-journeys, business-policies, constraints-and-limits, workflows.
    - `system-design`: product, architecture, features-and-journeys, business-policies, constraints-and-limits.
    - `general`: product, directory-structure, features-and-journeys, business-policies, constraints-and-limits.
 
@@ -69,7 +69,7 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 **Map-Reduce / Context Filtering:** Chunk large sources into segments; extract facts per chunk (map), then merge per category (reduce). Per category, feed only relevant chunks as context — filtered by category keywords and churn priority — instead of all content.
 
 **Knowledge Categories:**
-*(Note: The following 9 categories are defaults for `frontend-spa`. Other archetypes use different categories depending on Phase 2).*
+*(Note: The following 10 categories are defaults for `frontend-spa` (`backend-api` uses the same set minus `state-and-data.md` and `design-system.md`). Other archetypes use different categories depending on Phase 2).*
 1. `product.md` — Product identity, version, audience, tagline
 2. `directory-structure.md` — Folder tree, module boundaries, import conventions
 3. `architecture.md` — High-level architecture, module boundaries, layout wrappers, routing structure, entity names + purpose only (not full field listings)
@@ -79,6 +79,7 @@ Content headings normalized to start at H2 (`##`). Manifest format: table with S
 7. `features-and-journeys.md` — Feature catalog, personas, end-to-end user journeys, acceptance criteria
 8. `business-policies.md` — Business rules, validation policies, cross-cutting concerns, domain glossary
 9. `constraints-and-limits.md` — Technical limits, performance budgets, security, known issues
+10. `workflows.md` — Step-by-step procedures, execution flows, CI/CD, deployment, release
 
 **Feature Boundary & Negative Constraints:**
 - Features MUST represent functional product capabilities and business workflows (e.g., Content Planner, Video Generation Pipeline, Auth, Sheets Sync, AI Copilot).
