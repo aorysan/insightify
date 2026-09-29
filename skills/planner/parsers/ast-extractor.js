@@ -14,7 +14,9 @@ function getParser(lang) {
     if (parsers[normalized]) return parsers[normalized];
 
     const parser = new Parser();
-    if (normalized === 'ts' || normalized === 'tsx') {
+    if (normalized === 'tsx') {
+        parser.setLanguage(require('tree-sitter-typescript').tsx);
+    } else if (normalized === 'ts') {
         parser.setLanguage(require('tree-sitter-typescript').typescript);
     } else if (normalized === 'js' || normalized === 'jsx') {
         parser.setLanguage(require('tree-sitter-javascript'));

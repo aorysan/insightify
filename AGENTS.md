@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## Commands
 
-- **Run tests**: `npm test` (runs `node --test`, discovers `tests/**/*.test.js`)
+- **Run tests**: `npm test` (runs `node --test`, discovers `tests/**/*.test.js` and `skills/**/*.test.mjs`)
 - **Install dependencies**: `npm install` (no flags needed; `package.json` `overrides` reconciles the stale `tree-sitter-typescript` peer range — see below)
 - **Verify a generated output**: `npm run verify:output -- insights/<project>` (see Output verification below)
 - No lint, typecheck, or format commands exist. No CI workflows.

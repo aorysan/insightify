@@ -10,10 +10,18 @@ test('extractAst succeeds with short alias "js"', () => {
   assert.deepEqual(result.imports, ['react']);
 });
 
-test('extractAst succeeds with long alias "javascript" (currently fails — bug)', () => {
+test('extractAst succeeds with long alias "javascript"', () => {
   const result = extractAst(sampleJs, 'javascript');
   assert.equal(result.status, 'success');
   assert.deepEqual(result.imports, ['react']);
+});
+
+test('extractAst succeeds with tsx and extracts exports containing JSX', () => {
+  const sampleTsx = `import React from 'react';\nexport const App = () => <div>Hello</div>;\n`;
+  const result = extractAst(sampleTsx, 'tsx');
+  assert.equal(result.status, 'success');
+  assert.deepEqual(result.imports, ['react']);
+  assert.deepEqual(result.exports, ['App']);
 });
 
 test('extractAst succeeds with long alias "typescript"', () => {
