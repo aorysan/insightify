@@ -22,8 +22,9 @@ description: Stage 1 - Ingest sources, extract knowledge into categories based o
 | `.html`, `.htm` | `parsers/html-parser.js` | Strips nav/footer/scripts, preserves content structure; extracts color palette data (`## Colors` section) |
 | `.js`, `.ts`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.c`, `.cpp`, `.cs` | `parsers/code-parser.js` | Extracts JSDoc/docstrings; falls back to raw code |
 | `.pdf` | `parsers/pdf-parser.js` | Binary buffer input via `pdf-parse` |
-| `.json`, `.yaml`, `.yml` (`openapi.json`, `swagger.yaml`) | Native schema parser | OpenAPI/Swagger specs (detect `openapi`/`swagger` root key): parse endpoints/models directly instead of raw-text ingestion; non-spec `.json`/`.yaml` → Direct copy |
-| `.sql` (`schema.sql`) | Native schema parser | SQL DDL: parse tables/columns/entities directly instead of raw-text ingestion |
+| `.json` | `parsers/json-parser.js` | Strips comments/trailing commas, then extracts `dependencies`/`devDependencies`/`peerDependencies`/`scripts`/`compilerOptions` when present (package-manifest shape); any other JSON — including OpenAPI/Swagger specs — falls back to a formatted raw JSON dump. Structured OpenAPI/Swagger endpoint extraction is not yet implemented; treat such files as raw reference material for the `api-patterns.md` category. |
+| `.yaml`, `.yml` | Direct copy | No dedicated YAML parser exists yet; copied as-is with frontmatter added, same as `.md`/`.txt` |
+| `.sql` (`schema.sql`) | Direct copy | No SQL DDL parser exists yet; copied as-is with frontmatter added. Table/column/entity extraction from SQL is not yet implemented. |
 | `.md`, `.txt`, `.rst` | Direct copy | Copy content as-is with frontmatter added |
 | URLs (`http://`, `https://`) | Fetch → HTML parser | Fetch page, then process as HTML |
 | Other extensions | Skip | Log warning, mark as `skipped` in manifest |
