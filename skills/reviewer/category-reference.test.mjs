@@ -6,10 +6,6 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function readBusinessAlignmentLines(content) {
-  return content.split(/\r?\n/).filter(l => /Business Alignment/i.test(l));
-}
-
 test('reviewer SKILL.md Business Alignment references real Planner filenames', () => {
   const content = fs.readFileSync(path.join(__dirname, 'SKILL.md'), 'utf-8');
   assert.ok(!content.includes('user-journeys.md'), 'stale filename user-journeys.md must not appear');
